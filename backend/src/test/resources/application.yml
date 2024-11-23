@@ -1,0 +1,14 @@
+app:
+
+spring:
+  application:
+    name: backend
+
+server:
+  port: ${BACKEND_PORT}
+
+logging:
+  config: classpath:log4j2-plain.xml
+
+bot:
+  base-url: http://${BACKEND_BASEURL_HOST}:${BACKEND_PORT}

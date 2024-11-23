@@ -7,9 +7,9 @@ AI provides analytics and support at all stages of content creation and publicat
 
 The project is written in `Java 21` using `Spring Boot 3`.
 
-The project consists of ... applications:
-* ...
-* ...
+The project consists of two applications:
+* backend
+* scrapper
 
 The application relies on the following services to function properly:
 * ...

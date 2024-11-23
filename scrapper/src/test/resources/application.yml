@@ -1,0 +1,14 @@
+app:
+
+spring:
+  application:
+    name: scrapper
+
+server:
+  port: ${SCRAPPER_PORT}
+
+logging:
+  config: classpath:log4j2-plain.xml
+
+bot:
+  base-url: http://${SCRAPPER_BASEURL_HOST}:${SCRAPPER_PORT}

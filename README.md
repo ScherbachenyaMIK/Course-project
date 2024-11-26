@@ -1,3 +1,7 @@
+![Backend](https://github.com/ScherbachenyaMIK/Course-project/actions/workflows/backend.yml/badge.svg)
+![Scrapper](https://github.com/ScherbachenyaMIK/Course-project/actions/workflows/scrapper.yml/badge.svg)
+
+
 # AI-Powered Content Hub
 
 Author: Scherbachenya Mikhail

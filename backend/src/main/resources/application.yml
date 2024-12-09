@@ -1,8 +1,25 @@
 app:
 
+kafka-config:
+  topic-name: test_topic
+  count-of-partitions: 10
+  count-of-replicas: 1
+  dlq-topic-name: test_topic_dlq
+  dlq-count-of-partitions: 10
+  dlq-count-of-replicas: 1
+
 spring:
   application:
     name: backend
+  security:
+    user:
+      name: admin
+      password: admin
+  thymeleaf:
+    prefix: classpath:/UI/static/html/
+    suffix: .html
+  producer:
+    value-serializer: org.springframework.kafka.support.serializer.StringSerializer
 
 server:
   port: ${BACKEND_PORT}

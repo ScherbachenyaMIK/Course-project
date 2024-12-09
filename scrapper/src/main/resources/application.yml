@@ -1,8 +1,26 @@
 app:
 
+kafka-config:
+  topic-name: test_topic
+  count-of-partitions: 10
+  count-of-replicas: 1
+  dlq-topic-name: test_topic_dlq
+  dlq-count-of-partitions: 10
+  dlq-count-of-replicas: 1
+
 spring:
   application:
     name: scrapper
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+      group-id: test_group
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        spring:
+          json:
+            use.type.headers: false
+            value.default.type: java.lang.String
 
 server:
   port: ${SCRAPPER_PORT}

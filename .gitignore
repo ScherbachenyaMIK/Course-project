@@ -32,3 +32,6 @@ build/
 .vscode/
 
 ### yml and properties ###
+
+### UI icons ###
+/backend/src/main/resources/UI/resources/

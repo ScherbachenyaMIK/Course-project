@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress XmlUnusedNamespaceDeclaration -->
+<databaseChangeLog
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+       http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<include file="01-create-table-Users.sql"/>
+	<include file="02-create-table-Articles.sql"/>
+	<include file="03-create-table-Moderators.sql"/>
+	<include file="04-create-table-Articles_Moderators.sql"/>
+	<include file="05-create-table-Comments.sql"/>
+	<include file="06-create-table-Tags.sql"/>
+	<include file="07-create-table-Articles_Tags.sql"/>
+	<include file="08-create-table-Categories.sql"/>
+	<include file="09-create-table-Articles_Categories.sql"/>
+</databaseChangeLog>

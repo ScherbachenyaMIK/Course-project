@@ -1,12 +1,49 @@
 app:
 
 kafka-config:
-  topic-name: test_topic
-  count-of-partitions: 10
-  count-of-replicas: 1
-  dlq-topic-name: test_topic_dlq
-  dlq-count-of-partitions: 10
-  dlq-count-of-replicas: 1
+  topics:
+    identification:
+      partitions: 10
+      replicas: 3
+    profile_editing:
+      partitions: 10
+      replicas: 3
+    commenting:
+      partitions: 10
+      replicas: 1
+    articles_setup:
+      partitions: 5
+      replicas: 1
+    articles_editing:
+      partitions: 20
+      replicas: 1
+    bans:
+      partitions: 5
+      replicas: 3
+    reports:
+      partitions: 10
+      replicas: 1
+    get_info:
+      partitions: 5
+      replicas: 3
+    comments_showing:
+      partitions: 20
+      replicas: 1
+    articles_showing:
+      partitions: 20
+      replicas: 2
+    articles_searching:
+      partitions: 10
+      replicas: 3
+    statistics:
+      partitions: 20
+      replicas: 2
+    collection:
+      partitions: 20
+      replicas: 2
+    authorization:
+      partitions: 5
+      replicas: 3
 
 spring:
   application:
@@ -18,8 +55,16 @@ spring:
   thymeleaf:
     prefix: classpath:/UI/static/html/
     suffix: .html
+  kafka:
+    bootstrap-servers:
+      - localhost:9092
+      - localhost:9093
+      - localhost:9094
   producer:
-    value-serializer: org.springframework.kafka.support.serializer.StringSerializer
+    acks: all
+    value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      min.insync.replicas: 2
 
 server:
   port: ${BACKEND_PORT}

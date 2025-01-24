@@ -13,7 +13,6 @@ public class Controller {
 
     @GetMapping("/")
     public ModelAndView getSingIn() {
-        scrapperService.sendUpdate("Hello world!");
         return new ModelAndView("Home");
     }
 }

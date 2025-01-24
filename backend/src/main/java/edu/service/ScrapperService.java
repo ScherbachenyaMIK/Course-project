@@ -17,8 +17,8 @@ public class ScrapperService {
     @Autowired
     private KafkaProducerLogger kafkaProducerLogger;
 
-    public void sendUpdate(String request) {
-        kafkaProducerLogger.logRequest(request);
-        kafkaTemplate.send(kafkaConfig.topicName(), request);
+    public void sendUpdate(String topicName, Object request) {
+        kafkaProducerLogger.logRequest(topicName, request);
+        kafkaTemplate.send(topicName, request.toString());
     }
 }

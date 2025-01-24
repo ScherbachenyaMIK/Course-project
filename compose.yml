@@ -48,32 +48,75 @@ services:
     networks:
       - backend
 
-  kafka:
+  kafka1:
     image: confluentinc/cp-kafka:7.3.2
-    hostname: kafka
-    container_name: kafka_c
+    hostname: kafka1
+    container_name: kafka_c1
     depends_on:
       - zookeeper
     ports:
       - "9092:9092"
-      - "29092:29092"
-      - "9999:9999"
+      - "19092:19092"
     environment:
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_BROKER_ID: 1
-      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:19092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_JMX_PORT: 9999
-      KAFKA_JMX_HOSTNAME: ${DOCKER_HOST_IP:-127.0.0.1}
-      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
-      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
     volumes:
-      - kafka_data:/var/lib/kafka/data
+      - kafka_data:/var/lib/kafka1/data
+    networks:
+      - backend
+  
+  kafka2:
+    image: confluentinc/cp-kafka:7.3.2
+    hostname: kafka2
+    container_name: kafka_c2
+    depends_on:
+      - zookeeper
+    ports:
+      - "9093:9093"
+      - "19093:19093"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:19093,EXTERNAL://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    volumes:
+      - kafka_data:/var/lib/kafka2/data
+    networks:
+      - backend
+  
+  kafka3:
+    image: confluentinc/cp-kafka:7.3.2
+    hostname: kafka3
+    container_name: kafka_c3
+    depends_on:
+      - zookeeper
+    ports:
+      - "9094:9094"
+      - "19094:19094"
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:19094,EXTERNAL://localhost:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    volumes:
+      - kafka_data:/var/lib/kafka3/data
     networks:
       - backend
 

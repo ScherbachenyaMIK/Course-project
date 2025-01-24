@@ -11,9 +11,9 @@ public class KafkaProducerLogger {
     @Autowired
     private KafkaConfig kafkaConfig;
 
-    public void logRequest(Object request) {
+    public void logRequest(String topicName, Object request) {
         log.debug("Message pushed into queue");
-        log.debug("Topic: {}", kafkaConfig.topicName());
+        log.debug("Topic: {}", topicName);
         log.debug("Message body: {}", request);
     }
 }

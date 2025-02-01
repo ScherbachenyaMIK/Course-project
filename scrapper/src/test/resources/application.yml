@@ -1,14 +1,79 @@
 app:
 
+kafka-config:
+  topics:
+    identification:
+      partitions: 5
+      replicas: 1
+    profile_editing:
+      partitions: 5
+      replicas: 1
+    commenting:
+      partitions: 5
+      replicas: 1
+    articles_setup:
+      partitions: 5
+      replicas: 1
+    articles_editing:
+      partitions: 5
+      replicas: 1
+    bans:
+      partitions: 5
+      replicas: 1
+    reports:
+      partitions: 5
+      replicas: 1
+    get_info:
+      partitions: 5
+      replicas: 1
+    comments_showing:
+      partitions: 5
+      replicas: 1
+    articles_showing:
+      partitions: 5
+      replicas: 1
+    articles_searching:
+      partitions: 5
+      replicas: 1
+    articles_for_feed:
+      partitions: 5
+      replicas: 1
+    statistics:
+      partitions: 5
+      replicas: 1
+    collection:
+      partitions: 5
+      replicas: 1
+    authorization:
+      partitions: 5
+      replicas: 1
+
 spring:
   application:
     name: scrapper
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      group-id: test_consumers
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        retry-backoff-ms: 1000
+        fetch-min-bytes: 128
+        fetch-max-wait-ms: 300
+        isolation.level: read_committed
+        spring:
+          json:
+            use.type.headers: true
+            .trusted.packages: edu.model.web.**
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 server:
-  port: ${SCRAPPER_PORT}
+  port: 8080
 
 logging:
   config: classpath:log4j2-plain.xml
 
-bot:
-  base-url: http://${SCRAPPER_BASEURL_HOST}:${SCRAPPER_PORT}
+backend:
+  base-url: localhost:8090

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-Powered Content Hub — инновационная платформа для публикации авторских статей с использованием инструментов искусственного интеллекта. Создавайте, редактируйте и улучшайте контент с помощью ИИ. Подходит для блогеров, писателей и всех, кто хочет делиться своими идеями онлайн.">
+    <meta name="keywords" content="публикация статей, контент платформа, ИИ инструменты, искусственный интеллект, создание контента, редактирование, авторские статьи, блог, AI content hub">
+    <title>AI-Powered Content Hub</title>
+    <link rel="icon" href="/resources/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles/home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Geo:ital@0;1&family=Germania+One&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="home-page" class="form">
+        <div class="vertical-box">
+            <div class="header">
+                <div class="background">
+                    <a href="">
+                        <img class="logo" src="/resources/icon_p.png" alt="logo" />
+                    </a>
+                    <div class="site-title">
+                    <span>
+                        <span class="site-title-span1">AI&nbsp;</span>
+                        <span class="site-title-span2">C</span>
+                        <span class="site-title-span1">ON</span>
+                        <span class="site-title-span2">T</span>
+                        <span class="site-title-span3">e</span>
+                        <span class="site-title-span1">N</span>
+                        <span class="site-title-span2">T&nbsp;</span>
+                        <span class="site-title-span2">H</span>
+                        <span class="site-title-span1">UB</span>
+                    </span>
+                    </div>
+                    <div class="sign-up-button">
+                        <div class="sign-up-background"></div>
+                        <img class="sign-up-icon" src="/resources/sign_up_icon.png" alt="sign up" />
+                        <img class="sign-up-icon-hover" src="/resources/sign_up_icon_g.png" alt="sign up" />
+                        <div class="sign-up-text">регистрация</div>
+                    </div>
+                    <div class="log-in-button">
+                        <div class="log-in-background"></div>
+                        <img class="log-in-icon" src="/resources/log_in_icon.png" alt="log in" />
+                        <img class="log-in-icon-hover" src="/resources/log_in_icon_g.png" alt="log in" />
+                        <div class="log-in-text">войти</div>
+                    </div>
+                </div>
+            </div>
+            <div class="horizontal-box">
+                <div class="vertical-box-left">
+                    <div class="menu">
+                        <div class="menu-background"></div>
+                        <div class="menu-content">
+                            <div class="settings-button">
+                                <div class="settings-button-prime">
+                                    <div class="settings-background"></div>
+                                    <div class="settings">настройки</div>
+                                </div>
+                            </div>
+                            <div class="filters-button">
+                                <div class="filters-button-prime">
+                                    <div class="filters-background"></div>
+                                    <div class="filters">фильтры</div>
+                                </div>
+                            </div>
+                            <div class="searching-button">
+                                <div class="searching-button-prime">
+                                    <div class="searching-background"></div>
+                                    <div class="searching">поиск</div>
+                                </div>
+                            </div>
+                            <div class="categories-button">
+                                <div class="categories-button-prime">
+                                    <div class="categories-background"></div>
+                                    <div class="categories">категории</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="articles-area">
+                        <div class="article" th:each="article : ${articles}">
+                            <div class="icon-with-label">
+                                <img class="author-icon" th:src="${article.authorIconUri}" alt="Аватар автора">
+                                <div class="author-name" th:text="${article.author}">Автор статьи</div>
+                            </div>
+                            <div class="article-title" th:text="${article.title}">Название статьи</div>
+                            <div class="article-tags" th:text="${article.information.tags}">#теги</div>
+                            <div class="article-categories" th:text="${article.information.categories}">Категории</div>
+                            <div class="information-row">
+                                <div class="icon-with-label">
+                                    <img class="information-icon" src="/resources/clock_icon.png" alt="Время прочтения в минутах">
+                                    <div class="information-label" th:text="${article.information.timeToRead} + ' минут'">Время прочтения в минутах</div>
+                                </div>
+                                <div class="icon-with-label">
+                                    <img class="information-icon" src="/resources/created_icon.png" alt="Дата и время создания">
+                                    <div class="information-label" th:text="${article.information.creationDate}">Дата и время создания</div>
+                                </div>
+                                <div class="icon-with-label">
+                                    <img class="information-icon" src="/resources/status_icon.png" alt="Статус статьи">
+                                    <div class="information-label" th:text="${article.information.status}">Статус статьи</div>
+                                </div>
+                            </div>
+                            <img class="article-preview" th:src="${article.previewImageUri}" alt="Обложка статьи">
+                            <div class="article-fragment" th:utext="${article.fragment}">Фрагмент статьи</div>
+                            <a th:href="${article.articleUri}" class="more-button">
+                                <div class="more-button-text">Читать далее &gt;</div>
+                            </a>
+                            <div class="information-row">
+                                <div class="icon-with-label">
+                                    <img class="information-icon" src="/resources/views_icon.png" alt="Количество просмотров">
+                                    <div class="information-label" th:text="${article.information.views}">Количество просмотров</div>
+                                </div>
+                                <div class="icon-with-label">
+                                    <img class="information-icon" src="/resources/likes_icon.png" alt="Количество лайков">
+                                    <div class="information-label" th:text="${article.information.likes}">Количество лайков</div>
+                                </div>
+                                <div class="icon-with-label">
+                                    <img class="information-icon" src="/resources/comments_icon.png" alt="Количество комментариев">
+                                    <div class="information-label" th:text="${article.information.comments}">Количество комментариев</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="vertical-box-right">
+                    <div class="searching-area">
+                        <label class="searching-label" for="searching-input">Поиск:</label>
+                        <input id="searching-input" class="searching-input" type="text" placeholder="Искать...">
+                        <img class="magnifier" src="resources/magnifier.png" alt="search" />
+                    </div>
+                    <div class="information-block-1">
+                    </div>
+                    <div class="information-block-2">
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="background"></div>
+                <div class="_2024-content-hub">© 2024, Content Hub</div>
+                <div class="navigation-bar">
+                    <div class="tech-support">Техническая поддержка</div>
+                    <div class="faq">FAQ</div>
+                    <div class="about-us">Информация</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

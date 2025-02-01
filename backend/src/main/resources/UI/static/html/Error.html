@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta http-equiv="refresh" content="10;url=/">
+    <title>Ошибка | AI-Powered Content Hub</title>
+    <link rel="icon" href="/resources/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles/error.css">
+</head>
+<body>
+<div class="vertical-box">
+    <div class="header">
+        <div class="background">
+            <a href="">
+                <img class="logo" src="/resources/icon_p.png" alt="logo" />
+            </a>
+            <div class="site-title">
+                    <span>
+                        <span class="site-title-span1">AI&nbsp;</span>
+                        <span class="site-title-span2">C</span>
+                        <span class="site-title-span1">ON</span>
+                        <span class="site-title-span2">T</span>
+                        <span class="site-title-span3">e</span>
+                        <span class="site-title-span1">N</span>
+                        <span class="site-title-span2">T&nbsp;</span>
+                        <span class="site-title-span2">H</span>
+                        <span class="site-title-span1">UB</span>
+                    </span>
+            </div>
+            <div class="sign-up-button">
+                <div class="sign-up-background"></div>
+                <img class="sign-up-icon" src="/resources/sign_up_icon.png" alt="sign up" />
+                <img class="sign-up-icon-hover" src="/resources/sign_up_icon_g.png" alt="sign up" />
+                <div class="sign-up-text">регистрация</div>
+            </div>
+            <div class="log-in-button">
+                <div class="log-in-background"></div>
+                <img class="log-in-icon" src="/resources/log_in_icon.png" alt="log in" />
+                <img class="log-in-icon-hover" src="/resources/log_in_icon_g.png" alt="log in" />
+                <div class="log-in-text">войти</div>
+            </div>
+        </div>
+    </div>
+    <div class="vertical-box-2">
+        <h1>Произошла ошибка</h1>
+        <h1 th:text="'Код ответа сервера: ' + ${HttpCode}">Код ответа сервера: [Код ответа]</h1>
+        <p th:text="${ResponseDescription}">Описание ошибки</p>
+        <p>Вы будете перенаправлены на главную страницу.</p>
+        <a class="return-button" href="/">Вернуться на главную</a>
+    </div>
+    <div class="footer">
+        <div class="background"></div>
+        <div class="_2024-content-hub">© 2024, Content Hub</div>
+        <div class="navigation-bar">
+            <div class="tech-support">Техническая поддержка</div>
+            <div class="faq">FAQ</div>
+            <div class="about-us">Информация</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,14 +1,88 @@
 app:
+  initial-searching-count: 5
+  timeout: 10
+
+kafka-config:
+  topics:
+    identification:
+      partitions: 5
+      replicas: 1
+    profile_editing:
+      partitions: 5
+      replicas: 1
+    commenting:
+      partitions: 5
+      replicas: 1
+    articles_setup:
+      partitions: 5
+      replicas: 1
+    articles_editing:
+      partitions: 5
+      replicas: 1
+    bans:
+      partitions: 5
+      replicas: 1
+    reports:
+      partitions: 5
+      replicas: 1
+    get_info:
+      partitions: 5
+      replicas: 1
+    comments_showing:
+      partitions: 5
+      replicas: 1
+    articles_showing:
+      partitions: 5
+      replicas: 1
+    articles_searching:
+      partitions: 5
+      replicas: 1
+    articles_for_feed:
+      partitions: 5
+      replicas: 1
+    statistics:
+      partitions: 5
+      replicas: 1
+    collection:
+      partitions: 5
+      replicas: 1
+    authorization:
+      partitions: 5
+      replicas: 1
 
 spring:
   application:
     name: backend
+  security:
+    user:
+      name: test
+      password: test
+  thymeleaf:
+    prefix: classpath:/UI/static/html/
+    suffix: .html
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      group-id: test_consumers
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        retry-backoff-ms: 1000
+        fetch-min-bytes: 128
+        fetch-max-wait-ms: 300
+        isolation.level: read_committed
+        spring:
+          json:
+            use.type.headers: true
+            .trusted.packages: edu.model.web.**
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 server:
-  port: ${BACKEND_PORT}
+  port: 8090
 
 logging:
   config: classpath:log4j2-plain.xml
 
-bot:
-  base-url: http://${BACKEND_BASEURL_HOST}:${BACKEND_PORT}
+scrapper:
+  base-url: http://localhost:8080

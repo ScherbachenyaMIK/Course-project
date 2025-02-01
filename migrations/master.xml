@@ -15,4 +15,7 @@
 	<include file="07-create-table-Articles_Tags.sql"/>
 	<include file="08-create-table-Categories.sql"/>
 	<include file="09-create-table-Articles_Categories.sql"/>
+	<include file="10-alter-table-Articles-column-author-id.sql"/>
+	<include file="11-alter-table-Articles-column-status.sql"/>
+	<include file="12-alter-table-Articles-column-time-to-read.sql"/>
 </databaseChangeLog>

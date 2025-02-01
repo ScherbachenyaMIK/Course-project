@@ -18,12 +18,23 @@ public class StyleController {
     @Setter
     private ResourceLoader resourceLoader;
 
+    private final String mediaType = "text/css";
+
     @GetMapping("/home.css")
     public ResponseEntity<Resource> getHome() {
         Resource resource = resourceLoader.getResource("classpath:UI/static/css/Home.css");
         return ResponseEntity.ok()
-                .contentType(MediaType.valueOf("text/css"))
+                .contentType(MediaType.valueOf(mediaType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Home.css\"")
+                .body(resource);
+    }
+
+    @GetMapping("/error.css")
+    public ResponseEntity<Resource> getError() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/css/Error.css");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Error.css\"")
                 .body(resource);
     }
 }

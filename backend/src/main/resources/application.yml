@@ -1,4 +1,6 @@
 app:
+  initial-searching-count: 5
+  timeout: 10
 
 kafka-config:
   topics:
@@ -35,6 +37,9 @@ kafka-config:
     articles_searching:
       partitions: 10
       replicas: 3
+    articles_for_feed:
+      partitions: 10
+      replicas: 3
     statistics:
       partitions: 20
       replicas: 2
@@ -60,11 +65,25 @@ spring:
       - localhost:9092
       - localhost:9093
       - localhost:9094
-  producer:
-    acks: all
-    value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    properties:
-      min.insync.replicas: 2
+    consumer:
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      group-id: backend_consumers
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        retry-backoff-ms: 1000
+        fetch-min-bytes: 128
+        fetch-max-wait-ms: 300
+        isolation.level: read_committed
+        spring:
+          json:
+            use.type.headers: true
+            trusted.packages: edu.model.web.**
+    producer:
+      value-serializer:  org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      properties:
+        min.insync.replicas: 2
 
 server:
   port: ${BACKEND_PORT}
@@ -72,5 +91,5 @@ server:
 logging:
   config: classpath:log4j2-plain.xml
 
-bot:
-  base-url: http://${BACKEND_BASEURL_HOST}:${BACKEND_PORT}
+scrapper:
+  base-url: http://${SCRAPPER_BASEURL_HOST}:${SCRAPPER_PORT}

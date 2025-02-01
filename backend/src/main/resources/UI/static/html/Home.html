@@ -78,12 +78,46 @@
                     </div>
                     <div class="articles-area">
                         <div class="article" th:each="article : ${articles}">
-                            <div class="article-author" th:text="${article.author}">Автор статьи</div>
+                            <div class="icon-with-label">
+                                <img class="author-icon" th:src="${article.authorIconUri}" alt="Аватар автора">
+                                <div class="author-name" th:text="${article.author}">Автор статьи</div>
+                            </div>
                             <div class="article-title" th:text="${article.title}">Название статьи</div>
-                            <div class="article-information" th:text="${article.information}">Информация о статье</div>
-                            <img class="article-image" th:src="${article.previewImageUrl}" alt="Превью статьи">
-                            <div class="article-fragment" th:utext="${article.fragment}">Краткая выдержка из статьи</div>
-                            <a class="read-more" th:href="${article.articleUrl}">Подробнее</a>
+                            <div class="article-tags" th:text="${article.information.tags}">#теги</div>
+                            <div class="article-categories" th:text="${article.information.categories}">Категории</div>
+                            <div class="information-row">
+                                <div class="icon-with-label">
+                                    <img class="information-icon" src="/resources/clock_icon.png" alt="Время прочтения в минутах">
+                                    <div class="information-label" th:text="${article.information.timeToRead} + ' минут'">Время прочтения в минутах</div>
+                                </div>
+                                <div class="icon-with-label">
+                                    <img class="information-icon" src="/resources/created_icon.png" alt="Дата и время создания">
+                                    <div class="information-label" th:text="${article.information.creationDate}">Дата и время создания</div>
+                                </div>
+                                <div class="icon-with-label">
+                                    <img class="information-icon" src="/resources/status_icon.png" alt="Статус статьи">
+                                    <div class="information-label" th:text="${article.information.status}">Статус статьи</div>
+                                </div>
+                            </div>
+                            <img class="article-preview" th:src="${article.previewImageUri}" alt="Обложка статьи">
+                            <div class="article-fragment" th:utext="${article.fragment}">Фрагмент статьи</div>
+                            <a th:href="${article.articleUri}" class="more-button">
+                                <div class="more-button-text">Читать далее &gt;</div>
+                            </a>
+                            <div class="information-row">
+                                <div class="icon-with-label">
+                                    <img class="information-icon" src="/resources/views_icon.png" alt="Количество просмотров">
+                                    <div class="information-label" th:text="${article.information.views}">Количество просмотров</div>
+                                </div>
+                                <div class="icon-with-label">
+                                    <img class="information-icon" src="/resources/likes_icon.png" alt="Количество лайков">
+                                    <div class="information-label" th:text="${article.information.likes}">Количество лайков</div>
+                                </div>
+                                <div class="icon-with-label">
+                                    <img class="information-icon" src="/resources/comments_icon.png" alt="Количество комментариев">
+                                    <div class="information-label" th:text="${article.information.comments}">Количество комментариев</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

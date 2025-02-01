@@ -82,12 +82,75 @@ public class ResourceController {
                 .body(resource);
     }
 
-    @GetMapping("/standard-preview.png")
+    @GetMapping("/clock_icon.png")
+    public ResponseEntity<Resource> getClockIcon() {
+        Resource resource = resourceLoader.getResource("classpath:UI/resources/Clock_Icon.png");
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Clock_icon.png\"")
+                .body(resource);
+    }
+
+    @GetMapping("/created_icon.png")
+    public ResponseEntity<Resource> getCreatedIcon() {
+        Resource resource = resourceLoader.getResource("classpath:UI/resources/Created_Icon.png");
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Created_icon.png\"")
+                .body(resource);
+    }
+
+    @GetMapping("/status_icon.png")
+    public ResponseEntity<Resource> getStatusIcon() {
+        Resource resource = resourceLoader.getResource("classpath:UI/resources/Status_Icon.png");
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Status_icon.png\"")
+                .body(resource);
+    }
+
+    @GetMapping("/views_icon.png")
+    public ResponseEntity<Resource> getViewsIcon() {
+        Resource resource = resourceLoader.getResource("classpath:UI/resources/Views_Icon.png");
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Views_icon.png\"")
+                .body(resource);
+    }
+
+    @GetMapping("/likes_icon.png")
+    public ResponseEntity<Resource> getLikesIcon() {
+        Resource resource = resourceLoader.getResource("classpath:UI/resources/Likes_Icon.png");
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Likes_icon.png\"")
+                .body(resource);
+    }
+
+    @GetMapping("/comments_icon.png")
+    public ResponseEntity<Resource> getCommentsIcon() {
+        Resource resource = resourceLoader.getResource("classpath:UI/resources/Comments_Icon.png");
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Comments_icon.png\"")
+                .body(resource);
+    }
+
+    @GetMapping("/standard_preview.png")
     public ResponseEntity<Resource> getStandardPreview() {
         Resource resource = resourceLoader.getResource("classpath:UI/resources/Logo_draw.png");
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Logo_draw.png\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Standard_preview.png\"")
+                .body(resource);
+    }
+
+    @GetMapping("/standard_icon.png")
+    public ResponseEntity<Resource> getStandardIcon() {
+        Resource resource = resourceLoader.getResource("classpath:UI/resources/Standard_Icon.png");
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Standard_icon.png\"")
                 .body(resource);
     }
 }

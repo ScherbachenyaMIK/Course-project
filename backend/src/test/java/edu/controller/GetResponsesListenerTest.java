@@ -1,8 +1,8 @@
 package edu.controller;
 
 import edu.KafkaIntegrationTest;
-import edu.model.web.ArticleInformationDTO;
-import edu.model.web.ArticlePreviewDTO;
+import edu.model.web.dto.ArticleInformationDTO;
+import edu.model.web.dto.ArticlePreviewDTO;
 import edu.service.ResponseHandler;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;

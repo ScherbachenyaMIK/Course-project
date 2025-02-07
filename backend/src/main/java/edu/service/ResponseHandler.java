@@ -1,7 +1,7 @@
 package edu.service;
 
 import edu.configuration.ApplicationConfig;
-import edu.model.web.ArticlePreviewDTO;
+import edu.model.web.dto.ArticlePreviewDTO;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;

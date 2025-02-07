@@ -1,6 +1,6 @@
 package edu.controller;
 
-import edu.model.web.ArticlePreviewDTO;
+import edu.model.web.dto.ArticlePreviewDTO;
 import edu.service.ResponseHandler;
 import edu.util.KafkaConsumerLogger;
 import java.util.List;

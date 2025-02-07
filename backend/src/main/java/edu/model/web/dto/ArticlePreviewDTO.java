@@ -1,4 +1,4 @@
-package edu.model.web;
+package edu.model.web.dto;
 
 import java.net.URI;
 

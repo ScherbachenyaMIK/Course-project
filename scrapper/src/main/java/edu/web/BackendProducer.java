@@ -1,6 +1,7 @@
 package edu.web;
 
 import edu.model.web.DTO;
+import edu.model.web.response.AuthResponse;
 import edu.util.KafkaProducerLogger;
 import java.util.List;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -14,11 +15,21 @@ public class BackendProducer {
     private KafkaTemplate<String, List<DTO>> kafkaDTOTemplate;
 
     @Autowired
+    private KafkaTemplate<String, AuthResponse> kafkaAuthTemplate;
+
+    @Autowired
     private KafkaProducerLogger kafkaProducerLogger;
 
     @SuppressWarnings("IllegalIdentifierName")
     public void sendDTOMessage(ProducerRecord<String, List<DTO>> record) {
         kafkaProducerLogger.logRequest(record.topic(), record.key() + ": " + record.value());
         kafkaDTOTemplate.send(record);
+    }
+
+    @SuppressWarnings("MultipleStringLiterals")
+    public void sendAuthResponse(String correlationId, AuthResponse response) {
+        kafkaProducerLogger.logRequest(
+                "authorization", correlationId + ": " + response);
+        kafkaAuthTemplate.send("authorization", correlationId, response);
     }
 }

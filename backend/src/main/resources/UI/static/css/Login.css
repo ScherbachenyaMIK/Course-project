@@ -1,0 +1,190 @@
+* {
+  box-sizing: border-box;
+}
+a {
+  text-decoration: none;
+}
+
+.log-in-form {
+  background: rgba(0, 0, 0, 0.5);
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.form-content {
+  background: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 35.5vw;
+  position: relative;
+}
+.header-content {
+  display: flex;
+  flex-direction: row;
+  gap: 1vh;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 100%;
+  height: 13vh;
+  background: var(--color-main-emerald);
+  position: relative;
+}
+.logo {
+  flex-shrink: 0;
+  width: auto;
+  height: 91%;
+  position: relative;
+  overflow: hidden;
+}
+.form-label {
+  color: var(--color-pink);
+  text-align: left;
+  font-family: "Georgia", sans-serif;
+  font-size: 5vh;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.log-in-area {
+  padding: 5vh;
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.field {
+  background: var(--color-gray-field);
+  border-radius: 15px;
+  padding: 2vh 3vh;
+  display: flex;
+  flex-direction: row;
+  gap: 1vh;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.field:focus-within {
+  outline: 2px solid var(--color-black);
+}
+.field-space-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex: 1;
+  position: relative;
+}
+.field-label {
+  color: var(--color-gray-label);
+  text-align: left;
+  font-family: "Georgia", sans-serif;
+  font-size: 2vh;
+  font-weight: 400;
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.login-input {
+  color: var(--color-gray-input);
+  text-align: left;
+  font-family: "Georgia", sans-serif;
+  font-size: 2.7vh;
+  font-weight: 400;
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border: none;
+  background: rgba(0, 0, 0, 0);
+}
+.login-input:focus {
+  color: var(--color-black);
+  outline: none;
+}
+.eye {
+  flex-shrink: 0;
+  width: 4vh;
+  height: 4vh;
+  position: relative;
+  object-fit: cover;
+  cursor: pointer;
+}
+.log-in-button {
+  flex-shrink: 0;
+  width: 40%;
+  height: 9vh;
+  position: relative;
+  background: var(--color-main-emerald);
+  border-radius: 8px;
+  box-shadow: 0px 4px 4.5px 4px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+.log-in-button-text {
+  color: var(--color-pink);
+  text-align: left;
+  font-family: "Georgia", sans-serif;
+  font-size: 4.5vh;
+  font-weight: 400;
+  position: absolute;
+  left: 50%;
+  translate: -50% -50%;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.log-in-button:hover {
+  background: var(--color-button-green);
+}
+.log-in-button:active {
+  background: var(--color-pink);
+}
+.log-in-button:active .log-in-button-text {
+  color: var(--color-button-green);
+}
+.redirect-content {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5vh;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+:root {
+   --color-main-emerald: #2C3A40;
+   --color-dark-green: #4F5938;
+   --color-green: #626E48;
+   --color-light-green: #658320;
+   --color-button-green: #5d6846;
+   --color-yellow: #BFB95E;
+   --color-clay: #8C5B49;
+   --color-pink: #D9BEB4;
+   --color-gray: #D9D9D9;
+   --color-gray-field: #F6F6F6;
+   --color-gray-label: #868686;
+   --color-gray-input: #7F7F7F;
+   --color-white: #FFF;
+   --color-black: #000;
+}

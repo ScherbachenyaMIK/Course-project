@@ -1,6 +1,7 @@
 package edu.web;
 
 import edu.KafkaIntegrationTest;
+import edu.cofiguration.NoJpaConfig;
 import edu.model.web.DTO;
 import edu.model.web.dto.ArticleInformationDTO;
 import edu.model.web.dto.ArticlePreviewDTO;
@@ -18,10 +19,12 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -29,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
+@Import(NoJpaConfig.class)
 class BackendProducerTest extends KafkaIntegrationTest {
     @Autowired
     private BackendProducer producer;
@@ -101,5 +105,10 @@ class BackendProducerTest extends KafkaIntegrationTest {
                 return;
             }
         }
+    }
+
+    @AfterAll
+    static void tearDown() {
+        consumer.close();
     }
 }

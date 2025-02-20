@@ -75,6 +75,15 @@ spring:
       acks: all
       properties:
         min.insync.replicas: 2
+  datasource:
+    url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/scrapper
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+  liquibase:
+    enabled: false
 
 server:
   port: ${SCRAPPER_PORT}

@@ -1,5 +1,6 @@
 package edu.controller;
 
+import edu.configuration.SecurityConfig;
 import edu.service.ResponseHandler;
 import edu.util.StatusCodeDescriptor;
 import edu.web.ScrapperProducer;
@@ -16,15 +17,17 @@ import org.springframework.test.web.servlet.MvcResult;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(Controller.class)
-@Import({StatusCodeDescriptor.class})
+@Import({StatusCodeDescriptor.class, SecurityConfig.class})
 class ExceptionControllerTest {
     @MockBean
     private ScrapperProducer scrapperProducer;
+
+    @MockBean
+    private AuthorizationListener authorizationListener;
 
     @MockBean
     private ResponseHandler responseHandler;
@@ -38,8 +41,7 @@ class ExceptionControllerTest {
         when(responseHandler.getResponse(any()))
                 .thenAnswer(invocation -> { throw new TimeoutException(); });
 
-        MvcResult result = mockMvc.perform(get("/")
-                        .with(httpBasic("test", "test")))
+        MvcResult result = mockMvc.perform(get("/"))
                 .andExpect(status().isFound())
                 .andReturn();
 
@@ -52,8 +54,7 @@ class ExceptionControllerTest {
     @SneakyThrows
     @Test
     void handleNotFound() {
-        MvcResult result = mockMvc.perform(get("/not-used-url")
-                        .with(httpBasic("test", "test")))
+        MvcResult result = mockMvc.perform(get("/not-used-url"))
                 .andExpect(status().isFound())
                 .andReturn();
 
@@ -69,8 +70,7 @@ class ExceptionControllerTest {
         when(responseHandler.getResponse(any()))
                 .thenThrow(new RuntimeException());
 
-        MvcResult result = mockMvc.perform(get("/")
-                        .with(httpBasic("test", "test")))
+        MvcResult result = mockMvc.perform(get("/"))
                 .andExpect(status().isFound())
                 .andReturn();
 

@@ -1,6 +1,8 @@
 package edu.controller;
 
+import edu.configuration.SecurityConfig;
 import edu.util.StatusCodeDescriptor;
+import edu.web.ScrapperProducer;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +14,20 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(StyleController.class)
-@Import({DefaultResourceLoader.class})
+@Import({DefaultResourceLoader.class, SecurityConfig.class})
 class StyleControllerTest {
     @MockBean
     private StatusCodeDescriptor statusCodeDescriptor;
+
+    @MockBean
+    private ScrapperProducer scrapperProducer;
+
+    @MockBean
+    private AuthorizationListener authorizationListener;
 
     @Autowired
     private MockMvc mockMvc;
@@ -28,8 +35,7 @@ class StyleControllerTest {
     @SneakyThrows
     @Test
     void getHome() {
-        MockHttpServletResponse result = mockMvc.perform(get("/styles/home.css")
-                        .with(httpBasic("test", "test")))
+        MockHttpServletResponse result = mockMvc.perform(get("/styles/home.css"))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -43,8 +49,7 @@ class StyleControllerTest {
     @SneakyThrows
     @Test
     void getError() {
-        MockHttpServletResponse result = mockMvc.perform(get("/styles/error.css")
-                        .with(httpBasic("test", "test")))
+        MockHttpServletResponse result = mockMvc.perform(get("/styles/error.css"))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -53,5 +58,31 @@ class StyleControllerTest {
                 .isEqualTo("text/css");
         assertThat(result.getHeader("Content-Disposition"))
                 .isEqualTo("inline; filename=\"Error.css\"");
+    }
+
+    @Test
+    void getLogin() throws Exception {
+        MockHttpServletResponse result = mockMvc.perform(get("/styles/login.css"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(result.getContentType())
+                .isEqualTo("text/css");
+        assertThat(result.getHeader("Content-Disposition"))
+                .isEqualTo("inline; filename=\"Login.css\"");
+    }
+
+    @Test
+    void getRegister() throws Exception {
+        MockHttpServletResponse result = mockMvc.perform(get("/styles/register.css"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(result.getContentType())
+                .isEqualTo("text/css");
+        assertThat(result.getHeader("Content-Disposition"))
+                .isEqualTo("inline; filename=\"Register.css\"");
     }
 }

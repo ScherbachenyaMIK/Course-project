@@ -54,10 +54,12 @@ security:
   open-endpoints:
     - "/"
     - "/login"
+    - "/register"
     - "/checked-error"
     - "/styles/*"
     - "/scripts/*"
     - "/resources/*"
+    - "/api/availability"
   secured-endpoints:
     - "/authorized"
   auth-key: ${AUTH_KEY}

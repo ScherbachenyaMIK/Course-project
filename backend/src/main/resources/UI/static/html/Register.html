@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Создайте личный аккаунт AI-Powered Content Hub">
+  <meta name="keywords" content="публикация статей, контент платформа, ИИ инструменты, искусственный интеллект, создание контента, редактирование, авторские статьи, блог, AI content hub, авторизация, регистрация">
+  <title>Регистрация | AI-Powered Content Hub</title>
+  <link rel="icon" href="/resources/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles/register.css">
+  <script src="/scripts/register.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Geo:ital@0;1&family=Germania+One&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="sign-up-form">
+  <div class="form-content">
+    <div class="header-content">
+      <img class="logo" src="/resources/icon_p.png" />
+      <div class="form-label">Регистрация</div>
+    </div>
+    <form class="sign-up-area" th:action="@{/register}" th:object="${registerRequest}" method="post">
+      <div class="page1">
+        <div id="username" class="field">
+          <div class="field-space-content">
+            <div class="field-label">Имя пользователя*</div>
+            <input id="username-input" class="line-input" type="text" placeholder="имя пользователя (видно всем)" th:field="*{username}">
+          </div>
+        </div>
+        <div id="name" class="field">
+          <div class="field-space-content">
+            <div class="field-label">Имя*</div>
+            <input id="name-input" class="line-input" type="text" placeholder="имя (видно только пользователю)" th:field="*{name}">
+          </div>
+        </div>
+        <div id="email" class="field">
+          <div class="field-space-content">
+            <div class="field-label">Электронная почта*</div>
+            <input id="email-input" class="line-input" type="text" placeholder="e-mail" th:field="*{email}">
+          </div>
+        </div>
+      </div>
+      <div class="page2">
+        <div id="password" class="field">
+          <div class="field-space-content">
+            <div class="field-label">Пароль*</div>
+            <input id="password-input" class="line-input" type="password" placeholder="пароль">
+          </div>
+          <img class="eye" src="/resources/eye_closed.png" />
+        </div>
+        <div id="password-repeat" class="field">
+          <div class="field-space-content">
+            <div class="field-label">Повторите пароль*</div>
+            <input id="password-repeat-input" class="line-input" type="password" placeholder="повторите пароль">
+          </div>
+          <img class="eye" src="/resources/eye_closed.png" />
+        </div>
+      </div>
+      <div class="page3">
+        <div id="sex" class="field">
+          <div class="field-space-content">
+            <div class="field-label">Пол</div>
+              <select id="sex-input" class="line-input" th:field="*{sex}">
+                <option value="">Выберите пол</option>
+                <option value="M">Мужской</option>
+                <option value="W">Женский</option>
+              </select>
+          </div>
+        </div>
+        <div id="birthdate" class="field">
+          <div class="field-space-content">
+            <div class="field-label">Дата рождения</div>
+            <input id="birthdate-input" class="line-input" type="date" th:field="*{date}">
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>Обязательные поля помечены *</div>
+      </div>
+      <div id="next-button" class="next-button">
+        <div class="sign-up-button-text">Далее</div>
+      </div>
+      <input id="hashed-password-input" class="line-input" type="hidden" th:field="*{passwordHash}">
+      <div id="sign-up-button" class="sign-up-button">
+        <div class="sign-up-button-text">Завершить</div>
+      </div>
+      <div class="redirect-content">
+        <div>Уже есть аккаунт?</div>
+        <a href="/login">Авторизация</a>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

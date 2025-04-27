@@ -1,7 +1,9 @@
 package edu.controller;
 
 import edu.configuration.FakeResourceLoaderConfiguration;
+import edu.configuration.SecurityConfig;
 import edu.util.StatusCodeDescriptor;
+import edu.web.ScrapperProducer;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -14,15 +16,20 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ResourceController.class)
-@Import({FakeResourceLoaderConfiguration.class})
+@Import({FakeResourceLoaderConfiguration.class, SecurityConfig.class})
 class ResourceControllerTest {
     @MockBean
     private StatusCodeDescriptor statusCodeDescriptor;
+
+    @MockBean
+    private ScrapperProducer scrapperProducer;
+
+    @MockBean
+    private AuthorizationListener authorizationListener;
 
     @Autowired
     private MockMvc mockMvc;
@@ -40,6 +47,7 @@ class ResourceControllerTest {
             "/views_icon.png",
             "/likes_icon.png",
             "/comments_icon.png",
+            "/eye_closed.png",
             "/standard_preview.png",
             "/standard_icon.png"
     );
@@ -47,8 +55,7 @@ class ResourceControllerTest {
     @SneakyThrows
     @Test
     void getIconSvg() {
-        MockHttpServletResponse result = mockMvc.perform(get("/resources/icon.svg")
-                        .with(httpBasic("test", "test")))
+        MockHttpServletResponse result = mockMvc.perform(get("/resources/icon.svg"))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -64,8 +71,7 @@ class ResourceControllerTest {
     void getIconPng() {
         for (String resource : listOfPngResources) {
             MockHttpServletResponse result =
-                    mockMvc.perform(get("/resources" + resource)
-                            .with(httpBasic("test", "test")))
+                    mockMvc.perform(get("/resources" + resource))
                     .andExpect(status().isOk())
                     .andReturn()
                     .getResponse();

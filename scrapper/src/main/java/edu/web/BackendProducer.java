@@ -1,7 +1,7 @@
 package edu.web;
 
+import edu.model.web.AuthResponse;
 import edu.model.web.DTO;
-import edu.model.web.response.AuthResponse;
 import edu.util.KafkaProducerLogger;
 import java.util.List;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -26,10 +26,10 @@ public class BackendProducer {
         kafkaDTOTemplate.send(record);
     }
 
-    @SuppressWarnings("MultipleStringLiterals")
-    public void sendAuthResponse(String correlationId, AuthResponse response) {
+    @SuppressWarnings("IllegalIdentifierName")
+    public void sendAuthResponse(ProducerRecord<String, AuthResponse> record) {
         kafkaProducerLogger.logRequest(
-                "authorization", correlationId + ": " + response);
-        kafkaAuthTemplate.send("authorization", correlationId, response);
+                record.topic(), record.key() + ": " + record);
+        kafkaAuthTemplate.send(record);
     }
 }

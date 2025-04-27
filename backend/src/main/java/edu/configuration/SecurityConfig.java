@@ -70,7 +70,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(openEndpoints).permitAll()
                         .requestMatchers(securedEndpoints).authenticated()
-                        .anyRequest().denyAll()
+                        .anyRequest().permitAll()
                 )
                 .authenticationManager(authenticationManager)
                 .exceptionHandling(exceptionHandling ->

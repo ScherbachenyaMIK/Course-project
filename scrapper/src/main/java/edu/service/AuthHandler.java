@@ -1,7 +1,11 @@
 package edu.service;
 
-import edu.model.web.request.AuthRequest;
-import edu.model.web.response.AuthResponse;
+import edu.model.web.request.CheckAvailabilityRequest;
+import edu.model.web.request.LoginRequest;
+import edu.model.web.request.RegisterRequest;
+import edu.model.web.response.CheckAvailabilityResponse;
+import edu.model.web.response.LoginResponse;
+import edu.model.web.response.RegisterResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +17,7 @@ public class AuthHandler {
     @Autowired
     private UsersService service;
 
-    public AuthResponse handle(AuthRequest request) {
+    public LoginResponse handleLogin(LoginRequest request) {
         String role;
         if (request.username().contains("@")) {
             role = service.checkAuthAndRoleByEmail(
@@ -27,8 +31,19 @@ public class AuthHandler {
             );
         }
         if (role.equals(NONE_ROLE) || role.equals(NOT_CONFIRMED)) {
-            return new AuthResponse(false, NONE_ROLE);
+            return new LoginResponse(false, NONE_ROLE);
         }
-        return new AuthResponse(true, role);
+        return new LoginResponse(true, role);
+    }
+
+    public CheckAvailabilityResponse handleAvailability(CheckAvailabilityRequest request) {
+        return new CheckAvailabilityResponse(
+                !service.isExistsByUsername(request.username()),
+                !service.isExistsByEmail(request.email())
+        );
+    }
+
+    public RegisterResponse handleRegister(RegisterRequest request) {
+        return new RegisterResponse(service.registerNewUser(request));
     }
 }

@@ -1,7 +1,12 @@
 package edu.service;
 
-import edu.model.web.request.AuthRequest;
-import edu.model.web.response.AuthResponse;
+import edu.model.web.request.CheckAvailabilityRequest;
+import edu.model.web.request.LoginRequest;
+import edu.model.web.request.RegisterRequest;
+import edu.model.web.response.CheckAvailabilityResponse;
+import edu.model.web.response.LoginResponse;
+import edu.model.web.response.RegisterResponse;
+import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -10,11 +15,12 @@ import org.mockito.MockitoAnnotations;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 class AuthHandlerTest {
     @Mock
-    UsersService service;
+    private UsersService service;
     @InjectMocks
     private AuthHandler authHandler;
 
@@ -25,13 +31,13 @@ class AuthHandlerTest {
 
     @Test
     void handleEmailWithCorrectPassword() {
-        AuthRequest request =
-                new AuthRequest(
+        LoginRequest request =
+                new LoginRequest(
                         "test@mail.ru",
                         "VerySecretPassword"
                 );
-        AuthResponse response =
-                new AuthResponse(
+        LoginResponse response =
+                new LoginResponse(
                         true,
                         "USER"
                 );
@@ -39,20 +45,20 @@ class AuthHandlerTest {
         when(service.checkAuthAndRoleByEmail(any(), any()))
                 .thenReturn("USER");
 
-        AuthResponse result = authHandler.handle(request);
+        LoginResponse result = authHandler.handleLogin(request);
 
         assertThat(result).isEqualTo(response);
     }
 
     @Test
     void handleUsernameWithCorrectPassword() {
-        AuthRequest request =
-                new AuthRequest(
+        LoginRequest request =
+                new LoginRequest(
                         "testUser",
                         "VerySecretPassword"
                 );
-        AuthResponse response =
-                new AuthResponse(
+        LoginResponse response =
+                new LoginResponse(
                         true,
                         "USER"
                 );
@@ -60,20 +66,20 @@ class AuthHandlerTest {
         when(service.checkAuthAndRoleByUsername(any(), any()))
                 .thenReturn("USER");
 
-        AuthResponse result = authHandler.handle(request);
+        LoginResponse result = authHandler.handleLogin(request);
 
         assertThat(result).isEqualTo(response);
     }
 
     @Test
     void handleEmailWithIncorrectPassword() {
-        AuthRequest request =
-                new AuthRequest(
+        LoginRequest request =
+                new LoginRequest(
                         "test@mail.ru",
                         "VerySecretPassword"
                 );
-        AuthResponse response =
-                new AuthResponse(
+        LoginResponse response =
+                new LoginResponse(
                         false,
                         "NONE"
                 );
@@ -81,20 +87,20 @@ class AuthHandlerTest {
         when(service.checkAuthAndRoleByEmail(any(), any()))
                 .thenReturn("NONE");
 
-        AuthResponse result = authHandler.handle(request);
+        LoginResponse result = authHandler.handleLogin(request);
 
         assertThat(result).isEqualTo(response);
     }
 
     @Test
     void handleNotConfirmed() {
-        AuthRequest request =
-                new AuthRequest(
+        LoginRequest request =
+                new LoginRequest(
                         "testUser",
                         "VerySecretPassword"
                 );
-        AuthResponse response =
-                new AuthResponse(
+        LoginResponse response =
+                new LoginResponse(
                         false,
                         "NONE"
                 );
@@ -102,7 +108,54 @@ class AuthHandlerTest {
         when(service.checkAuthAndRoleByUsername(any(), any()))
                 .thenReturn("NOT_CONFIRMED");
 
-        AuthResponse result = authHandler.handle(request);
+        LoginResponse result = authHandler.handleLogin(request);
+
+        assertThat(result).isEqualTo(response);
+    }
+
+    @Test
+    void handleAvailability() {
+        CheckAvailabilityRequest request =
+                new CheckAvailabilityRequest(
+                        "test",
+                        "test@mail.ru"
+                );
+        CheckAvailabilityResponse response =
+                new CheckAvailabilityResponse(
+                        false,
+                        true
+                );
+
+        when(service.isExistsByUsername(anyString()))
+                .thenReturn(true);
+        when(service.isExistsByEmail(anyString()))
+                .thenReturn(false);
+
+        CheckAvailabilityResponse result = authHandler.handleAvailability(request);
+
+        assertThat(result).isEqualTo(response);
+    }
+
+    @Test
+    void handleRegister() {
+        RegisterRequest request =
+                new RegisterRequest(
+                        "test",
+                        "test",
+                        "test@mail.ru",
+                        "VerySecretPassword",
+                        'M',
+                        LocalDate.now()
+                );
+        RegisterResponse response =
+                new RegisterResponse(
+                        true
+                );
+
+        when(service.registerNewUser(any()))
+                .thenReturn(true);
+
+        RegisterResponse result = authHandler.handleRegister(request);
 
         assertThat(result).isEqualTo(response);
     }

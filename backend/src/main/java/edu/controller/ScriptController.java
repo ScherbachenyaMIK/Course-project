@@ -25,4 +25,12 @@ public class ScriptController {
                 .contentType(MediaType.valueOf(mediaType))
                 .body(resource);
     }
+
+    @GetMapping("/register.js")
+    public ResponseEntity<Resource> getRegisterScript() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/js/Register.js");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .body(resource);
+    }
 }

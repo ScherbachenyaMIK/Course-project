@@ -2,21 +2,28 @@ package edu.service;
 
 import edu.configuration.ApplicationConfig;
 import edu.model.web.dto.ArticlePreviewDTO;
+import edu.model.web.response.CheckAvailabilityResponse;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
 @Service
 @Log4j2
 public class ResponseHandler {
+    private static final String TIMEOUT_MESSAGE = "Response timeout with id {}";
+
     @Autowired
     ApplicationConfig applicationConfig;
     private final ConcurrentHashMap<String, CompletableFuture<ModelAndView>> pendingResponses =
+            new ConcurrentHashMap<>();
+
+    private final ConcurrentHashMap<String, CompletableFuture<ResponseEntity<?>>> pendingApiResponses =
             new ConcurrentHashMap<>();
 
     public CompletableFuture<ModelAndView> getResponse(String correlationId) {
@@ -24,7 +31,19 @@ public class ResponseHandler {
         pendingResponses.put(correlationId, future);
         future.orTimeout(applicationConfig.timeout(), TimeUnit.SECONDS)
                 .exceptionally(ex -> {
-                    log.error("Response timeout with id {}", correlationId);
+                    log.error(TIMEOUT_MESSAGE, correlationId);
+                    pendingResponses.remove(correlationId);
+                    return null;
+                });
+        return future;
+    }
+
+    public CompletableFuture<ResponseEntity<?>> getApiResponse(String correlationId) {
+        CompletableFuture<ResponseEntity<?>> future = new CompletableFuture<>();
+        pendingApiResponses.put(correlationId, future);
+        future.orTimeout(applicationConfig.timeout(), TimeUnit.SECONDS)
+                .exceptionally(ex -> {
+                    log.error(TIMEOUT_MESSAGE, correlationId);
                     pendingResponses.remove(correlationId);
                     return null;
                 });
@@ -38,6 +57,13 @@ public class ResponseHandler {
         if (future != null) {
             modelAndView.addObject("articles", articles);
             future.complete(modelAndView);
+        }
+    }
+
+    public void completeAvailabilityResponse(String correlationId, CheckAvailabilityResponse response) {
+        CompletableFuture<ResponseEntity<?>> future = pendingApiResponses.remove(correlationId);
+        if (future != null) {
+            future.complete(ResponseEntity.ok(response));
         }
     }
 }

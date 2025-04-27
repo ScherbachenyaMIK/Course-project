@@ -10,6 +10,10 @@ public interface UsersRepository extends JpaRepository<User, Long> {
     @NotNull
     User save(@NotNull User user);
 
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
+
     User findUserByEmail(String email);
 
     User findUserByUsername(String username);

@@ -14,11 +14,10 @@ import org.springframework.context.annotation.FilterType;
         KafkaAutoConfiguration.class
 })
 @ComponentScan(
-        basePackages = "edu",
+        basePackages = {"edu.service", "edu.model"},
         excludeFilters = {
-                @ComponentScan.Filter(type = FilterType.REGEX, pattern = "edu\\.configuration\\.KafkaConfig"),
-                @ComponentScan.Filter(type = FilterType.REGEX, pattern = "edu\\.controller\\..*"),
-                @ComponentScan.Filter(type = FilterType.REGEX, pattern = "edu\\.web\\..*")
+                @ComponentScan.Filter(type = FilterType.REGEX, pattern = "edu\\.service\\..*Handler"),
+                @ComponentScan.Filter(type = FilterType.REGEX, pattern = "edu\\.service\\..*Resolver")
         }
 )
 @TestConfiguration

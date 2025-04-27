@@ -38,6 +38,15 @@ public class StyleController {
                 .body(resource);
     }
 
+    @GetMapping("/register.css")
+    public ResponseEntity<Resource> getRegister() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/css/Register.css");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Register.css\"")
+                .body(resource);
+    }
+
     @GetMapping("/error.css")
     public ResponseEntity<Resource> getError() {
         Resource resource = resourceLoader.getResource("classpath:UI/static/css/Error.css");

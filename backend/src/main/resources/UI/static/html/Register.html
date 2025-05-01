@@ -1,44 +1,37 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head th:replace="~{Form :: common_head(~{::meta},'Sign up',~{::link},~{::script})}">
   <meta name="description" content="Создайте личный аккаунт AI-Powered Content Hub">
   <meta name="keywords" content="публикация статей, контент платформа, ИИ инструменты, искусственный интеллект, создание контента, редактирование, авторские статьи, блог, AI content hub, авторизация, регистрация">
-  <title>Регистрация | AI-Powered Content Hub</title>
-  <link rel="icon" href="/resources/icon.svg" type="image/svg+xml">
+
   <link rel="stylesheet" href="/styles/register.css">
+
   <script src="/scripts/register.js" defer></script>
-  <link href="https://fonts.googleapis.com/css2?family=Geo:ital@0;1&family=Germania+One&display=swap" rel="stylesheet">
 </head>
 <body>
-<div class="sign-up-form">
-  <div class="form-content">
-    <div class="header-content">
-      <img class="logo" src="/resources/icon_p.png" />
-      <div class="form-label">Регистрация</div>
-    </div>
-    <form class="sign-up-area" th:action="@{/register}" th:object="${registerRequest}" method="post">
+<div th:replace="~{Form :: common_body('Регистрация',~{::content})}">
+    <form th:fragment="content" id="register-form" class="content-area" method="post">
       <div class="page1">
         <div id="username" class="field">
           <div class="field-space-content">
             <div class="field-label">Имя пользователя*</div>
-            <input id="username-input" class="line-input" type="text" placeholder="имя пользователя (видно всем)" th:field="*{username}">
+            <input id="username-input" name="username" class="line-input" type="text" placeholder="имя пользователя (видно всем)">
           </div>
         </div>
         <div id="name" class="field">
           <div class="field-space-content">
             <div class="field-label">Имя*</div>
-            <input id="name-input" class="line-input" type="text" placeholder="имя (видно только пользователю)" th:field="*{name}">
+            <input id="name-input" name="name" class="line-input" type="text" placeholder="имя (видно только пользователю)">
           </div>
         </div>
         <div id="email" class="field">
           <div class="field-space-content">
             <div class="field-label">Электронная почта*</div>
-            <input id="email-input" class="line-input" type="text" placeholder="e-mail" th:field="*{email}">
+            <input id="email-input" name="email" class="line-input" type="text" placeholder="e-mail">
           </div>
         </div>
       </div>
+      <div id="username-email-error-message" class="error-message"></div>
       <div class="page2">
         <div id="password" class="field">
           <div class="field-space-content">
@@ -59,7 +52,7 @@
         <div id="sex" class="field">
           <div class="field-space-content">
             <div class="field-label">Пол</div>
-              <select id="sex-input" class="line-input" th:field="*{sex}">
+              <select id="sex-input" name="sex" class="line-input">
                 <option value="">Выберите пол</option>
                 <option value="M">Мужской</option>
                 <option value="W">Женский</option>
@@ -69,9 +62,10 @@
         <div id="birthdate" class="field">
           <div class="field-space-content">
             <div class="field-label">Дата рождения</div>
-            <input id="birthdate-input" class="line-input" type="date" th:field="*{date}">
+            <input id="birthdate-input" name="date" class="line-input" type="date">
           </div>
         </div>
+        <div id="result" style="display:none"></div>
       </div>
       <div>
         <div>Обязательные поля помечены *</div>
@@ -79,7 +73,7 @@
       <div id="next-button" class="next-button">
         <div class="sign-up-button-text">Далее</div>
       </div>
-      <input id="hashed-password-input" class="line-input" type="hidden" th:field="*{passwordHash}">
+      <input id="hashed-password-input" name="passwordHash" class="line-input" type="hidden">
       <div id="sign-up-button" class="sign-up-button">
         <div class="sign-up-button-text">Завершить</div>
       </div>
@@ -88,7 +82,6 @@
         <a href="/login">Авторизация</a>
       </div>
     </form>
-  </div>
 </div>
 </body>
 </html>

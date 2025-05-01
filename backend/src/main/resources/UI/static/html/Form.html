@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="common_head(meta,title,links,scripts)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${title} + ' | AI-Powered Content Hub'">AI-Powered Content Hub</title>
+
+    <link rel="icon" href="/resources/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/styles/form.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Geo:ital@0;1&family=Germania+One&display=swap" rel="stylesheet">
+
+    <th:block th:replace="${meta}" />
+    <th:block th:replace="${links}" />
+    <th:block th:replace="${scripts}" />
+</head>
+
+<body>
+<div th:fragment="common_body(label,content)" class="form">
+    <div class="form-content">
+        <div class="header-content">
+            <img class="logo" src="/resources/icon_p.png" />
+            <div th:text="${label}" class="form-label">Форма</div>
+        </div>
+        <div th:replace="${content}"></div>
+    </div>
+</div>
+</body>
+</html>

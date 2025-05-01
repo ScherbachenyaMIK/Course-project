@@ -3,27 +3,6 @@ const nextButton = document.getElementById("next-button");
 const signUpButton = document.getElementById("sign-up-button");
 let currentPage = 0;
 
-async function checkAvailability(username, email) {
-    const response = await fetch('/api/availability', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            username: username,
-            email: email
-        })
-    });
-
-    if (!response.ok) {
-        return false;
-    }
-
-    const data = await response.json();
-
-    return data.usernameAvailable && data.emailAvailable;
-}
-
 async function validateData(index) {
     if (index === 0) {
         return true;
@@ -64,8 +43,52 @@ async function validateData(index) {
         }
 
         if (!isMistake) {
-            isMistake = !await checkAvailability(username, email);
+            const availability = await fetch('/api/availability', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    email: email
+                })
+            });
+
+            const usernameEmailErrorBlock = document.getElementById("username-email-error-message");
+            let message = "Аккаунт с таким username, email уже существует";
+
+            if (availability.redirected) {
+                usernameInput.style.outline = '2px solid red';
+                emailInput.style.outline = '2px solid red';
+                usernameEmailErrorBlock.textContent = "Ошибка при проверке данных, повторите попытку позже";
+                usernameEmailErrorBlock.style.display = "block";
+                return false;
+            }
+
+            const availabilityData = await availability.json();
+
+            if (!availabilityData.usernameAvailable) {
+                usernameInput.style.outline = '2px solid red';
+                isMistake = true;
+                usernameEmailErrorBlock.style.display = "block";
+            } else {
+                usernameInput.style.outline = '2px solid green';
+                message = message.replace("username, ", "");
+            }
+
+            if (!availabilityData.emailAvailable) {
+                emailInput.style.outline = '2px solid red';
+                isMistake = true;
+                usernameEmailErrorBlock.style.display = "block";
+            } else {
+                emailInput.style.outline = '2px solid green';
+                message = message.replace(", email", "");
+            }
+
+            usernameEmailErrorBlock.textContent = message;
+
             if (!isMistake) {
+                usernameEmailErrorBlock.style.display = "none";
                 return true;
             } else {
                 return false;
@@ -156,13 +179,36 @@ async function hashPassword(password) {
 
 signUpButton.addEventListener("click", async function () {
     if (await validateData(currentPage + 1)) {
-        const form = document.querySelector("form");
+        const form = document.getElementById("register-form");
         const passwordInput = document.getElementById("password-input");
         const hashedPasswordInput = document.getElementById("hashed-password-input");
         const hashedPassword = await hashPassword(passwordInput.value);
         hashedPasswordInput.value = hashedPassword;
 
-        form.submit();
+        const formData = new FormData(form);
+        const jsonData = Object.fromEntries(formData);
+
+        const response = await fetch('/register', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(jsonData)
+        });
+
+        const responseData = await response.json();
+
+        const resultBlock = document.getElementById("result");
+
+        if (responseData.success) {
+            setTimeout(() => {
+                window.location.href = "/login";
+            }, 2000);
+            resultBlock.textContent = "Регистрация прошла успешно, не забудьте подтвердить email.\nВы будете перенаправлены на страницу входа.";
+            resultBlock.className = "success-message";
+        } else {
+            resultBlock.textContent = "Что-то пошло не так. Повторите попытку позже.";
+            resultBlock.className = "error-message";
+        }
+        resultBlock.style.display = "block";
     }
 });
 

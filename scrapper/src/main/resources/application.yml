@@ -1,4 +1,5 @@
 app:
+  timeout: 10
 
 kafka-config:
   topics:

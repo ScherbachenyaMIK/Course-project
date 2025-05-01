@@ -1,31 +1,40 @@
 package edu.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import edu.configuration.SecurityConfig;
 import edu.model.web.request.LoginRequest;
+import edu.model.web.request.RegisterRequest;
+import edu.model.web.response.AuthenticationResponse;
 import edu.model.web.response.LoginResponse;
+import edu.model.web.response.RegisterResponse;
 import edu.security.JwtProvider;
 import edu.service.ResponseHandler;
 import edu.util.StatusCodeDescriptor;
 import edu.web.ScrapperProducer;
 import jakarta.servlet.http.Cookie;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeoutException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.ModelAndView;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(Controller.class)
@@ -52,7 +61,7 @@ class ControllerTest {
     @SneakyThrows
     @Test
     void getHome() {
-        when(responseHandler.getResponse(any()))
+        when(responseHandler.getResponse(anyString(), anyString()))
                 .thenReturn(CompletableFuture.completedFuture(
                         new ModelAndView("Home"))
                 );
@@ -77,6 +86,26 @@ class ControllerTest {
 
     @SneakyThrows
     @Test
+    void getLoginAuthenticated() {
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(
+                        "username",
+                        null,
+                        List.of()
+                )
+        );
+
+        ModelAndView result = mockMvc.perform(get("/login"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/"))
+                .andReturn().getModelAndView();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getViewName()).isEqualTo("redirect:/");
+    }
+
+    @SneakyThrows
+    @Test
     void getRegister() {
         ModelAndView result = mockMvc.perform(get("/register"))
                 .andExpect(status().isOk())
@@ -84,8 +113,25 @@ class ControllerTest {
 
         assertThat(result).isNotNull();
         assertThat(result.getViewName()).isEqualTo("Register");
-        assertThat(result.getModelMap().getAttribute("registerRequest"))
-                .isNotNull();
+    }
+
+    @SneakyThrows
+    @Test
+    void getRegisterAuthenticated() {
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(
+                        "username",
+                        null,
+                        List.of()
+                )
+        );
+
+        ModelAndView result = mockMvc.perform(get("/register"))
+                .andExpect(status().isFound())
+                .andReturn().getModelAndView();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getViewName()).isEqualTo("redirect:/");
     }
 
     @SneakyThrows
@@ -99,11 +145,25 @@ class ControllerTest {
                 "test"
         );
 
-        mockMvc.perform(post("/login")
-                        .contentType("application/json")
-                        .content(new ObjectMapper().writeValueAsString(loginRequest)))
-                .andExpect(status().isOk())
-                .andDo(print());
+        AuthenticationResponse result = new ObjectMapper().readValue(
+                mockMvc.perform(post("/login")
+                                .contentType("application/json")
+                                .content(new ObjectMapper().writeValueAsString(loginRequest)))
+                        .andExpect(status().isOk())
+                        .andExpect(cookie().exists("JWT_TOKEN"))
+                        .andExpect(cookie().httpOnly("JWT_TOKEN", true))
+                        .andExpect(cookie().secure("JWT_TOKEN", true))
+                        .andExpect(cookie().path("JWT_TOKEN", "/"))
+                        .andExpect(cookie().maxAge("JWT_TOKEN", 86400))
+                        .andDo(print())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString(),
+                AuthenticationResponse.class
+        );
+
+        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.getCause()).isEqualTo("");
     }
 
     @SneakyThrows
@@ -117,43 +177,111 @@ class ControllerTest {
                 "test"
         );
 
-        mockMvc.perform(post("/login")
-                        .contentType("application/json")
-                        .content(new ObjectMapper().writeValueAsString(loginRequest)))
-                .andExpect(status().isFound())
-                .andExpect(redirectedUrl("/checked-error"))
-                .andDo(print());
+        AuthenticationResponse result = new ObjectMapper().readValue(
+                mockMvc.perform(post("/login")
+                                .contentType("application/json")
+                                .content(new ObjectMapper().writeValueAsString(loginRequest)))
+                        .andExpect(status().isOk())
+                        .andDo(print())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString(),
+                AuthenticationResponse.class
+        );
+
+        assertThat(result.isSuccess()).isFalse();
+        assertThat(result.getCause()).isEqualTo("BadCredentialsException");
+    }
+
+    @SneakyThrows
+    @Test
+    void postLoginAuthenticationServiceOffline() {
+        when(authorizationListener.waitForResponse(anyString()))
+                .thenThrow(new TimeoutException());
+
+        LoginRequest loginRequest = new LoginRequest(
+                "test",
+                "test"
+        );
+
+        AuthenticationResponse result = new ObjectMapper().readValue(
+                mockMvc.perform(post("/login")
+                                .contentType("application/json")
+                                .content(new ObjectMapper().writeValueAsString(loginRequest)))
+                        .andExpect(status().isOk())
+                        .andDo(print())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString(),
+                AuthenticationResponse.class
+        );
+
+        assertThat(result.isSuccess()).isFalse();
+        assertThat(result.getCause()).isEqualTo("AuthenticationServiceException");
     }
 
     @SneakyThrows
     @Test
     void postRegister() {
-        mockMvc.perform(post("/register")
-                        .contentType("application/x-www-form-urlencoded")
-                        .param("username", "test")
-                        .param("name", "test")
-                        .param("email", "test@example.com")
-                        .param("passwordHash", "test")
-                        .param("sex", "M")
-                        .param("date", "2025-11-22"))
+        RegisterRequest request = new RegisterRequest(
+                "test",
+                "test",
+                "test@example.com",
+                "test",
+                'M',
+                LocalDate.of(2025, 11, 22)
+        );
+
+        when(authorizationListener.waitForResponse(anyString()))
+                .thenReturn(new RegisterResponse(true));
+
+        String result = mockMvc.perform(post("/register")
+                        .contentType("application/json")
+                        .content(
+                                new ObjectMapper()
+                                        .registerModule(new JavaTimeModule())
+                                        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                                        .writeValueAsString(request)
+                        ))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(print())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertThat(result).isEqualTo("{\"success\":true}");
     }
 
     @SneakyThrows
     @Test
-    void postRegisterBadCredentials() {
-        mockMvc.perform(post("/register")
-                        .contentType("application/x-www-form-urlencoded")
-                        .param("username", "test")
-                        .param("name", "test")
-                        .param("email", "test@example.com")
-                        .param("passwordHash", "test")
-                        .param("sex", "AaAaA")
-                        .param("date", "2025-11-22"))
-                .andExpect(status().isFound())
-                .andExpect(redirectedUrl("/checked-error"))
-                .andDo(print());
+    void postRegisterException() {
+        RegisterRequest request = new RegisterRequest(
+                "test",
+                "test",
+                "test@example.com",
+                "test",
+                'M',
+                LocalDate.of(2025, 11, 22)
+        );
+
+        when(authorizationListener.waitForResponse(anyString()))
+                .thenThrow(new TimeoutException());
+
+        String result = mockMvc.perform(post("/register")
+                        .contentType("application/json")
+                        .content(
+                                new ObjectMapper()
+                                        .registerModule(new JavaTimeModule())
+                                        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                                        .writeValueAsString(request)
+                        ))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertThat(result).isEqualTo("{\"success\":false}");
     }
 
     @SneakyThrows
@@ -189,5 +317,19 @@ class ControllerTest {
                 .isEqualTo(500);
         assertThat(result.getModel().get("ResponseDescription"))
                 .isEqualTo("Неизвестная ошибка.");
+    }
+
+    @SneakyThrows
+    @Test
+    void deleteLogin() {
+        mockMvc.perform(delete("/login"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/"))
+                .andExpect(cookie().value("JWT_TOKEN", ""))
+                .andExpect(cookie().maxAge("JWT_TOKEN", 0))
+                .andDo(print())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
     }
 }

@@ -67,9 +67,9 @@ public class UsersService {
         newUser.setUsername(request.username());
         newUser.setEmail(request.email());
         newUser.setPasswordHash(request.passwordHash());
-        newUser.setBirthDate(Timestamp.valueOf(
-                request.date().atStartOfDay()
-        ));
+        newUser.setBirthDate(request.date() != null ? Timestamp.valueOf(
+                request.date().atStartOfDay()) : null
+        );
         newUser.setSex(request.sex());
         newUser.setUserRole(NOT_CONFIRMED);
         newUser.setDescription("");

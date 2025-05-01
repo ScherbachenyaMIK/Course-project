@@ -20,6 +20,7 @@ import static org.awaitility.Awaitility.await;
 @SpringBootTest
 class ResponseHandlerTest {
     private final String id = "id";
+    private final String role = "USER";
 
     @Autowired
     private ResponseHandler handler;
@@ -29,8 +30,32 @@ class ResponseHandlerTest {
     void getResponseFeed() {
         ModelAndView expected = new ModelAndView("");
         expected.addObject("articles", null);
+        expected.addObject("isAuthenticated", false);
 
-        CompletableFuture<ModelAndView> future = handler.getResponse(id);
+        CompletableFuture<ModelAndView> future = handler.getResponse(id, "NONE");
+
+        handler.completeResponseFeed(id, null, "");
+
+        await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until(future::isDone);
+
+        assertThat(future.get())
+                .usingRecursiveComparison()
+                .comparingOnlyFields(
+                        "model",
+                        "view")
+                .isEqualTo(expected);
+    }
+
+    @SneakyThrows
+    @Test
+    void getResponseFeedAuthenticated() {
+        ModelAndView expected = new ModelAndView("");
+        expected.addObject("articles", null);
+        expected.addObject("isAuthenticated", true);
+
+        CompletableFuture<ModelAndView> future = handler.getResponse(id, "USER");
 
         handler.completeResponseFeed(id, null, "");
 
@@ -49,7 +74,7 @@ class ResponseHandlerTest {
     @SneakyThrows
     @Test
     void getResponseTimeout() {
-        CompletableFuture<ModelAndView> future = handler.getResponse(id);
+        CompletableFuture<ModelAndView> future = handler.getResponse(id, "USER");
 
         await()
                 .atMost(11, TimeUnit.SECONDS)

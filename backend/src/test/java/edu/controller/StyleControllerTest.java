@@ -34,6 +34,34 @@ class StyleControllerTest {
 
     @SneakyThrows
     @Test
+    void getMain() {
+        MockHttpServletResponse result = mockMvc.perform(get("/styles/main.css"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(result.getContentType())
+                .isEqualTo("text/css");
+        assertThat(result.getHeader("Content-Disposition"))
+                .isEqualTo("inline; filename=\"Main.css\"");
+    }
+
+    @SneakyThrows
+    @Test
+    void getForm() {
+        MockHttpServletResponse result = mockMvc.perform(get("/styles/form.css"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(result.getContentType())
+                .isEqualTo("text/css");
+        assertThat(result.getHeader("Content-Disposition"))
+                .isEqualTo("inline; filename=\"Form.css\"");
+    }
+
+    @SneakyThrows
+    @Test
     void getHome() {
         MockHttpServletResponse result = mockMvc.perform(get("/styles/home.css"))
                 .andExpect(status().isOk())

@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,7 +38,7 @@ class ExceptionControllerTest {
     @SneakyThrows
     @Test
     void handleTimeout() {
-        when(responseHandler.getResponse(any()))
+        when(responseHandler.getResponse(anyString(), anyString()))
                 .thenAnswer(invocation -> { throw new TimeoutException(); });
 
         MvcResult result = mockMvc.perform(get("/"))
@@ -67,7 +67,7 @@ class ExceptionControllerTest {
     @SneakyThrows
     @Test
     void handleUnknownException() {
-        when(responseHandler.getResponse(any()))
+        when(responseHandler.getResponse(anyString(), anyString()))
                 .thenThrow(new RuntimeException());
 
         MvcResult result = mockMvc.perform(get("/"))

@@ -40,6 +40,8 @@ class ResourceControllerTest {
             "/sign_up_icon_g.png",
             "/log_in_icon.png",
             "/log_in_icon_g.png",
+            "/log_out_icon.png",
+            "/log_out_icon_g.png",
             "/magnifier.png",
             "/clock_icon.png",
             "/created_icon.png",

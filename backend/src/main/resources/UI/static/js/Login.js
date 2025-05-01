@@ -33,7 +33,7 @@ document.getElementById("log-in-button").addEventListener("click", async functio
     if (!isMistake) {
         const hashedPassword = await hashPassword(password);
 
-        fetch("/login", {
+        const response = await fetch("/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -41,6 +41,24 @@ document.getElementById("log-in-button").addEventListener("click", async functio
                 password: hashedPassword
             })
         });
+
+        const responseData = await response.json();
+
+        if (responseData.success) {
+            window.location.href = "/";
+        } else {
+            usernameInput.style.outline = '2px solid red';
+            passwordInput.style.outline = '2px solid red';
+            errorBlock = document.getElementById("error-message");
+
+            if (responseData.cause == "BadCredentialsException") {
+                errorBlock.textContent = "Введённые данные неверны";
+            } else {
+                errorBlock.textContent = "Что-то пошло не так, повторите попытку позже";
+            }
+
+            errorBlock.style.display = "block";
+        }
     } else {
         return;
     }

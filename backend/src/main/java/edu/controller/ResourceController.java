@@ -73,6 +73,24 @@ public class ResourceController {
                 .body(resource);
     }
 
+    @GetMapping("/log_out_icon.png")
+    public ResponseEntity<Resource> getLogOutIconPink() {
+        Resource resource = resourceLoader.getResource("classpath:UI/resources/Log_out_icon.png");
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Log_out_icon.png\"")
+                .body(resource);
+    }
+
+    @GetMapping("/log_out_icon_g.png")
+    public ResponseEntity<Resource> getLogOutIconGreen() {
+        Resource resource = resourceLoader.getResource("classpath:UI/resources/Log_out_icon_g.png");
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Log_out_icon_g.png\"")
+                .body(resource);
+    }
+
     @GetMapping("/magnifier.png")
     public ResponseEntity<Resource> getMagnifier() {
         Resource resource = resourceLoader.getResource("classpath:UI/resources/Magnifier.png");

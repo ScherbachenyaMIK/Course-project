@@ -13,4 +13,8 @@ public class KafkaConsumerLogger {
         int length = request.toString().length();
         log.debug("Message body: {}", request.toString().substring(0, length > 300 ? 300 : length - 1));
     }
+
+    public void logRequestTimeout(String key, long age) {
+        log.warn("Discarded stale message: {} (age: {} ms)", key, age);
+    }
 }

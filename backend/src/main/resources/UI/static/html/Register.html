@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{Form :: common_head(~{::meta},'Sign up',~{::link},~{::script})}">
+  <meta name="description" content="Создайте личный аккаунт AI-Powered Content Hub">
+  <meta name="keywords" content="публикация статей, контент платформа, ИИ инструменты, искусственный интеллект, создание контента, редактирование, авторские статьи, блог, AI content hub, авторизация, регистрация">
+
+  <link rel="stylesheet" href="/styles/register.css">
+
+  <script src="/scripts/register.js" defer></script>
+</head>
+<body>
+<div th:fragment="register-form" th:replace="~{Form :: common_body('Регистрация',~{::content})}">
+    <form th:fragment="content" id="register-form" class="content-area" method="post">
+      <div class="page1">
+        <div id="username" class="field">
+          <div class="field-space-content">
+            <div class="field-label">Имя пользователя*</div>
+            <input id="username-input" name="username" class="line-input" type="text" placeholder="имя пользователя (видно всем)">
+          </div>
+        </div>
+        <div id="name" class="field">
+          <div class="field-space-content">
+            <div class="field-label">Имя*</div>
+            <input id="name-input" name="name" class="line-input" type="text" placeholder="имя (видно только пользователю)">
+          </div>
+        </div>
+        <div id="email" class="field">
+          <div class="field-space-content">
+            <div class="field-label">Электронная почта*</div>
+            <input id="email-input" name="email" class="line-input" type="text" placeholder="e-mail">
+          </div>
+        </div>
+      </div>
+      <div id="username-email-error-message" class="error-message"></div>
+      <div class="page2">
+        <div id="password" class="field">
+          <div class="field-space-content">
+            <div class="field-label">Пароль*</div>
+            <input id="password-input" class="line-input" type="password" placeholder="пароль">
+          </div>
+          <img class="eye" src="/resources/eye_closed.png" />
+        </div>
+        <div id="password-repeat" class="field">
+          <div class="field-space-content">
+            <div class="field-label">Повторите пароль*</div>
+            <input id="password-repeat-input" class="line-input" type="password" placeholder="повторите пароль">
+          </div>
+          <img class="eye" src="/resources/eye_closed.png" />
+        </div>
+      </div>
+      <div class="page3">
+        <div id="sex" class="field">
+          <div class="field-space-content">
+            <div class="field-label">Пол</div>
+              <select id="sex-input" name="sex" class="line-input">
+                <option value="">Выберите пол</option>
+                <option value="M">Мужской</option>
+                <option value="W">Женский</option>
+              </select>
+          </div>
+        </div>
+        <div id="birthdate" class="field">
+          <div class="field-space-content">
+            <div class="field-label">Дата рождения</div>
+            <input id="birthdate-input" name="date" class="line-input" type="date">
+          </div>
+        </div>
+        <div id="result" style="display:none"></div>
+      </div>
+      <div>
+        <div>Обязательные поля помечены *</div>
+      </div>
+      <div id="next-button" class="next-button">
+        <div class="sign-up-button-confirm-text">Далее</div>
+      </div>
+      <input id="hashed-password-input" name="passwordHash" class="line-input" type="hidden">
+      <div id="sign-up-button-confirm" class="sign-up-button-confirm">
+        <div class="sign-up-button-confirm-text">Завершить</div>
+      </div>
+      <div class="redirect-content">
+        <div>Уже есть аккаунт?</div>
+        <a href="/login">Авторизация</a>
+      </div>
+    </form>
+</div>
+</body>
+</html>

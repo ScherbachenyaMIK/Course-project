@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class GetRequestsResolver {
     @Autowired
-    GetRequestsHandler getRequestsHandler;
+    private GetRequestsHandler getRequestsHandler;
 
     @SuppressWarnings("IllegalIdentifierName")
     public ProducerRecord<String, List<DTO>> resolve(ConsumerRecord<String, ScrapperRequest> record) {
@@ -22,7 +22,7 @@ public class GetRequestsResolver {
         String type = record.value().getClass().toString();
         type = type.substring(type.lastIndexOf('.') + 1);
         switch (type) {
-            case "ArticlesForFeedRequest":
+            case "ArticlesForFeedRequest" -> {
                 return new ProducerRecord<>(
                         "articles_for_feed",
                         record.key(),
@@ -31,8 +31,8 @@ public class GetRequestsResolver {
                                         (ArticlesForFeedRequest) record.value()
                                 )
                 );
-            default:
-                throw new IllegalArgumentException("Unknown request type: " + type);
+            }
+            default -> throw new IllegalArgumentException("Unknown request type: " + type);
         }
     }
 }

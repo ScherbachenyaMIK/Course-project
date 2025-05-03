@@ -50,13 +50,24 @@ kafka-config:
       partitions: 5
       replicas: 1
 
+security:
+  open-endpoints:
+    - "/"
+    - "/login"
+    - "/register"
+    - "/checked-error"
+    - "/styles/*"
+    - "/scripts/*"
+    - "/resources/*"
+    - "/api/availability"
+  secured-endpoints:
+    - "/authorized"
+  auth-key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
+  expiration: 24h
+
 spring:
   application:
     name: backend
-  security:
-    user:
-      name: test
-      password: test
   thymeleaf:
     prefix: classpath:/UI/static/html/
     suffix: .html

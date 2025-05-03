@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="common_head(meta,title,links,scripts)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${title} + ' | AI-Powered Content Hub'">AI-Powered Content Hub</title>
+
+    <link rel="icon" href="/resources/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/styles/main.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Geo:ital@0;1&family=Germania+One&display=swap" rel="stylesheet">
+
+    <script src="/scripts/page.js" defer></script>
+
+    <th:block th:replace="${meta}" />
+    <th:block th:replace="${links}" />
+    <th:block th:replace="${scripts}" />
+</head>
+
+<body>
+    <div th:fragment="common_body(content)" class="vertical-box">
+        <div class="header">
+            <div class="header-background">
+                <a href="">
+                    <img class="logo" src="/resources/icon_p.png" alt="logo" />
+                </a>
+                <div class="site-title">
+                    <span>
+                        <span class="site-title-span1">AI&nbsp;</span>
+                        <span class="site-title-span2">C</span>
+                        <span class="site-title-span1">ON</span>
+                        <span class="site-title-span2">T</span>
+                        <span class="site-title-span3">e</span>
+                        <span class="site-title-span1">N</span>
+                        <span class="site-title-span2">T&nbsp;</span>
+                        <span class="site-title-span2">H</span>
+                        <span class="site-title-span1">UB</span>
+                    </span>
+                </div>
+                <div th:if="${!isAuthenticated}">
+                    <div id="sign-up-button" class="sign-up-button">
+                        <div class="sign-up-background"></div>
+                        <img class="sign-up-icon" src="/resources/sign_up_icon.png" alt="sign up" />
+                        <img class="sign-up-icon-hover" src="/resources/sign_up_icon_g.png" alt="sign up" />
+                        <div class="sign-up-text">регистрация</div>
+                    </div>
+                    <div id="log-in-button" class="log-in-button">
+                        <div class="log-in-background"></div>
+                        <img class="log-in-icon" src="/resources/log_in_icon.png" alt="log in" />
+                        <img class="log-in-icon-hover" src="/resources/log_in_icon_g.png" alt="log in" />
+                        <div class="log-in-text">войти</div>
+                    </div>
+                </div>
+                <div th:if="${isAuthenticated}">
+                    <div id="profile-button" class="profile-button">
+                        <div class="profile-background"></div>
+                        <div class="profile-icon-circle">
+                            <img class="profile-icon" src="/resources/standard_icon.png" alt="profile" />
+                        </div>
+                        <div class="profile-icon-circle-hover">
+                            <img class="profile-icon-hover" src="/resources/standard_icon.png" alt="profile" />
+                        </div>
+                        <div class="profile-text">профиль</div>
+                    </div>
+                    <div id="log-out-button" class="log-out-button">
+                        <div class="log-out-background"></div>
+                        <img class="log-out-icon" src="/resources/log_out_icon.png" alt="log out" />
+                        <img class="log-out-icon-hover" src="/resources/log_out_icon_g.png" alt="log out" />
+                        <div class="log-out-text">выйти</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="${content}"></div>
+
+        <div class="footer">
+            <div class="footer-background"></div>
+            <div class="_2024-content-hub">© 2024, Content Hub</div>
+            <div class="navigation-bar">
+                <div class="tech-support">Техническая поддержка</div>
+                <div class="faq">FAQ</div>
+                <div class="about-us">Информация</div>
+            </div>
+        </div>
+        <div id="register-form-container" class="hidden"></div>
+        <div id="login-form-container" class="hidden"></div>
+    </div>
+</body>
+</html>

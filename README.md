@@ -18,3 +18,5 @@ The project consists of two applications:
 The application relies on the following services to function properly:
 * `Kafka 7.3.*` (at least 3 brokers)
 * `Zookeeper 7.3.*`
+* `Postgres 16`
+* `Liquibase 4.25`

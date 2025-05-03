@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{Form :: common_head(~{::meta},'Log in',~{::link},~{::script})}">
+    <meta name="description" content="Войдите в свой аккаунт AI-Powered Content Hub">
+    <meta name="keywords" content="публикация статей, контент платформа, ИИ инструменты, искусственный интеллект, создание контента, редактирование, авторские статьи, блог, AI content hub, авторизация, аутентификаация, идентификация">
+
+    <link rel="stylesheet" href="/styles/login.css">
+
+    <script src="/scripts/login.js" defer></script>
+</head>
+<body>
+  <div th:fragment="login-form" th:replace="~{Form :: common_body('Вход',~{::content})}">
+    <div th:fragment="content" class="content-area">
+      <div id="login" class="field">
+        <div class="field-space-content">
+          <div class="field-label">Логин</div>
+          <input id="login-input" class="login-input" type="text" placeholder="e-mail или имя пользователя">
+        </div>
+      </div>
+      <div id="password" class="field">
+        <div class="field-space-content">
+          <div class="field-label">Пароль</div>
+          <input id="password-input" class="login-input" type="password" placeholder="пароль">
+        </div>
+        <img class="eye" src="/resources/eye_closed.png" />
+      </div>
+      <div id="error-message" class="error-message"></div>
+      <div id="log-in-button-confirm" class="log-in-button-confirm">
+        <div class="log-in-button-confirm-text">войти</div>
+      </div>
+      <div class="redirect-content">
+        <div>Нет аккаунта?</div>
+        <a href="/register">Регистрация</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

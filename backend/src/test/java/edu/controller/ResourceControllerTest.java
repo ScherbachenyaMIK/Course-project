@@ -1,6 +1,8 @@
 package edu.controller;
 
 import edu.configuration.FakeResourceLoaderConfiguration;
+import edu.configuration.NoKafkaConfig;
+import edu.configuration.SecurityConfig;
 import edu.util.StatusCodeDescriptor;
 import java.util.List;
 import lombok.SneakyThrows;
@@ -14,12 +16,11 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ResourceController.class)
-@Import({FakeResourceLoaderConfiguration.class})
+@Import({FakeResourceLoaderConfiguration.class, SecurityConfig.class, NoKafkaConfig.class})
 class ResourceControllerTest {
     @MockBean
     private StatusCodeDescriptor statusCodeDescriptor;
@@ -33,6 +34,8 @@ class ResourceControllerTest {
             "/sign_up_icon_g.png",
             "/log_in_icon.png",
             "/log_in_icon_g.png",
+            "/log_out_icon.png",
+            "/log_out_icon_g.png",
             "/magnifier.png",
             "/clock_icon.png",
             "/created_icon.png",
@@ -40,6 +43,8 @@ class ResourceControllerTest {
             "/views_icon.png",
             "/likes_icon.png",
             "/comments_icon.png",
+            "/eye_closed.png",
+            "/eye_open.png",
             "/standard_preview.png",
             "/standard_icon.png"
     );
@@ -47,8 +52,7 @@ class ResourceControllerTest {
     @SneakyThrows
     @Test
     void getIconSvg() {
-        MockHttpServletResponse result = mockMvc.perform(get("/resources/icon.svg")
-                        .with(httpBasic("test", "test")))
+        MockHttpServletResponse result = mockMvc.perform(get("/resources/icon.svg"))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -64,8 +68,7 @@ class ResourceControllerTest {
     void getIconPng() {
         for (String resource : listOfPngResources) {
             MockHttpServletResponse result =
-                    mockMvc.perform(get("/resources" + resource)
-                            .with(httpBasic("test", "test")))
+                    mockMvc.perform(get("/resources" + resource))
                     .andExpect(status().isOk())
                     .andReturn()
                     .getResponse();

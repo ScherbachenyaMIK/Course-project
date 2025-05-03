@@ -20,12 +20,48 @@ public class StyleController {
 
     private final String mediaType = "text/css";
 
+    @GetMapping("/main.css")
+    public ResponseEntity<Resource> getMain() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/css/Main.css");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Main.css\"")
+                .body(resource);
+    }
+
+    @GetMapping("/form.css")
+    public ResponseEntity<Resource> getForm() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/css/Form.css");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Form.css\"")
+                .body(resource);
+    }
+
     @GetMapping("/home.css")
     public ResponseEntity<Resource> getHome() {
         Resource resource = resourceLoader.getResource("classpath:UI/static/css/Home.css");
         return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(mediaType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Home.css\"")
+                .body(resource);
+    }
+
+    @GetMapping("/login.css")
+    public ResponseEntity<Resource> getLogin() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/css/Login.css");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Login.css\"")
+                .body(resource);
+    }
+
+    @GetMapping("/register.css")
+    public ResponseEntity<Resource> getRegister() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/css/Register.css");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Register.css\"")
                 .body(resource);
     }
 

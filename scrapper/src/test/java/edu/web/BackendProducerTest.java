@@ -1,9 +1,12 @@
 package edu.web;
 
 import edu.KafkaIntegrationTest;
+import edu.cofiguration.NoJpaConfig;
+import edu.model.web.AuthResponse;
 import edu.model.web.DTO;
 import edu.model.web.dto.ArticleInformationDTO;
 import edu.model.web.dto.ArticlePreviewDTO;
+import edu.model.web.response.LoginResponse;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -22,20 +25,26 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
+@Import(NoJpaConfig.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class BackendProducerTest extends KafkaIntegrationTest {
     @Autowired
     private BackendProducer producer;
 
-    private static KafkaConsumer<String, List<DTO>> consumer;
+    private static KafkaConsumer<String, List<DTO>> DTOConsumer;
+    private static KafkaConsumer<String, AuthResponse> AuthConsumer;
 
-    private final CompletableFuture<ConsumerRecord<String, List<DTO>>> future = new CompletableFuture<>();
+    private final CompletableFuture<ConsumerRecord<String, List<DTO>>> DTOFuture = new CompletableFuture<>();
+    private final CompletableFuture<ConsumerRecord<String, AuthResponse>> AuthFuture = new CompletableFuture<>();
 
     @BeforeAll
     static void setUp() {
@@ -45,13 +54,15 @@ class BackendProducerTest extends KafkaIntegrationTest {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        consumer = new KafkaConsumer<>(props);
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "edu.model.web.**");
+        DTOConsumer = new KafkaConsumer<>(props);
+        AuthConsumer = new KafkaConsumer<>(props);
     }
 
     @SneakyThrows
     @Test
     void sendDTOMessage() {
-        consumer.subscribe(Collections.singletonList("articles_for_feed"));
+        DTOConsumer.subscribe(Collections.singletonList("articles_for_feed"));
 
         ProducerRecord<String, List<DTO>> message = new ProducerRecord<>(
                 "articles_for_feed",
@@ -83,17 +94,44 @@ class BackendProducerTest extends KafkaIntegrationTest {
         await()
                 .atMost(10, SECONDS)
                 .until(() -> {
-                    checkKafkaConsumer();
-                    return future.isDone();
+                    checkKafkaConsumer(DTOConsumer, DTOFuture);
+                    return DTOFuture.isDone();
                         });
 
-        assertThat(future.get().topic()).isEqualTo(message.topic());
-        assertThat(future.get().key()).isEqualTo(message.key());
+        assertThat(DTOFuture.get().topic()).isEqualTo(message.topic());
+        assertThat(DTOFuture.get().key()).isEqualTo(message.key());
+        DTOConsumer.close();
     }
 
-    private void checkKafkaConsumer() {
+    @SneakyThrows
+    @Test
+    void sendAuthResponse() {
+        AuthConsumer.subscribe(Collections.singletonList("authorization"));
+
+        ProducerRecord<String, AuthResponse> message = new ProducerRecord<>(
+                "authorization",
+                "id",
+                new LoginResponse(true, "USER")
+        );
+
+        producer.sendAuthResponse(message);
+
+        await()
+                .atMost(10, SECONDS)
+                .until(() -> {
+                    checkKafkaConsumer(AuthConsumer, AuthFuture);
+                    return AuthFuture.isDone();
+                });
+
+        assertThat(AuthFuture.get().topic()).isEqualTo(message.topic());
+        assertThat(AuthFuture.get().key()).isEqualTo(message.key());
+        AuthConsumer.close();
+    }
+
+    private <K, V> void checkKafkaConsumer(KafkaConsumer<K, V> consumer,
+                                           CompletableFuture<ConsumerRecord<K, V>> future) {
         while (true) {
-            ConsumerRecords<String, List<DTO>> records =
+            ConsumerRecords<K, V> records =
                     consumer.poll(Duration.ofMillis(1000));
             if (!records.isEmpty()) {
                 assert(records.count() == 1);

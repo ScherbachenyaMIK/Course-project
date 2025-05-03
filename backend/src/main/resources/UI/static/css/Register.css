@@ -1,0 +1,181 @@
+.content-area {
+  padding: 5vh;
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.page1 {
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.page2 {
+  display: none;
+  flex-direction: column;
+  gap: 3vh;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.page3 {
+  display: none;
+  flex-direction: column;
+  gap: 3vh;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.field {
+  background: var(--color-gray-field);
+  border-radius: 15px;
+  padding: 2vh 3vh;
+  display: flex;
+  flex-direction: row;
+  gap: 1vh;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.field:focus-within {
+  outline: 2px solid var(--color-black);
+}
+.field-space-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex: 1;
+  position: relative;
+}
+.field-label {
+  color: var(--color-gray-label);
+  text-align: left;
+  font-family: "Georgia", sans-serif;
+  font-size: 2vh;
+  font-weight: 400;
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.line-input {
+  color: var(--color-gray-input);
+  text-align: left;
+  font-family: "Georgia", sans-serif;
+  font-size: 2.7vh;
+  font-weight: 400;
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border: none;
+  background: rgba(0, 0, 0, 0);
+}
+.line-input:focus {
+  color: var(--color-black);
+  outline: none;
+}
+input[type="date"].line-input::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 0;
+  height: 100%;
+  cursor: pointer;
+}
+.eye {
+  flex-shrink: 0;
+  width: 4vh;
+  height: 4vh;
+  position: relative;
+  object-fit: cover;
+  cursor: pointer;
+}
+.error-message {
+  color: red;
+  margin-top: 10px;
+  text-align: center;
+  display: none;
+}
+.success-message {
+  color: green;
+  margin-top: 10px;
+  text-align: center;
+  display: none;
+}
+.sign-up-button-confirm {
+  flex-shrink: 0;
+  width: 40%;
+  height: 9vh;
+  position: relative;
+  background: var(--color-main-emerald);
+  border-radius: 8px;
+  box-shadow: 0px 4px 4.5px 4px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  display: none;
+}
+.sign-up-button-confirm-text {
+  color: var(--color-pink);
+  text-align: left;
+  font-family: "Georgia", sans-serif;
+  font-size: 4.5vh;
+  font-weight: 400;
+  position: absolute;
+  left: 50%;
+  translate: -50% -50%;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.sign-up-button-confirm:hover {
+  background: var(--color-button-green);
+}
+.sign-up-button-confirm:active {
+  background: var(--color-pink);
+}
+.sign-up-button-confirm:active .sign-up-button-confirm-text {
+  color: var(--color-button-green);
+}
+.next-button {
+  flex-shrink: 0;
+  width: 40%;
+  height: 9vh;
+  position: relative;
+  background: var(--color-main-emerald);
+  border-radius: 8px;
+  box-shadow: 0px 4px 4.5px 4px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  display: flex;
+}
+.next-button:hover {
+  background: var(--color-button-green);
+}
+.next-button:active {
+  background: var(--color-pink);
+}
+.next-button:active .sign-up-button-confirm-text {
+  color: var(--color-button-green);
+}
+.redirect-content {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5vh;
+}

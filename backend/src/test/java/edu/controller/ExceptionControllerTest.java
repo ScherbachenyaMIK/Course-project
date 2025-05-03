@@ -1,8 +1,9 @@
 package edu.controller;
 
+import edu.configuration.NoKafkaConfig;
+import edu.configuration.SecurityConfig;
 import edu.service.ResponseHandler;
 import edu.util.StatusCodeDescriptor;
-import edu.web.ScrapperProducer;
 import java.util.concurrent.TimeoutException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -14,18 +15,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(Controller.class)
-@Import({StatusCodeDescriptor.class})
+@Import({StatusCodeDescriptor.class, SecurityConfig.class, NoKafkaConfig.class})
 class ExceptionControllerTest {
-    @MockBean
-    private ScrapperProducer scrapperProducer;
-
     @MockBean
     private ResponseHandler responseHandler;
 
@@ -35,11 +32,10 @@ class ExceptionControllerTest {
     @SneakyThrows
     @Test
     void handleTimeout() {
-        when(responseHandler.getResponse(any()))
+        when(responseHandler.getResponse(anyString(), anyString()))
                 .thenAnswer(invocation -> { throw new TimeoutException(); });
 
-        MvcResult result = mockMvc.perform(get("/")
-                        .with(httpBasic("test", "test")))
+        MvcResult result = mockMvc.perform(get("/"))
                 .andExpect(status().isFound())
                 .andReturn();
 
@@ -52,8 +48,7 @@ class ExceptionControllerTest {
     @SneakyThrows
     @Test
     void handleNotFound() {
-        MvcResult result = mockMvc.perform(get("/not-used-url")
-                        .with(httpBasic("test", "test")))
+        MvcResult result = mockMvc.perform(get("/not-used-url"))
                 .andExpect(status().isFound())
                 .andReturn();
 
@@ -66,11 +61,10 @@ class ExceptionControllerTest {
     @SneakyThrows
     @Test
     void handleUnknownException() {
-        when(responseHandler.getResponse(any()))
+        when(responseHandler.getResponse(anyString(), anyString()))
                 .thenThrow(new RuntimeException());
 
-        MvcResult result = mockMvc.perform(get("/")
-                        .with(httpBasic("test", "test")))
+        MvcResult result = mockMvc.perform(get("/"))
                 .andExpect(status().isFound())
                 .andReturn();
 

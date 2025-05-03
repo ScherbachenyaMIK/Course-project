@@ -1,4 +1,5 @@
 app:
+  timeout: 10
 
 kafka-config:
   topics:
@@ -68,6 +69,10 @@ spring:
             .trusted.packages: edu.model.web.**
     producer:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  jpa:
+    open-in-view: false
+  liquibase:
+    enabled: false
 
 server:
   port: 8080

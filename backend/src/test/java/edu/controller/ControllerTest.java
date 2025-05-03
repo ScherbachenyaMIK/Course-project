@@ -3,6 +3,7 @@ package edu.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import edu.configuration.NoKafkaConfig;
 import edu.configuration.SecurityConfig;
 import edu.model.web.request.LoginRequest;
 import edu.model.web.request.RegisterRequest;
@@ -12,7 +13,6 @@ import edu.model.web.response.RegisterResponse;
 import edu.security.JwtProvider;
 import edu.service.ResponseHandler;
 import edu.util.StatusCodeDescriptor;
-import edu.web.ScrapperProducer;
 import jakarta.servlet.http.Cookie;
 import java.time.LocalDate;
 import java.util.List;
@@ -38,12 +38,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(Controller.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, NoKafkaConfig.class})
 class ControllerTest {
-    @MockBean
-    private ScrapperProducer scrapperProducer;
-
-    @MockBean
+    @Autowired
     private AuthorizationListener authorizationListener;
 
     @MockBean

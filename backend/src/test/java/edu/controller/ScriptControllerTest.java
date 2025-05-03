@@ -1,8 +1,8 @@
 package edu.controller;
 
+import edu.configuration.NoKafkaConfig;
 import edu.configuration.SecurityConfig;
 import edu.util.StatusCodeDescriptor;
-import edu.web.ScrapperProducer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -17,16 +17,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ScriptController.class)
-@Import({DefaultResourceLoader.class, SecurityConfig.class})
+@Import({DefaultResourceLoader.class, SecurityConfig.class, NoKafkaConfig.class})
 class ScriptControllerTest {
     @MockBean
     private StatusCodeDescriptor statusCodeDescriptor;
-
-    @MockBean
-    private ScrapperProducer scrapperProducer;
-
-    @MockBean
-    private AuthorizationListener authorizationListener;
 
     @Autowired
     private MockMvc mockMvc;

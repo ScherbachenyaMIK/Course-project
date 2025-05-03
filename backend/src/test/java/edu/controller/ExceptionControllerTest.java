@@ -1,9 +1,9 @@
 package edu.controller;
 
+import edu.configuration.NoKafkaConfig;
 import edu.configuration.SecurityConfig;
 import edu.service.ResponseHandler;
 import edu.util.StatusCodeDescriptor;
-import edu.web.ScrapperProducer;
 import java.util.concurrent.TimeoutException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -21,14 +21,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(Controller.class)
-@Import({StatusCodeDescriptor.class, SecurityConfig.class})
+@Import({StatusCodeDescriptor.class, SecurityConfig.class, NoKafkaConfig.class})
 class ExceptionControllerTest {
-    @MockBean
-    private ScrapperProducer scrapperProducer;
-
-    @MockBean
-    private AuthorizationListener authorizationListener;
-
     @MockBean
     private ResponseHandler responseHandler;
 

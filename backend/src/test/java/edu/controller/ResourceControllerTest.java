@@ -1,9 +1,9 @@
 package edu.controller;
 
 import edu.configuration.FakeResourceLoaderConfiguration;
+import edu.configuration.NoKafkaConfig;
 import edu.configuration.SecurityConfig;
 import edu.util.StatusCodeDescriptor;
-import edu.web.ScrapperProducer;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -20,16 +20,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ResourceController.class)
-@Import({FakeResourceLoaderConfiguration.class, SecurityConfig.class})
+@Import({FakeResourceLoaderConfiguration.class, SecurityConfig.class, NoKafkaConfig.class})
 class ResourceControllerTest {
     @MockBean
     private StatusCodeDescriptor statusCodeDescriptor;
-
-    @MockBean
-    private ScrapperProducer scrapperProducer;
-
-    @MockBean
-    private AuthorizationListener authorizationListener;
 
     @Autowired
     private MockMvc mockMvc;

@@ -25,7 +25,7 @@ import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @Import(NoJpaConfig.class)
-class AllListenerTest extends KafkaIntegrationTest {
+class ListenerTest extends KafkaIntegrationTest {
     @MockBean
     private GetRequestsResolver getRequestsResolver;
 

@@ -1,8 +1,8 @@
 package edu.controller;
 
+import edu.configuration.NoKafkaConfig;
 import edu.configuration.SecurityConfig;
 import edu.util.StatusCodeDescriptor;
-import edu.web.ScrapperProducer;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +18,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(StyleController.class)
-@Import({DefaultResourceLoader.class, SecurityConfig.class})
+@Import({DefaultResourceLoader.class, SecurityConfig.class, NoKafkaConfig.class})
 class StyleControllerTest {
     @MockBean
     private StatusCodeDescriptor statusCodeDescriptor;
-
-    @MockBean
-    private ScrapperProducer scrapperProducer;
-
-    @MockBean
-    private AuthorizationListener authorizationListener;
 
     @Autowired
     private MockMvc mockMvc;

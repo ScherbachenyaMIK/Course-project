@@ -1,5 +1,6 @@
 package edu.service;
 
+import edu.configuration.NoKafkaConfig;
 import edu.model.web.response.CheckAvailabilityResponse;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -9,6 +10,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.ModelAndView;
@@ -18,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
+@Import(NoKafkaConfig.class)
 class ResponseHandlerTest {
     private final String id = "id";
     private final String role = "USER";

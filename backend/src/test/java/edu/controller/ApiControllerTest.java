@@ -1,12 +1,12 @@
 package edu.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.configuration.NoKafkaConfig;
 import edu.configuration.SecurityConfig;
 import edu.model.web.request.CheckAvailabilityRequest;
 import edu.model.web.response.CheckAvailabilityResponse;
 import edu.service.ResponseHandler;
 import edu.util.StatusCodeDescriptor;
-import edu.web.ScrapperProducer;
 import java.util.concurrent.CompletableFuture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +27,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ApiController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, NoKafkaConfig.class})
 class ApiControllerTest {
     @MockBean
     private StatusCodeDescriptor statusCodeDescriptor;
-
-    @MockBean
-    private ScrapperProducer scrapperProducer;
-
-    @MockBean
-    private AuthorizationListener authorizationListener;
 
     @MockBean
     private ResponseHandler responseHandler;

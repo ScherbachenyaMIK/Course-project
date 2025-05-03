@@ -1,6 +1,7 @@
+(() => {
 const pages = document.querySelectorAll(".page1, .page2, .page3");
 const nextButton = document.getElementById("next-button");
-const signUpButton = document.getElementById("sign-up-button");
+const signUpButton = document.getElementById("sign-up-button-confirm");
 let currentPage = 0;
 
 async function validateData(index) {
@@ -213,3 +214,38 @@ signUpButton.addEventListener("click", async function () {
 });
 
 showPage(currentPage);
+
+const passwordInput = document.getElementById("password-input");
+const eyeIcon = document.querySelector("#password .eye");
+
+let visiblePassword = false;
+
+eyeIcon.addEventListener("click", () => {
+    visiblePassword = !visiblePassword;
+
+    if (visiblePassword) {
+        passwordInput.type = "text";
+        eyeIcon.src = "/resources/eye_open.png";
+    } else {
+        passwordInput.type = "password";
+        eyeIcon.src = "/resources/eye_closed.png";
+    }
+});
+
+const passwordRepeatInput = document.getElementById("password-repeat-input");
+const eyeIconRepeat = document.querySelector("#password-repeat .eye");
+
+let visiblePasswordRepeat = false;
+
+eyeIconRepeat.addEventListener("click", () => {
+    visiblePasswordRepeat = !visiblePasswordRepeat;
+
+    if (visiblePasswordRepeat) {
+        passwordRepeatInput.type = "text";
+        eyeIconRepeat.src = "/resources/eye_open.png";
+    } else {
+        passwordRepeatInput.type = "password";
+        eyeIconRepeat.src = "/resources/eye_closed.png";
+    }
+});
+})();

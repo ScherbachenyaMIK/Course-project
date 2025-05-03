@@ -78,7 +78,7 @@
   text-align: center;
   display: none;
 }
-.log-in-button {
+.log-in-button-confirm {
   flex-shrink: 0;
   width: 40%;
   height: 9vh;
@@ -88,7 +88,7 @@
   box-shadow: 0px 4px 4.5px 4px rgba(0, 0, 0, 0.25);
   cursor: pointer;
 }
-.log-in-button-text {
+.log-in-button-confirm-text {
   color: var(--color-pink);
   text-align: left;
   font-family: "Georgia", sans-serif;
@@ -102,13 +102,13 @@
   align-items: center;
   justify-content: flex-start;
 }
-.log-in-button:hover {
+.log-in-button-confirm:hover {
   background: var(--color-button-green);
 }
-.log-in-button:active {
+.log-in-button-confirm:active {
   background: var(--color-pink);
 }
-.log-in-button:active .log-in-button-text {
+.log-in-button-confirm:active .log-in-button-confirm-text {
   color: var(--color-button-green);
 }
 .redirect-content {

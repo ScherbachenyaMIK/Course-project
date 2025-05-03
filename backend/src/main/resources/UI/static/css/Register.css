@@ -120,7 +120,7 @@ input[type="date"].line-input::-webkit-calendar-picker-indicator {
   text-align: center;
   display: none;
 }
-.sign-up-button {
+.sign-up-button-confirm {
   flex-shrink: 0;
   width: 40%;
   height: 9vh;
@@ -131,7 +131,7 @@ input[type="date"].line-input::-webkit-calendar-picker-indicator {
   cursor: pointer;
   display: none;
 }
-.sign-up-button-text {
+.sign-up-button-confirm-text {
   color: var(--color-pink);
   text-align: left;
   font-family: "Georgia", sans-serif;
@@ -145,13 +145,13 @@ input[type="date"].line-input::-webkit-calendar-picker-indicator {
   align-items: center;
   justify-content: flex-start;
 }
-.sign-up-button:hover {
+.sign-up-button-confirm:hover {
   background: var(--color-button-green);
 }
-.sign-up-button:active {
+.sign-up-button-confirm:active {
   background: var(--color-pink);
 }
-.sign-up-button:active .sign-up-button-text {
+.sign-up-button-confirm:active .sign-up-button-confirm-text {
   color: var(--color-button-green);
 }
 .next-button {
@@ -171,7 +171,7 @@ input[type="date"].line-input::-webkit-calendar-picker-indicator {
 .next-button:active {
   background: var(--color-pink);
 }
-.next-button:active .sign-up-button-text {
+.next-button:active .sign-up-button-confirm-text {
   color: var(--color-button-green);
 }
 .redirect-content {

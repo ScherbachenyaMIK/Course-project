@@ -86,6 +86,17 @@ class ControllerTest {
 
     @SneakyThrows
     @Test
+    void getLoginFragment() {
+        ModelAndView result = mockMvc.perform(get("/login?fragment=true"))
+                .andExpect(status().isOk())
+                .andReturn().getModelAndView();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getViewName()).isEqualTo("Login :: login-form");
+    }
+
+    @SneakyThrows
+    @Test
     void getLoginAuthenticated() {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(
@@ -113,6 +124,17 @@ class ControllerTest {
 
         assertThat(result).isNotNull();
         assertThat(result.getViewName()).isEqualTo("Register");
+    }
+
+    @SneakyThrows
+    @Test
+    void getRegisterFragment() {
+        ModelAndView result = mockMvc.perform(get("/register?fragment=true"))
+                .andExpect(status().isOk())
+                .andReturn().getModelAndView();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getViewName()).isEqualTo("Register :: register-form");
     }
 
     @SneakyThrows

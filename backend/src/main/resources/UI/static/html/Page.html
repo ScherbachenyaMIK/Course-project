@@ -10,6 +10,8 @@
     <link rel="stylesheet" type="text/css" media="all" th:href="@{/styles/main.css}">
     <link href="https://fonts.googleapis.com/css2?family=Geo:ital@0;1&family=Germania+One&display=swap" rel="stylesheet">
 
+    <script src="/scripts/page.js" defer></script>
+
     <th:block th:replace="${meta}" />
     <th:block th:replace="${links}" />
     <th:block th:replace="${scripts}" />
@@ -36,13 +38,13 @@
                     </span>
                 </div>
                 <div th:if="${!isAuthenticated}">
-                    <div class="sign-up-button">
+                    <div id="sign-up-button" class="sign-up-button">
                         <div class="sign-up-background"></div>
                         <img class="sign-up-icon" src="/resources/sign_up_icon.png" alt="sign up" />
                         <img class="sign-up-icon-hover" src="/resources/sign_up_icon_g.png" alt="sign up" />
                         <div class="sign-up-text">регистрация</div>
                     </div>
-                    <div class="log-in-button">
+                    <div id="log-in-button" class="log-in-button">
                         <div class="log-in-background"></div>
                         <img class="log-in-icon" src="/resources/log_in_icon.png" alt="log in" />
                         <img class="log-in-icon-hover" src="/resources/log_in_icon_g.png" alt="log in" />
@@ -50,7 +52,7 @@
                     </div>
                 </div>
                 <div th:if="${isAuthenticated}">
-                    <div class="profile-button">
+                    <div id="profile-button" class="profile-button">
                         <div class="profile-background"></div>
                         <div class="profile-icon-circle">
                             <img class="profile-icon" src="/resources/standard_icon.png" alt="profile" />
@@ -60,7 +62,7 @@
                         </div>
                         <div class="profile-text">профиль</div>
                     </div>
-                    <div class="log-out-button">
+                    <div id="log-out-button" class="log-out-button">
                         <div class="log-out-background"></div>
                         <img class="log-out-icon" src="/resources/log_out_icon.png" alt="log out" />
                         <img class="log-out-icon-hover" src="/resources/log_out_icon_g.png" alt="log out" />
@@ -81,6 +83,8 @@
                 <div class="about-us">Информация</div>
             </div>
         </div>
+        <div id="register-form-container" class="hidden"></div>
+        <div id="login-form-container" class="hidden"></div>
     </div>
 </body>
 </html>

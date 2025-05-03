@@ -163,6 +163,15 @@ public class ResourceController {
                 .body(resource);
     }
 
+    @GetMapping("/eye_open.png")
+    public ResponseEntity<Resource> getEyeOpen() {
+        Resource resource = resourceLoader.getResource("classpath:UI/resources/Eye_open.png");
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Eye_open.png\"")
+                .body(resource);
+    }
+
     @GetMapping("/standard_preview.png")
     public ResponseEntity<Resource> getStandardPreview() {
         Resource resource = resourceLoader.getResource("classpath:UI/resources/Logo_draw.png");

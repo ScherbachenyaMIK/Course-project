@@ -16,10 +16,10 @@
 </head>
 
 <body>
-<div th:fragment="common_body(label,content)" class="form">
+<div id="form" th:fragment="common_body(label,content)" class="form">
     <div class="form-content">
         <div class="header-content">
-            <img class="logo" src="/resources/icon_p.png" />
+            <img class="form-logo" src="/resources/icon_p.png" />
             <div th:text="${label}" class="form-label">Форма</div>
         </div>
         <div th:replace="${content}"></div>

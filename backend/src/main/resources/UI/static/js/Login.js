@@ -1,3 +1,4 @@
+(() => {
 async function hashPassword(password) {
     const encoder = new TextEncoder();
     const data = encoder.encode(password);
@@ -6,7 +7,7 @@ async function hashPassword(password) {
     return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
-document.getElementById("log-in-button").addEventListener("click", async function() {
+document.getElementById("log-in-button-confirm").addEventListener("click", async function() {
     const regex = /(^[A-Za-z0-9][A-Za-z0-9-_.]{2,63}$)|(^[^&=+<>,_'@.-][^&=+<>,_'@-]*@(mail|gmail|yandex)\.[a-z]+$)/;
 
     const username = document.getElementById("login-input").value.trim();
@@ -63,3 +64,21 @@ document.getElementById("log-in-button").addEventListener("click", async functio
         return;
     }
 });
+
+const passwordInput = document.getElementById("password-input");
+const eyeIcon = document.querySelector("#password .eye");
+
+let visiblePassword = false;
+
+eyeIcon.addEventListener("click", () => {
+    visiblePassword = !visiblePassword;
+
+    if (visiblePassword) {
+        passwordInput.type = "text";
+        eyeIcon.src = "/resources/eye_open.png";
+    } else {
+        passwordInput.type = "password";
+        eyeIcon.src = "/resources/eye_closed.png";
+    }
+});
+})();

@@ -50,6 +50,7 @@ class ResourceControllerTest {
             "/likes_icon.png",
             "/comments_icon.png",
             "/eye_closed.png",
+            "/eye_open.png",
             "/standard_preview.png",
             "/standard_icon.png"
     );

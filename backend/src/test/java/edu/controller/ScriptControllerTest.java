@@ -32,6 +32,17 @@ class ScriptControllerTest {
     private MockMvc mockMvc;
 
     @Test
+    void getPageScript() throws Exception {
+        MockHttpServletResponse result = mockMvc.perform(get("/scripts/page.js"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(result.getContentType())
+                .isEqualTo("text/javascript");
+    }
+
+    @Test
     void getLoginScript() throws Exception {
         MockHttpServletResponse result = mockMvc.perform(get("/scripts/login.js"))
                 .andExpect(status().isOk())

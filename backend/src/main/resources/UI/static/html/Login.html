@@ -9,7 +9,7 @@
     <script src="/scripts/login.js" defer></script>
 </head>
 <body>
-  <div th:replace="~{Form :: common_body('Вход',~{::content})}">
+  <div th:fragment="login-form" th:replace="~{Form :: common_body('Вход',~{::content})}">
     <div th:fragment="content" class="content-area">
       <div id="login" class="field">
         <div class="field-space-content">
@@ -25,8 +25,8 @@
         <img class="eye" src="/resources/eye_closed.png" />
       </div>
       <div id="error-message" class="error-message"></div>
-      <div id="log-in-button" class="log-in-button">
-        <div class="log-in-button-text">войти</div>
+      <div id="log-in-button-confirm" class="log-in-button-confirm">
+        <div class="log-in-button-confirm-text">войти</div>
       </div>
       <div class="redirect-content">
         <div>Нет аккаунта?</div>

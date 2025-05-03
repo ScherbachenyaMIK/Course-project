@@ -9,7 +9,7 @@
   <script src="/scripts/register.js" defer></script>
 </head>
 <body>
-<div th:replace="~{Form :: common_body('Регистрация',~{::content})}">
+<div th:fragment="register-form" th:replace="~{Form :: common_body('Регистрация',~{::content})}">
     <form th:fragment="content" id="register-form" class="content-area" method="post">
       <div class="page1">
         <div id="username" class="field">
@@ -71,11 +71,11 @@
         <div>Обязательные поля помечены *</div>
       </div>
       <div id="next-button" class="next-button">
-        <div class="sign-up-button-text">Далее</div>
+        <div class="sign-up-button-confirm-text">Далее</div>
       </div>
       <input id="hashed-password-input" name="passwordHash" class="line-input" type="hidden">
-      <div id="sign-up-button" class="sign-up-button">
-        <div class="sign-up-button-text">Завершить</div>
+      <div id="sign-up-button-confirm" class="sign-up-button-confirm">
+        <div class="sign-up-button-confirm-text">Завершить</div>
       </div>
       <div class="redirect-content">
         <div>Уже есть аккаунт?</div>

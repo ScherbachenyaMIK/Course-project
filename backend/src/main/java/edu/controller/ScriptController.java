@@ -18,6 +18,14 @@ public class ScriptController {
     private ResourceLoader resourceLoader;
     private final String mediaType = "text/javascript";
 
+    @GetMapping("/page.js")
+    public ResponseEntity<Resource> getPageScript() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/js/Page.js");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .body(resource);
+    }
+
     @GetMapping("/login.js")
     public ResponseEntity<Resource> getLoginScript() {
         Resource resource = resourceLoader.getResource("classpath:UI/static/js/Login.js");

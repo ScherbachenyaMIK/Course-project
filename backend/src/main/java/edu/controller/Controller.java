@@ -74,21 +74,29 @@ public class Controller {
     }
 
     @GetMapping("/login")
-    public ModelAndView getLogin() {
+    public ModelAndView getLogin(
+            @RequestParam(value = "fragment", required = false) Boolean fragment
+    ) {
         if (AuthenticationChecker.checkUserAuthentication(checkAuthorities())) {
             return new ModelAndView(REDIRECT_HOME_URL);
         }
 
-        return new ModelAndView("Login");
+        return Boolean.TRUE.equals(fragment)
+                ? new ModelAndView("Login :: login-form")
+                : new ModelAndView("Login");
     }
 
     @GetMapping("/register")
-    public ModelAndView getRegister() {
+    public ModelAndView getRegister(
+            @RequestParam(value = "fragment", required = false) Boolean fragment
+    ) {
         if (AuthenticationChecker.checkUserAuthentication(checkAuthorities())) {
             return new ModelAndView(REDIRECT_HOME_URL);
         }
 
-        return new ModelAndView("Register");
+        return Boolean.TRUE.equals(fragment)
+                ? new ModelAndView("Register :: register-form")
+                : new ModelAndView("Register");
     }
 
     @PostMapping("/login")

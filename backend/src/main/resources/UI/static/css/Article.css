@@ -1,0 +1,186 @@
+.vertical-box-left {
+  margin-left: calc(5.21% + 9.1vh);
+  padding: 0px 0px 0px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 4.08vh;
+  width: 58.16%;
+}
+.article-area {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 100%;
+  color: var(--color-white);
+  box-shadow: 0vh 1.29vh 1.2vh 1.29vh rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  background-color: var(--color-white);
+  padding: 2%;
+  gap: 1vh;
+}
+.icon-with-label {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5vh;
+  align-items: center;
+  justify-content: left;
+  flex-shrink: 0;
+  position: relative;
+}
+.author-icon {
+  flex-shrink: 0;
+  width: calc(var(--icon-height) * 1.8);
+  height: calc(var(--icon-height) * 1.8);
+  position: relative;
+  object-fit: cover;
+}
+.author-name {
+  color: var(--color-black);
+  text-align: left;
+  font-family: "Arial-Bold", sans-serif;
+  font-size: var(--icon-height);
+  font-weight: 700;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.update-date {
+  color: var(--color-gray-text);
+  text-align: left;
+  font-family: "Arial", "Segoe UI", "Roboto", sans-serif;
+  font-size: var(--icon-height);
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.article-title {
+  color: var(--color-black);
+  text-align: left;
+  font-family: "Arial-Bold", sans-serif;
+  font-size: calc(var(--icon-height) * 2);
+  font-weight: 700;
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.article-tags {
+  color: var(--color-black);
+  text-align: left;
+  font-family: "Arial-Regular", sans-serif;
+  font-size: var(--icon-height);
+  font-weight: 400;
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.article-categories {
+  color: var(--color-black);
+  text-align: left;
+  font-family: "Arial-Bold", sans-serif;
+  font-size: var(--icon-height);
+  font-weight: 700;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.information-row {
+  display: flex;
+  flex-direction: row;
+  gap: 2.75vh;
+  align-items: center;
+  justify-content: left;
+  flex-shrink: 0;
+  position: relative;
+}
+.information-icon {
+  flex-shrink: 0;
+  width: var(--icon-height);
+  height: var(--icon-height);
+  position: relative;
+  object-fit: cover;
+}
+.information-label {
+  color: var(--color-black);
+  text-align: left;
+  font-family: "Arial-Narrow", sans-serif;
+  font-size: var(--icon-height);
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.text-content {
+  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--color-gray-content-text);
+  text-align: left;
+  margin-top: 20px;
+  white-space: pre-line;
+  word-break: break-word;
+}
+.text-content img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-height: 30vh;
+  height: auto;
+  object-fit: contain;
+}
+
+.vertical-box-right {
+  padding: 0px 0px 0px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 4.08vh;
+  width: 20.56%;
+}
+.information-block-1 {
+  --information-block-1: 28.6vh;
+  position: relative;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: var(--information-block-1);
+  color: var(--color-white);
+  box-shadow: 0vh 1.29vh 1.2vh 1.29vh rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding-left: 0.5%;
+  padding-right: 0.5%;
+  background-color: var(--color-white);
+}
+
+.information-block-2 {
+  --information-block-2: 25vh;
+  position: relative;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: var(--information-block-2);
+  color: var(--color-white);
+  box-shadow: 0vh 1.29vh 1.2vh 1.29vh rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding-left: 0.5%;
+  padding-right: 0.5%;
+  background-color: var(--color-white);
+}
+
+:root {
+  --icon-height: 2vh;
+}

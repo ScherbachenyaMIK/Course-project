@@ -1,6 +1,7 @@
 app:
   initial-searching-count: 5
   timeout: 10
+  initial-comments-count: 5
 
 kafka-config:
   topics:
@@ -53,6 +54,7 @@ kafka-config:
 security:
   open-endpoints:
     - "/"
+    - "/articles/*"
     - "/login"
     - "/register"
     - "/checked-error"

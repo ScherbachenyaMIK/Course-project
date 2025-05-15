@@ -4,11 +4,11 @@ import edu.KafkaIntegrationTest;
 import edu.cofiguration.NoJpaConfig;
 import edu.model.web.AuthResponse;
 import edu.model.web.DTO;
+import edu.model.web.dto.ArticleFeedDTO;
 import edu.model.web.dto.ArticleInformationDTO;
 import edu.model.web.dto.ArticlePreviewDTO;
 import edu.model.web.response.LoginResponse;
 import java.time.Duration;
-import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -40,10 +40,10 @@ class BackendProducerTest extends KafkaIntegrationTest {
     @Autowired
     private BackendProducer producer;
 
-    private static KafkaConsumer<String, List<DTO>> DTOConsumer;
+    private static KafkaConsumer<String, DTO> DTOConsumer;
     private static KafkaConsumer<String, AuthResponse> AuthConsumer;
 
-    private final CompletableFuture<ConsumerRecord<String, List<DTO>>> DTOFuture = new CompletableFuture<>();
+    private final CompletableFuture<ConsumerRecord<String, DTO>> DTOFuture = new CompletableFuture<>();
     private final CompletableFuture<ConsumerRecord<String, AuthResponse>> AuthFuture = new CompletableFuture<>();
 
     @BeforeAll
@@ -64,27 +64,29 @@ class BackendProducerTest extends KafkaIntegrationTest {
     void sendDTOMessage() {
         DTOConsumer.subscribe(Collections.singletonList("articles_for_feed"));
 
-        ProducerRecord<String, List<DTO>> message = new ProducerRecord<>(
+        ProducerRecord<String, DTO> message = new ProducerRecord<>(
                 "articles_for_feed",
                 "id",
-                List.of(
-                        new ArticlePreviewDTO(
-                                null,
-                                "Author 1",
-                                "Title 1",
-                                new ArticleInformationDTO(
-                                        "tags",
-                                        "categories",
-                                        30,
-                                        ZonedDateTime.now(),
-                                        "status",
-                                        0,
-                                        0,
-                                        0
-                                ),
-                                null,
-                                "Article 1",
-                                null
+                new ArticleFeedDTO(
+                        List.of(
+                                new ArticlePreviewDTO(
+                                        null,
+                                        "Author 1",
+                                        "Title 1",
+                                        new ArticleInformationDTO(
+                                                "tags",
+                                                "categories",
+                                                30,
+                                                null,
+                                                "status",
+                                                0,
+                                                0,
+                                                0
+                                        ),
+                                        null,
+                                        "Article 1",
+                                        null
+                                )
                         )
                 )
         );

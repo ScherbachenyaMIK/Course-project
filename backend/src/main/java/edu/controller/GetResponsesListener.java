@@ -1,9 +1,9 @@
 package edu.controller;
 
-import edu.model.web.dto.ArticlePreviewDTO;
+import edu.model.web.dto.ArticleDTO;
+import edu.model.web.dto.ArticleFeedDTO;
 import edu.service.ResponseHandler;
 import edu.util.KafkaConsumerLogger;
-import java.util.List;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -19,8 +19,15 @@ public class GetResponsesListener {
 
     @SuppressWarnings("IllegalIdentifierName")
     @KafkaListener(topics = "articles_for_feed")
-    public void listen(ConsumerRecord<String, List<ArticlePreviewDTO>> record) {
+    public void listenFeed(ConsumerRecord<String, ArticleFeedDTO> record) {
         kafkaConsumerLogger.logRequest("articles_for_feed", record);
         responseHandler.completeResponseFeed(record.key(), record.value(), "Home");
+    }
+
+    @SuppressWarnings("IllegalIdentifierName")
+    @KafkaListener(topics = "articles_showing")
+    public void listenArticle(ConsumerRecord<String, ArticleDTO> record) {
+        kafkaConsumerLogger.logRequest("articles_showing", record);
+        responseHandler.completeResponseArticle(record.key(), record.value(), "Article");
     }
 }

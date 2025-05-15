@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -30,7 +31,7 @@ public class ExceptionController {
         return modelAndView;
     }
 
-    @ExceptionHandler(NoResourceFoundException.class)
+    @ExceptionHandler({NoResourceFoundException.class, MethodArgumentTypeMismatchException.class})
     public ModelAndView handleNotFound() {
         ModelAndView modelAndView = new ModelAndView(redirectUrl);
         modelAndView.addObject(httpAttribute, HttpStatus.NOT_FOUND.value());

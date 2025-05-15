@@ -65,6 +65,15 @@ public class StyleController {
                 .body(resource);
     }
 
+    @GetMapping("/article.css")
+    public ResponseEntity<Resource> getArticle() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/css/Article.css");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Article.css\"")
+                .body(resource);
+    }
+
     @GetMapping("/error.css")
     public ResponseEntity<Resource> getError() {
         Resource resource = resourceLoader.getResource("classpath:UI/static/css/Error.css");

@@ -1,7 +1,10 @@
 package edu.service;
 
 import edu.configuration.NoKafkaConfig;
+import edu.model.web.dto.ArticleDTO;
+import edu.model.web.dto.ArticleFeedDTO;
 import edu.model.web.response.CheckAvailabilityResponse;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -31,13 +34,14 @@ class ResponseHandlerTest {
     @SneakyThrows
     @Test
     void getResponseFeed() {
+        ArticleFeedDTO articleFeedDTO = new ArticleFeedDTO(List.of());
         ModelAndView expected = new ModelAndView("");
-        expected.addObject("articles", null);
+        expected.addObject("articles", List.of());
         expected.addObject("isAuthenticated", false);
 
-        CompletableFuture<ModelAndView> future = handler.getResponse(id, "NONE");
+        CompletableFuture<ModelAndView> future = handler.getResponse(id, false);
 
-        handler.completeResponseFeed(id, null, "");
+        handler.completeResponseFeed(id, articleFeedDTO, "");
 
         await()
                 .atMost(10, TimeUnit.SECONDS)
@@ -54,13 +58,14 @@ class ResponseHandlerTest {
     @SneakyThrows
     @Test
     void getResponseFeedAuthenticated() {
+        ArticleFeedDTO articleFeedDTO = new ArticleFeedDTO(List.of());
         ModelAndView expected = new ModelAndView("");
-        expected.addObject("articles", null);
+        expected.addObject("articles", List.of());
         expected.addObject("isAuthenticated", true);
 
-        CompletableFuture<ModelAndView> future = handler.getResponse(id, "USER");
+        CompletableFuture<ModelAndView> future = handler.getResponse(id, true);
 
-        handler.completeResponseFeed(id, null, "");
+        handler.completeResponseFeed(id, articleFeedDTO, "");
 
         await()
                 .atMost(10, TimeUnit.SECONDS)
@@ -77,7 +82,7 @@ class ResponseHandlerTest {
     @SneakyThrows
     @Test
     void getResponseTimeout() {
-        CompletableFuture<ModelAndView> future = handler.getResponse(id, "USER");
+        CompletableFuture<ModelAndView> future = handler.getResponse(id, true);
 
         await()
                 .atMost(11, TimeUnit.SECONDS)
@@ -125,5 +130,37 @@ class ResponseHandlerTest {
         assertThatThrownBy(future::get)
                 .isInstanceOf(ExecutionException.class)
                 .hasCauseInstanceOf(TimeoutException.class);
+    }
+
+    @SneakyThrows
+    @Test
+    void getResponseArticle() {
+        ArticleDTO articleFeedDTO = new ArticleDTO(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+        ModelAndView expected = new ModelAndView("");
+        expected.addObject("article", articleFeedDTO);
+        expected.addObject("isAuthenticated", false);
+
+        CompletableFuture<ModelAndView> future = handler.getResponse(id, false);
+
+        handler.completeResponseArticle(id, articleFeedDTO, "");
+
+        await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until(future::isDone);
+
+        assertThat(future.get())
+                .usingRecursiveComparison()
+                .comparingOnlyFields(
+                        "model",
+                        "view")
+                .isEqualTo(expected);
     }
 }

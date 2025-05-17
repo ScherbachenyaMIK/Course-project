@@ -98,7 +98,7 @@ async function resolveLogIn() {
     }
 
     if (!ContextHolder.isLoginStyleLoaded) {
-        ContextHolder.isRegisterStyleLoaded = true;
+        ContextHolder.isLoginStyleLoaded = true;
         const styleLink = document.createElement("link");
         styleLink.rel = "stylesheet";
         styleLink.href = "/styles/login.css";
@@ -106,7 +106,7 @@ async function resolveLogIn() {
     }
 
     if (!ContextHolder.isLoginScriptLoaded) {
-        ContextHolder.isRegisterScriptLoaded = true;
+        ContextHolder.isLoginScriptLoaded = true;
         const script = document.createElement("script");
         script.src = "/scripts/login.js";
         document.head.appendChild(script);

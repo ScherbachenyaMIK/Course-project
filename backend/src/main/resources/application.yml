@@ -106,3 +106,4 @@ logging:
 
 scrapper:
   base-url: http://${SCRAPPER_BASEURL_HOST}:${SCRAPPER_PORT}
+  cache-size: 10485760

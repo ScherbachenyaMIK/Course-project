@@ -97,3 +97,4 @@ logging:
 
 scrapper:
   base-url: http://localhost:8080
+  cache-size: 10485760

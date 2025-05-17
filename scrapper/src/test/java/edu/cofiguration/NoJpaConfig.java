@@ -1,5 +1,6 @@
 package edu.cofiguration;
 
+import edu.service.ImagesService;
 import edu.service.UsersService;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
@@ -26,4 +27,6 @@ import org.springframework.context.annotation.FilterType;
 public class NoJpaConfig {
     @MockBean
     private UsersService usersService;
+    @MockBean
+    private ImagesService imagesService;
 }

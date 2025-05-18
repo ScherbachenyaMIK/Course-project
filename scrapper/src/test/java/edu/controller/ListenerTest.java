@@ -3,7 +3,7 @@ package edu.controller;
 import edu.KafkaIntegrationTest;
 import edu.cofiguration.NoJpaConfig;
 import edu.model.web.AuthRequest;
-import edu.model.web.ScrapperRequest;
+import edu.model.web.ScrapperGetRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
 import edu.model.web.request.LoginRequest;
 import edu.service.AuthResolver;
@@ -42,14 +42,14 @@ class ListenerTest extends KafkaIntegrationTest {
     private AuthRequestsListener authRequestsListener;
 
     @Autowired
-    private KafkaTemplate<String, ScrapperRequest> scrapperKafkaTemplate;
+    private KafkaTemplate<String, ScrapperGetRequest> scrapperKafkaTemplate;
 
     @Autowired
     private KafkaTemplate<String, AuthRequest> authkafkaTemplate;
 
     @Test
     void listenScrapper() {
-        ProducerRecord<String, ScrapperRequest> message = new ProducerRecord<>(
+        ProducerRecord<String, ScrapperGetRequest> message = new ProducerRecord<>(
                 "get_info",
                 "id",
                 new ArticlesForFeedRequest(5)

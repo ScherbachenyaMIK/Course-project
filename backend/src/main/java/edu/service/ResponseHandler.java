@@ -10,9 +10,11 @@ import java.util.concurrent.TimeUnit;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Service
 @Log4j2
@@ -70,6 +72,11 @@ public class ResponseHandler {
                                         ArticleDTO article, String modelName) {
         ImmutablePair<CompletableFuture<ModelAndView>, Boolean>
                 entry = pendingResponses.remove(correlationId);
+        if (article.title() == null) {
+            entry.getLeft().completeExceptionally(
+                    new NoResourceFoundException(HttpMethod.GET, "/articles/{id}")
+            );
+        }
         ModelAndView modelAndView = new ModelAndView(modelName);
         if (entry != null) {
             modelAndView.addObject("article", article);

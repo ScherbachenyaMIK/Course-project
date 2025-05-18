@@ -1,7 +1,7 @@
 package edu.service;
 
 import edu.model.web.DTO;
-import edu.model.web.ScrapperRequest;
+import edu.model.web.ScrapperGetRequest;
 import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
 import edu.model.web.dto.ArticleInformationDTO;
@@ -37,7 +37,7 @@ class GetRequestsResolverTest {
 
     @Test
     void resolveArticlesForFeedRequest() {
-        ConsumerRecord<String, ScrapperRequest> record = new ConsumerRecord<>(
+        ConsumerRecord<String, ScrapperGetRequest> record = new ConsumerRecord<>(
                 "topic",
                 1,
                 0,
@@ -91,7 +91,7 @@ class GetRequestsResolverTest {
 
     @Test
     void resolveArticleRequest() {
-        ConsumerRecord<String, ScrapperRequest> record = new ConsumerRecord<>(
+        ConsumerRecord<String, ScrapperGetRequest> record = new ConsumerRecord<>(
                 "topic",
                 1,
                 0,
@@ -142,7 +142,7 @@ class GetRequestsResolverTest {
 
     @Test
     void resolveNullKey() {
-        ConsumerRecord<String, ScrapperRequest> record = new ConsumerRecord<>(
+        ConsumerRecord<String, ScrapperGetRequest> record = new ConsumerRecord<>(
                 "topic",
                 1,
                 0,
@@ -160,7 +160,7 @@ class GetRequestsResolverTest {
 
     @Test
     void resolveNullValue() {
-        ConsumerRecord<String, ScrapperRequest> record = new ConsumerRecord<>(
+        ConsumerRecord<String, ScrapperGetRequest> record = new ConsumerRecord<>(
                 "topic",
                 1,
                 0,

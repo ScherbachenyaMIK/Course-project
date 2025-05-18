@@ -2,8 +2,8 @@ package edu.model.web.request;
 
 import edu.model.web.ScrapperGetRequest;
 
-public record ArticleRequest(
-        Long id,
-        int commentCount
+public record ArticleSetupRequest(
+        Long authorId,
+        String title
 ) implements ScrapperGetRequest {
 }

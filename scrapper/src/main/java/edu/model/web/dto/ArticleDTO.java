@@ -5,7 +5,9 @@ import edu.model.web.DTO;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import lombok.Builder;
 
+@Builder
 public record ArticleDTO(
         URI authorIconUri,
         String author,

@@ -2,7 +2,7 @@ package edu.web;
 
 import edu.KafkaIntegrationTest;
 import edu.model.web.AuthRequest;
-import edu.model.web.ScrapperRequest;
+import edu.model.web.ScrapperGetRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
 import edu.model.web.request.LoginRequest;
 import java.time.Duration;
@@ -33,10 +33,10 @@ class ScrapperProducerTest extends KafkaIntegrationTest {
     @Autowired
     private ScrapperProducer producer;
 
-    private static KafkaConsumer<String, ScrapperRequest> scrapperConsumer;
+    private static KafkaConsumer<String, ScrapperGetRequest> scrapperConsumer;
     private static KafkaConsumer<String, AuthRequest> authConsumer;
 
-    private final CompletableFuture<ConsumerRecord<String, ScrapperRequest>> scrapperFuture = new CompletableFuture<>();
+    private final CompletableFuture<ConsumerRecord<String, ScrapperGetRequest>> scrapperFuture = new CompletableFuture<>();
     private final CompletableFuture<ConsumerRecord<String, AuthRequest>> authFuture = new CompletableFuture<>();
 
     @BeforeAll

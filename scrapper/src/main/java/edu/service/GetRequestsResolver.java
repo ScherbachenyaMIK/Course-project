@@ -1,7 +1,7 @@
 package edu.service;
 
 import edu.model.web.DTO;
-import edu.model.web.ScrapperRequest;
+import edu.model.web.ScrapperGetRequest;
 import edu.model.web.request.ArticleRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
 import java.util.Objects;
@@ -16,7 +16,7 @@ public class GetRequestsResolver {
     private GetRequestsHandler getRequestsHandler;
 
     @SuppressWarnings("IllegalIdentifierName")
-    public ProducerRecord<String, DTO> resolve(ConsumerRecord<String, ScrapperRequest> record) {
+    public ProducerRecord<String, DTO> resolve(ConsumerRecord<String, ScrapperGetRequest> record) {
         Objects.requireNonNull(record.key(), "Key must not be null");
         Objects.requireNonNull(record.value(), "Value must not be null");
         String type = record.value().getClass().toString();

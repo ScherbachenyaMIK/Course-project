@@ -19,4 +19,6 @@
 	<include file="11-alter-table-Articles-column-status.sql"/>
 	<include file="12-alter-table-Articles-column-time-to-read.sql"/>
 	<include file="13-create-table-Images.sql"/>
+	<include file="14-insert-data-Categories.sql"/>
+	<include file="15-create-index-by-names-Categories.sql"/>
 </databaseChangeLog>

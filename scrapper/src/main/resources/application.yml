@@ -6,6 +6,9 @@ kafka-config:
     identification:
       partitions: 10
       replicas: 3
+    profile_showing:
+      partitions: 5
+      replicas: 3
     profile_editing:
       partitions: 10
       replicas: 3

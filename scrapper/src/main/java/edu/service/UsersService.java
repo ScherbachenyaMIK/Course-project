@@ -54,6 +54,10 @@ public class UsersService {
         return NONE_ROLE;
     }
 
+    public User findUserById(Long id) {
+        return repository.findUserById(id);
+    }
+
     public boolean isExistsByUsername(String username) {
         return repository.existsByUsername(username);
     }

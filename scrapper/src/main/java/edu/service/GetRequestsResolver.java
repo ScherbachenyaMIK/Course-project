@@ -4,6 +4,7 @@ import edu.model.web.DTO;
 import edu.model.web.ScrapperGetRequest;
 import edu.model.web.request.ArticleRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
+import edu.model.web.request.ProfileRequest;
 import java.util.Objects;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -39,6 +40,16 @@ public class GetRequestsResolver {
                         getRequestsHandler
                                 .handleArticleRequest(
                                         (ArticleRequest) record.value()
+                                )
+                );
+            }
+            case "ProfileRequest" -> {
+                return new ProducerRecord<>(
+                        "profile_showing",
+                        record.key(),
+                        getRequestsHandler
+                                .handleProfileRequest(
+                                        (ProfileRequest) record.value()
                                 )
                 );
             }

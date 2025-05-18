@@ -74,6 +74,15 @@ public class StyleController {
                 .body(resource);
     }
 
+    @GetMapping("/profile.css")
+    public ResponseEntity<Resource> getProfile() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/css/Profile.css");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Profile.css\"")
+                .body(resource);
+    }
+
     @GetMapping("/error.css")
     public ResponseEntity<Resource> getError() {
         Resource resource = resourceLoader.getResource("classpath:UI/static/css/Error.css");

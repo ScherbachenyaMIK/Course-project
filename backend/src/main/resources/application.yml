@@ -58,6 +58,7 @@ security:
   open-endpoints:
     - "/"
     - "/articles/*"
+    - "/users/*"
     - "/login"
     - "/register"
     - "/checked-error"

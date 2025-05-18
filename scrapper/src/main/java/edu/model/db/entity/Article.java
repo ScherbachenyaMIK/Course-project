@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -75,7 +76,7 @@ public class Article {
             joinColumns = @JoinColumn(name = "article_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    private Set<Category> categories;
+    private Set<Category> categories = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -83,7 +84,7 @@ public class Article {
             joinColumns = @JoinColumn(name = "article_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private Set<Tag> tags;
+    private Set<Tag> tags = new HashSet<>();
 
     @SuppressWarnings({"MagicNumber", "MultipleStringLiterals"})
     @PrePersist
@@ -95,5 +96,7 @@ public class Article {
         this.status = "draft";
         this.views = 0;
         this.likes = 0;
+        this.categories = new HashSet<>();
+        this.tags = new HashSet<>();
     }
 }

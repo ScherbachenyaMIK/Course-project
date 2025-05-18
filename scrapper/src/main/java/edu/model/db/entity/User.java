@@ -3,13 +3,13 @@ package edu.model.db.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,7 +45,7 @@ public class User {
     private String passwordHash;
 
     @Column(name = "registration_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private Timestamp registrationDate = Timestamp.from(Instant.now());
+    private LocalDateTime registrationDate = LocalDateTime.now();
 
     @Column(name = "description")
     private String description;
@@ -57,8 +57,8 @@ public class User {
     private Character sex;
 
     @Column(name = "birth_date")
-    private Timestamp birthDate;
+    private LocalDateTime birthDate;
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Article> articles;
 }

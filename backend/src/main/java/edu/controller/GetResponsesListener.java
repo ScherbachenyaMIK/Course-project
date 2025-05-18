@@ -2,6 +2,7 @@ package edu.controller;
 
 import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
+import edu.model.web.dto.UserDTO;
 import edu.service.ResponseHandler;
 import edu.util.KafkaConsumerLogger;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -29,5 +30,12 @@ public class GetResponsesListener {
     public void listenArticle(ConsumerRecord<String, ArticleDTO> record) {
         kafkaConsumerLogger.logRequest("articles_showing", record);
         responseHandler.completeResponseArticle(record.key(), record.value(), "Article");
+    }
+
+    @SuppressWarnings("IllegalIdentifierName")
+    @KafkaListener(topics = "profile_showing")
+    public void listenProfile(ConsumerRecord<String, UserDTO> record) {
+        kafkaConsumerLogger.logRequest("profile_showing", record);
+        responseHandler.completeResponseProfile(record.key(), record.value(), "Profile");
     }
 }

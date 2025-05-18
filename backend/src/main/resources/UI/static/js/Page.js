@@ -141,6 +141,18 @@ async function resolveLogOut() {
     window.location.reload();
 }
 
+async function resolveProfile() {
+    const response = await fetch('/api/get/username', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Accept': 'text/plain'
+        }
+    });
+    const username = await response.text();
+    window.location.href = "/users/" + username;
+}
+
 const signUpBtn = document.getElementById("sign-up-button");
 if (signUpBtn) {
     signUpBtn.addEventListener("click", async function(e) {
@@ -172,5 +184,7 @@ const profileBtn = document.getElementById("profile-button");
 if (profileBtn) {
     profileBtn.addEventListener("click", async function(e) {
         playAnimation(this, e);
+
+        setTimeout(() => resolveProfile(), 300);
     });
 }

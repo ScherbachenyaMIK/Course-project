@@ -1,24 +1,25 @@
 package edu.controller;
 
 import edu.configuration.ApplicationConfig;
-import edu.model.web.request.ArticleRequest;
-import edu.model.web.request.ArticleSetupRequest;
+import edu.model.web.request.ProfileRequest;
 import edu.service.ResponseHandler;
 import edu.util.AuthenticationChecker;
 import edu.web.ScrapperProducer;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestController
-@RequestMapping("/articles")
-public class ArticlesController {
+@RequestMapping("/users")
+public class UsersController {
     @Autowired
     private ScrapperProducer scrapperProducer;
 
@@ -28,28 +29,18 @@ public class ArticlesController {
     @Autowired
     private ResponseHandler responseHandler;
 
-    @GetMapping("/{id}")
-    public CompletableFuture<ModelAndView> getArticle(@PathVariable Long id) {
+    @GetMapping("/{username}")
+    public CompletableFuture<ModelAndView> getProfile(@PathVariable String username) throws NoResourceFoundException {
+        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(username)) {
+            throw new NoResourceFoundException(HttpMethod.GET, "/users/" + username);
+        }
+
         String correlationId = UUID.randomUUID().toString();
         scrapperProducer.sendGetRequest(
                 "get_info",
                 correlationId,
-                new ArticleRequest(
-                        id,
-                        applicationConfig.initialCommentsCount()
-                ));
-        return responseHandler.getResponse(correlationId, AuthenticationChecker.checkAuthorities());
-    }
-
-    @PostMapping("/{authorId}")
-    public CompletableFuture<ModelAndView> postArticle(@PathVariable Long authorId) {
-        String correlationId = UUID.randomUUID().toString();
-        scrapperProducer.sendPostRequest(
-                "articles_setup",
-                correlationId,
-                new ArticleSetupRequest(
-                        authorId,
-                        "Title"
+                new ProfileRequest(
+                        username
                 ));
         return responseHandler.getResponse(correlationId, AuthenticationChecker.checkAuthorities());
     }

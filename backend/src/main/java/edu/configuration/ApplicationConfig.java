@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record ApplicationConfig(
         int initialSearchingCount,
         int timeout,
+        int timeoutIntelligence,
         int initialCommentsCount
 ) {
 }

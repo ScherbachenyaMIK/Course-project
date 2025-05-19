@@ -51,6 +51,9 @@ kafka-config:
     authorization:
       partitions: 5
       replicas: 1
+    ai_responses:
+      partitions: 5
+      replicas: 1
 
 spring:
   application:
@@ -85,3 +88,7 @@ logging:
 
 backend:
   base-url: localhost:8090
+
+huggingface:
+  api:
+    token: {HF_TOKEN}

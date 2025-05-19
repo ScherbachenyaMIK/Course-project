@@ -1,5 +1,6 @@
 package edu.controller;
 
+import edu.model.web.request.AIRequest;
 import edu.model.web.request.CheckAvailabilityRequest;
 import edu.model.web.response.CheckAvailabilityResponse;
 import edu.service.ResponseHandler;
@@ -40,5 +41,18 @@ public class ApiController {
     @GetMapping("/get/username")
     public ResponseEntity<String> getUsername() {
         return ResponseEntity.ok(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    @SuppressWarnings("unchecked")
+    @GetMapping("/ai/sample")
+    public CompletableFuture<ResponseEntity<CheckAvailabilityResponse>> getSampleAI() {
+        String correlationId = UUID.randomUUID().toString();
+        scrapperProducer.sendGetRequest(
+                "get_info",
+                correlationId,
+                new AIRequest("", "Sample")
+        );
+        return (CompletableFuture<ResponseEntity<CheckAvailabilityResponse>>)
+                (CompletableFuture<?>) responseHandler.getApiResponse(correlationId);
     }
 }

@@ -2,6 +2,7 @@ package edu.service;
 
 import edu.model.web.DTO;
 import edu.model.web.ScrapperGetRequest;
+import edu.model.web.request.AIRequest;
 import edu.model.web.request.ArticleRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
 import edu.model.web.request.ProfileRequest;
@@ -50,6 +51,16 @@ public class GetRequestsResolver {
                         getRequestsHandler
                                 .handleProfileRequest(
                                         (ProfileRequest) record.value()
+                                )
+                );
+            }
+            case "AIRequest" -> {
+                return new ProducerRecord<>(
+                        "ai_responses",
+                        record.key(),
+                        getRequestsHandler
+                                .handleAIRequest(
+                                        (AIRequest) record.value()
                                 )
                 );
             }

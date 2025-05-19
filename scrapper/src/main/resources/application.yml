@@ -51,6 +51,9 @@ kafka-config:
     authorization:
       partitions: 5
       replicas: 3
+    ai_responses:
+      partitions: 20
+      replicas: 2
 
 spring:
   application:
@@ -97,3 +100,7 @@ logging:
 
 backend:
   base-url: http://${BACKEND_BASEURL_HOST}:${BACKEND_PORT}
+
+huggingface:
+  api:
+    token: ${HF_TOKEN}

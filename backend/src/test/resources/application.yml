@@ -1,6 +1,8 @@
 app:
   initial-searching-count: 5
   timeout: 10
+  timeout-intelligence: 90
+  initial-comments-count: 5
 
 kafka-config:
   topics:
@@ -50,6 +52,9 @@ kafka-config:
       partitions: 5
       replicas: 1
     authorization:
+      partitions: 5
+      replicas: 1
+    ai_responses:
       partitions: 5
       replicas: 1
 

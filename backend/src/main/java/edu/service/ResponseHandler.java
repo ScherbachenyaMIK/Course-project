@@ -1,6 +1,7 @@
 package edu.service;
 
 import edu.configuration.ApplicationConfig;
+import edu.model.web.dto.AIResponseDTO;
 import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
 import edu.model.web.dto.UserDTO;
@@ -48,7 +49,7 @@ public class ResponseHandler {
     public CompletableFuture<ResponseEntity<?>> getApiResponse(String correlationId) {
         CompletableFuture<ResponseEntity<?>> future = new CompletableFuture<>();
         pendingApiResponses.put(correlationId, future);
-        future.orTimeout(applicationConfig.timeout(), TimeUnit.SECONDS)
+        future.orTimeout(applicationConfig.timeoutIntelligence(), TimeUnit.SECONDS)
                 .exceptionally(ex -> {
                     log.error(TIMEOUT_MESSAGE, correlationId);
                     pendingResponses.remove(correlationId);
@@ -102,6 +103,13 @@ public class ResponseHandler {
         CompletableFuture<ResponseEntity<?>> future = pendingApiResponses.remove(correlationId);
         if (future != null) {
             future.complete(ResponseEntity.ok(response));
+        }
+    }
+
+    public void completeResponseAI(String correlationId, AIResponseDTO response) {
+        CompletableFuture<ResponseEntity<?>> future = pendingApiResponses.remove(correlationId);
+        if (future != null) {
+            future.complete(ResponseEntity.ok(response.response()));
         }
     }
 }

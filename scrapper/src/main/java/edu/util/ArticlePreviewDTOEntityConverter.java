@@ -20,14 +20,17 @@ public class ArticlePreviewDTOEntityConverter {
         ArticlePreviewDTO.ArticlePreviewDTOBuilder builder = ArticlePreviewDTO.builder();
         ArticleInformationDTO.ArticleInformationDTOBuilder informationBuilder = ArticleInformationDTO.builder();
 
+        String regex = "<[^>]+>[^<]+</[^>]+>";
         builder.articleUri(URI.create("/articles/" + article.getId().toString()));
         builder.title(article.getTitle());
         builder.fragment(
                 article.getTextContent()
+                        .replaceAll(regex, "")
                         .substring(
                                 0,
                                 Math.min(article.getTextContent().length(), 500)
                         )
+                        .replaceAll(regex, "")
                         .concat("..."));
         builder.previewImageUri(URI.create("/resources/preview/" + article.getId().toString()));
 

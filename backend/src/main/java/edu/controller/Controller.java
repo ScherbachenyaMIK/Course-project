@@ -24,7 +24,6 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,14 +69,14 @@ public class Controller {
                 new ArticlesForFeedRequest(
                         applicationConfig.initialSearchingCount()
                 ));
-        return responseHandler.getResponse(correlationId, checkAuthorities());
+        return responseHandler.getResponse(correlationId, AuthenticationChecker.checkAuthorities());
     }
 
     @GetMapping("/login")
     public ModelAndView getLogin(
             @RequestParam(value = "fragment", required = false) Boolean fragment
     ) {
-        if (AuthenticationChecker.checkUserAuthentication(checkAuthorities())) {
+        if (AuthenticationChecker.checkAuthorities()) {
             return new ModelAndView(REDIRECT_HOME_URL);
         }
 
@@ -90,7 +89,7 @@ public class Controller {
     public ModelAndView getRegister(
             @RequestParam(value = "fragment", required = false) Boolean fragment
     ) {
-        if (AuthenticationChecker.checkUserAuthentication(checkAuthorities())) {
+        if (AuthenticationChecker.checkAuthorities()) {
             return new ModelAndView(REDIRECT_HOME_URL);
         }
 
@@ -154,7 +153,7 @@ public class Controller {
                 ResponseDescription != null ? ResponseDescription : "Неизвестная ошибка.");
         modelAndView.addObject(
                 "isAuthenticated",
-                AuthenticationChecker.checkUserAuthentication(checkAuthorities())
+                AuthenticationChecker.checkAuthorities()
         );
         return modelAndView;
     }
@@ -176,17 +175,5 @@ public class Controller {
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge(0);
         return jwtCookie;
-    }
-
-    private static String checkAuthorities() {
-        if ("anonymousUser".equals(
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication()
-                        .getPrincipal()
-                        .toString())) {
-            return "NONE";
-        }
-        return "USER";
     }
 }

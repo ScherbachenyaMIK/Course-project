@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{Page :: common_head(~{::meta},'Article',~{::link},~{})}">
+    <meta name="description" content="AI-Powered Content Hub — инновационная платформа для публикации авторских статей с использованием инструментов искусственного интеллекта. Создавайте, редактируйте и улучшайте контент с помощью ИИ. Подходит для блогеров, писателей и всех, кто хочет делиться своими идеями онлайн.">
+    <meta name="keywords" content="публикация статей, контент платформа, ИИ инструменты, искусственный интеллект, создание контента, редактирование, авторские статьи, блог, AI content hub">
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/styles/article.css}">
+</head>
+<body>
+<div th:replace="~{Page :: common_body(~{::content})}">
+    <div th:fragment="content" class="horizontal-box">
+        <div class="vertical-box-left">
+            <div class="article-area">
+                <div class="icon-with-label">
+                    <img class="author-icon" th:src="${article.authorIconUri}" alt="Аватар автора">
+                    <div class="author-name" th:text="${article.author}">Автор статьи</div>
+                    <div class="update-date" th:text="${article.lastUpdateDate}">Дата обновления</div>
+                </div>
+                <div class="article-title" th:text="${article.title}">Название статьи</div>
+                <div class="article-tags" th:text="${'Теги: ' + article.information.tags}">#теги</div>
+                <div class="article-categories" th:text="${'Категории: ' + article.information.categories}">Категории</div>
+                <div class="icon-with-label">
+                    <img class="information-icon" src="/resources/clock_icon.png" alt="Время прочтения в минутах">
+                    <div class="information-label">Время прочтения:</div>
+                    <div class="information-label" th:text="${article.information.timeToRead} + ' минут'">Время прочтения в минутах</div>
+                </div>
+                <div class="icon-with-label">
+                    <img class="information-icon" src="/resources/created_icon.png" alt="Дата и время создания">
+                    <div class="information-label">Время создания:</div>
+                    <div class="information-label" th:text="${article.information.creationDate}">Дата и время создания</div>
+                </div>
+                <div class="icon-with-label">
+                    <img class="information-icon" src="/resources/status_icon.png" alt="Статус статьи">
+                    <div class="information-label">Статус готовности:</div>
+                    <div class="information-label" th:text="${article.information.status}">Статус статьи</div>
+                </div>
+                <div class="text-content" th:utext="${article.content}">Содержание статьи</div>
+                <div class="information-row">
+                    <div class="icon-with-label">
+                        <img class="information-icon" src="/resources/views_icon.png" alt="Количество просмотров">
+                        <div class="information-label" th:text="${article.information.views}">Количество просмотров</div>
+                    </div>
+                    <div class="icon-with-label">
+                        <img class="information-icon" src="/resources/likes_icon.png" alt="Количество лайков">
+                        <div class="information-label" th:text="${article.information.likes}">Количество лайков</div>
+                    </div>
+                    <div class="icon-with-label">
+                        <img class="information-icon" src="/resources/comments_icon.png" alt="Количество комментариев">
+                        <div class="information-label" th:text="${article.information.comments}">Количество комментариев</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="vertical-box-right">
+            <div class="information-block-1">
+            </div>
+            <div class="information-block-2">
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

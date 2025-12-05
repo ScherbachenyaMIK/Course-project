@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.ModelAndView;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -58,7 +59,7 @@ class ControllerTest {
     @SneakyThrows
     @Test
     void getHome() {
-        when(responseHandler.getResponse(anyString(), anyString()))
+        when(responseHandler.getResponse(anyString(), anyBoolean()))
                 .thenReturn(CompletableFuture.completedFuture(
                         new ModelAndView("Home"))
                 );

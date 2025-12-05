@@ -107,4 +107,30 @@ class StyleControllerTest {
         assertThat(result.getHeader("Content-Disposition"))
                 .isEqualTo("inline; filename=\"Register.css\"");
     }
+
+    @Test
+    void getArticle() throws Exception {
+        MockHttpServletResponse result = mockMvc.perform(get("/styles/article.css"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(result.getContentType())
+                .isEqualTo("text/css");
+        assertThat(result.getHeader("Content-Disposition"))
+                .isEqualTo("inline; filename=\"Article.css\"");
+    }
+
+    @Test
+    void getProfile() throws Exception {
+        MockHttpServletResponse result = mockMvc.perform(get("/styles/profile.css"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(result.getContentType())
+                .isEqualTo("text/css");
+        assertThat(result.getHeader("Content-Disposition"))
+                .isEqualTo("inline; filename=\"Profile.css\"");
+    }
 }

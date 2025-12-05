@@ -6,6 +6,9 @@ kafka-config:
     identification:
       partitions: 10
       replicas: 3
+    profile_showing:
+      partitions: 5
+      replicas: 3
     profile_editing:
       partitions: 10
       replicas: 3
@@ -48,6 +51,9 @@ kafka-config:
     authorization:
       partitions: 5
       replicas: 3
+    ai_responses:
+      partitions: 20
+      replicas: 2
 
 spring:
   application:
@@ -94,3 +100,33 @@ logging:
 
 backend:
   base-url: http://${BACKEND_BASEURL_HOST}:${BACKEND_PORT}
+
+huggingface:
+  api:
+    token: ${HF_TOKEN}
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: info,health,prometheus
+      base-path: /
+      path-mapping:
+        health: health
+        prometheus: metrics
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  labels:
+    application: ${spring.application.name}
+  server:
+    port: 8081

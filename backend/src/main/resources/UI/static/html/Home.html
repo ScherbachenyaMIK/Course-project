@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{Page :: common_head(~{::meta},'Home',~{::link},~{})}">
+<head th:replace="~{Page :: common_head(~{::meta},'Home',~{::link},~{::script})}">
     <meta name="description" content="AI-Powered Content Hub — инновационная платформа для публикации авторских статей с использованием инструментов искусственного интеллекта. Создавайте, редактируйте и улучшайте контент с помощью ИИ. Подходит для блогеров, писателей и всех, кто хочет делиться своими идеями онлайн.">
     <meta name="keywords" content="публикация статей, контент платформа, ИИ инструменты, искусственный интеллект, создание контента, редактирование, авторские статьи, блог, AI content hub">
+
     <link rel="stylesheet" type="text/css" media="all" th:href="@{/styles/home.css}">
+
+    <script src="/scripts/home.js" defer></script>
 </head>
 <body>
 <div th:replace="~{Page :: common_body(~{::content})}">
@@ -89,9 +92,32 @@
                 <input id="searching-input" class="searching-input" type="text" placeholder="Искать...">
                 <img class="magnifier" src="resources/magnifier.png" alt="search" />
             </div>
-            <div class="information-block-1">
+            <div class="information-block">
+                <div class="information-block-content">
+                    <div class="information-title">Мы открылись!</div>
+                    <div class="information-content">
+                        С радостью сообщаем, что наш проект официально стартовал! Вас ждут свежие материалы, удобный интерфейс и множество интересных функций. Следите за обновлениями — впереди много нового!
+                    </div>
+                </div>
             </div>
-            <div class="information-block-2">
+            <div class="information-block">
+                <div class="information-block-content">
+                    <div class="information-title">Запросы ИИ</div>
+                    <div class="information-content">
+                        Попробуйте — нажмите на кнопку ниже и получите ответ от интеллектуального помощника.
+                    </div>
+                    <form id="sample-form" class="sample-button-form">
+                        <button type="submit" class="sample-button">
+                            <div class="sample-button-text">Проверить</div>
+                        </button>
+                    </form>
+                    <div id="result-block" class="result-block" style="display:none;">
+                        <div class="result-label">Промпт:</div>
+                        <div class="result-text">Опиши осеннюю дождливую погоду красиво и поэтично.</div>
+                        <div class="result-label">Ответ:</div>
+                        <div id="response-text" class="result-text"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

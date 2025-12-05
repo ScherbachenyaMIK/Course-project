@@ -3,7 +3,8 @@ package edu.service;
 import edu.model.db.entity.User;
 import edu.model.db.repository.UsersRepository;
 import edu.model.web.request.RegisterRequest;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +55,14 @@ public class UsersService {
         return NONE_ROLE;
     }
 
+    public User findUserById(Long id) {
+        return repository.findUserById(id);
+    }
+
+    public User findUserByUsername(String username) {
+        return repository.findUserByUsername(username);
+    }
+
     public boolean isExistsByUsername(String username) {
         return repository.existsByUsername(username);
     }
@@ -67,8 +76,8 @@ public class UsersService {
         newUser.setUsername(request.username());
         newUser.setEmail(request.email());
         newUser.setPasswordHash(request.passwordHash());
-        newUser.setBirthDate(request.date() != null ? Timestamp.valueOf(
-                request.date().atStartOfDay()) : null
+        newUser.setBirthDate(request.date() != null ? LocalDateTime.of(
+                request.date(), LocalTime.MIN) : null
         );
         newUser.setSex(request.sex());
         newUser.setUserRole(NOT_CONFIRMED);

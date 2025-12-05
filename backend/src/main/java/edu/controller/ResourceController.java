@@ -1,5 +1,6 @@
 package edu.controller;
 
+import edu.web.ScrapperClient;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -8,8 +9,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/resources")
@@ -17,6 +20,9 @@ public class ResourceController {
     @Autowired
     @Setter
     private ResourceLoader resourceLoader;
+
+    @Autowired
+    private ScrapperClient scrapperClient;
 
     @GetMapping("/icon.svg")
     public ResponseEntity<Resource> getIcon() {
@@ -188,5 +194,23 @@ public class ResourceController {
                 .contentType(MediaType.IMAGE_PNG)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Standard_icon.png\"")
                 .body(resource);
+    }
+
+    @GetMapping("/preview/{id}")
+    public Mono<ResponseEntity<byte[]>> getPreviewImage(@PathVariable Long id) {
+        return scrapperClient.getImage(id, "/preview/");
+    }
+
+    @GetMapping("/user_icon/{id}")
+    public Mono<ResponseEntity<byte[]>> getUserIcon(@PathVariable Long id) {
+        return scrapperClient.getImage(id, "/user_icon/");
+    }
+
+    @GetMapping("/article/{articleId}/images/{id}")
+    public Mono<ResponseEntity<byte[]>> getArticleIcon(
+            @PathVariable Long id,
+            @PathVariable Long articleId
+    ) {
+        return scrapperClient.getImage(id, "/article/" + articleId + "/images/");
     }
 }

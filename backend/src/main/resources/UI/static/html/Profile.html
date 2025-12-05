@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{Page :: common_head(~{::meta},'Profile',~{::link},~{})}">
+    <meta name="description" content="AI-Powered Content Hub — инновационная платформа для публикации авторских статей с использованием инструментов искусственного интеллекта. Создавайте, редактируйте и улучшайте контент с помощью ИИ. Подходит для блогеров, писателей и всех, кто хочет делиться своими идеями онлайн.">
+    <meta name="keywords" content="публикация статей, контент платформа, ИИ инструменты, искусственный интеллект, создание контента, редактирование, авторские статьи, блог, AI content hub">
+
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/styles/profile.css}">
+</head>
+<body>
+<div th:replace="~{Page :: common_body(~{::content})}">
+    <div th:fragment="content" class="horizontal-box">
+        <div class="vertical-box-left">
+            <form class="profile-area">
+                <div class="icon-with-fields">
+                    <img class="user-icon" th:src="${'/resources/user_icon/' + user.id}" onerror="this.onerror=null; this.src='/resources/standard_icon.png';" alt="Аватар"/>
+                    <div class="icon-right-fields">
+                        <div class="field">
+                            <div class="field-space-content">
+                                <div class="field-label">Публичное имя пользователя:</div>
+                                <div class="field-input" th:text="${user.username}">Публичное имя пользователя</div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="field-space-content">
+                                <div class="field-label">Электронная почта:</div>
+                                <div class="field-input" th:text="${user.email}">Электронная почта</div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="field-space-content">
+                                <div class="field-label">Зарегистрирован с:</div>
+                                <div class="field-input" th:text="${user.registrationDate}">Дата регистрации</div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="field-space-content">
+                                <div class="field-label">Роль:</div>
+                                <div class="field-input" th:text="${user.role}">Роль</div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="field-space-content">
+                                <div class="field-label">Собственное имя пользователя:</div>
+                                <div class="field-input" th:text="${user.nativeName}">Собственное имя пользователя</div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="field-space-content">
+                                <div class="field-label">Описание:</div>
+                                <div class="field-input" th:text="${user.description}">Описание</div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="field-space-content">
+                                <div class="field-label">Пол:</div>
+                                <div class="field-input" th:text="${user.sex}">Пол</div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="field-space-content">
+                                <div class="field-label">Дата рождения:</div>
+                                <div class="field-input" th:text="${user.birthDate}">Дата рождения</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr style="border: none; border-top: 1px solid #000; margin: 10px 0;">
+                <div class="article-label">Статьи автора:</div>
+                <div class="articles-area" th:each="article : ${user.articles}">
+                    <div class="article">
+                        <a th:href="${article.articleUri}">
+                            <div class="article-title" th:text="${article.title}">Название статьи</div>
+                        </a>
+                        <img class="information-icon" src="/resources/created_icon.png" alt="Дата и время создания">
+                        <div class="information-label" th:text="${article.information.creationDate}">Дата и время создания</div>
+                        <img class="information-icon" src="/resources/status_icon.png" alt="Статус статьи">
+                        <div class="information-label" th:text="${article.information.status}">Статус статьи</div>
+                    </div>
+                </div>
+                <div class="create-button" onclick="document.getElementById('create-article-form').submit();">
+                    <div class="create-button-text">Создать статью</div>
+                </div>
+            </form>
+        </div>
+        <form id="create-article-form" th:action="@{'/articles/' + ${user.id}}" method="post" style="display:none;"></form>
+        <div class="vertical-box-right">
+            <div class="information-block-1">
+            </div>
+            <div class="information-block-2">
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

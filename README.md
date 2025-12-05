@@ -20,3 +20,5 @@ The application relies on the following services to function properly:
 * `Zookeeper 7.3.*`
 * `Postgres 16`
 * `Liquibase 4.25`
+* `Prometheus *`
+* `Grafana *`

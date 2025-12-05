@@ -3,7 +3,9 @@ package edu.model.web.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import edu.model.web.DTO;
 import java.time.ZonedDateTime;
+import lombok.Builder;
 
+@Builder
 public record ArticleInformationDTO(
         String tags,
         String categories,

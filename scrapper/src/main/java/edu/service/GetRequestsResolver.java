@@ -1,9 +1,11 @@
 package edu.service;
 
 import edu.model.web.DTO;
-import edu.model.web.ScrapperRequest;
+import edu.model.web.ScrapperGetRequest;
+import edu.model.web.request.AIRequest;
+import edu.model.web.request.ArticleRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
-import java.util.List;
+import edu.model.web.request.ProfileRequest;
 import java.util.Objects;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -16,7 +18,7 @@ public class GetRequestsResolver {
     private GetRequestsHandler getRequestsHandler;
 
     @SuppressWarnings("IllegalIdentifierName")
-    public ProducerRecord<String, List<DTO>> resolve(ConsumerRecord<String, ScrapperRequest> record) {
+    public ProducerRecord<String, DTO> resolve(ConsumerRecord<String, ScrapperGetRequest> record) {
         Objects.requireNonNull(record.key(), "Key must not be null");
         Objects.requireNonNull(record.value(), "Value must not be null");
         String type = record.value().getClass().toString();
@@ -29,6 +31,36 @@ public class GetRequestsResolver {
                         getRequestsHandler
                                 .handleFindArticlesRequest(
                                         (ArticlesForFeedRequest) record.value()
+                                )
+                );
+            }
+            case "ArticleRequest" -> {
+                return new ProducerRecord<>(
+                        "articles_showing",
+                        record.key(),
+                        getRequestsHandler
+                                .handleArticleRequest(
+                                        (ArticleRequest) record.value()
+                                )
+                );
+            }
+            case "ProfileRequest" -> {
+                return new ProducerRecord<>(
+                        "profile_showing",
+                        record.key(),
+                        getRequestsHandler
+                                .handleProfileRequest(
+                                        (ProfileRequest) record.value()
+                                )
+                );
+            }
+            case "AIRequest" -> {
+                return new ProducerRecord<>(
+                        "ai_responses",
+                        record.key(),
+                        getRequestsHandler
+                                .handleAIRequest(
+                                        (AIRequest) record.value()
                                 )
                 );
             }

@@ -514,4 +514,6 @@ html, body {
    --color-gray: #D9D9D9;
    --color-white: #FFF;
    --color-black: #000;
+   --color-gray-text: #666;
+   --color-gray-content-text: #333;
 }

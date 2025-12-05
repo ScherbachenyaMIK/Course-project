@@ -1,11 +1,10 @@
 package edu.controller;
 
 import edu.model.web.DTO;
-import edu.model.web.ScrapperRequest;
+import edu.model.web.ScrapperGetRequest;
 import edu.service.GetRequestsResolver;
 import edu.util.KafkaConsumerLogger;
 import edu.web.BackendProducer;
-import java.util.List;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +24,9 @@ public class GetRequestsListener {
 
     @SuppressWarnings("IllegalIdentifierName")
     @KafkaListener(topics = "get_info")
-    public void listen(ConsumerRecord<String, ScrapperRequest> record) {
+    public void listen(ConsumerRecord<String, ScrapperGetRequest> record) {
         kafkaConsumerLogger.logRequest("get_info", record);
-        ProducerRecord<String, List<DTO>> response = resolver.resolve(record);
+        ProducerRecord<String, DTO> response = resolver.resolve(record);
         backendProducer.sendDTOMessage(response);
     }
 }

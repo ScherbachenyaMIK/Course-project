@@ -1,10 +1,15 @@
 app:
   initial-searching-count: 5
-  timeout: 10
+  timeout: 5
+  timeout-intelligence: 5
+  initial-comments-count: 5
 
 kafka-config:
   topics:
     identification:
+      partitions: 5
+      replicas: 1
+    profile_showing:
       partitions: 5
       replicas: 1
     profile_editing:
@@ -47,6 +52,9 @@ kafka-config:
       partitions: 5
       replicas: 1
     authorization:
+      partitions: 5
+      replicas: 1
+    ai_responses:
       partitions: 5
       replicas: 1
 
@@ -97,3 +105,4 @@ logging:
 
 scrapper:
   base-url: http://localhost:8080
+  cache-size: 10485760

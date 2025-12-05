@@ -3,8 +3,10 @@ package edu.service;
 import edu.PostgreIntegrationTest;
 import edu.cofiguration.NoKafkaConfig;
 import edu.model.db.entity.User;
+import edu.model.db.repository.UsersRepository;
 import edu.model.web.request.RegisterRequest;
 import java.sql.Timestamp;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -28,7 +30,7 @@ class UsersServiceTest extends PostgreIntegrationTest {
             .passwordHash("VerySecretPassword")
             .userRole("USER")
             .sex('M')
-            .birthDate(new Timestamp(954882000))
+            .birthDate(new Timestamp(954882000).toLocalDateTime())
             .build();
 
     private final RegisterRequest request = new RegisterRequest(
@@ -37,8 +39,14 @@ class UsersServiceTest extends PostgreIntegrationTest {
             user.getEmail(),
             user.getPasswordHash(),
             user.getSex(),
-            user.getBirthDate().toLocalDateTime().toLocalDate()
+            user.getBirthDate().toLocalDate()
     );
+
+    @AfterAll
+    static void finalize(@Autowired UsersRepository usersRepository) {
+        User user = usersRepository.findUserByUsername("testUsername");
+        usersRepository.delete(user);
+    }
 
     @Test
     @Order(1)
@@ -128,5 +136,14 @@ class UsersServiceTest extends PostgreIntegrationTest {
     @Order(12)
     void isExistsByEmailNotExists() {
         assertThat(service.isExistsByEmail("testUsername")).isFalse();
+    }
+
+    @Test
+    @Order(13)
+    void findUserByIdAndUsername() {
+        User user = service.findUserByUsername("testUsername");
+        assertThat(service.findUserById(user.getId()))
+                .usingRecursiveComparison()
+                .isEqualTo(user);
     }
 }

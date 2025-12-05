@@ -3,6 +3,8 @@ package edu.web;
 import edu.KafkaIntegrationTest;
 import edu.model.web.AuthRequest;
 import edu.model.web.ScrapperGetRequest;
+import edu.model.web.ScrapperPostRequest;
+import edu.model.web.request.ArticleSetupRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
 import edu.model.web.request.LoginRequest;
 import java.time.Duration;
@@ -35,9 +37,11 @@ class ScrapperProducerTest extends KafkaIntegrationTest {
 
     private static KafkaConsumer<String, ScrapperGetRequest> scrapperConsumer;
     private static KafkaConsumer<String, AuthRequest> authConsumer;
+    private static KafkaConsumer<String, ScrapperPostRequest> postConsumer;
 
     private final CompletableFuture<ConsumerRecord<String, ScrapperGetRequest>> scrapperFuture = new CompletableFuture<>();
     private final CompletableFuture<ConsumerRecord<String, AuthRequest>> authFuture = new CompletableFuture<>();
+    private final CompletableFuture<ConsumerRecord<String, ScrapperPostRequest>> postFuture = new CompletableFuture<>();
 
     @BeforeAll
     static void setUp() {
@@ -50,6 +54,7 @@ class ScrapperProducerTest extends KafkaIntegrationTest {
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "edu.model.web.**");
         scrapperConsumer = new KafkaConsumer<>(props);
         authConsumer = new KafkaConsumer<>(props);
+        postConsumer = new KafkaConsumer<>(props);
     }
 
     @SneakyThrows
@@ -94,6 +99,31 @@ class ScrapperProducerTest extends KafkaIntegrationTest {
         assertThat(authFuture.get().key()).isEqualTo("id");
         assertThat(authFuture.get().value()).isEqualTo(request);
         authConsumer.close();
+    }
+
+    @SneakyThrows
+    @Test
+    void sendPostRequest() {
+        postConsumer.subscribe(Collections.singletonList("articles_setup"));
+
+        ArticleSetupRequest request = new ArticleSetupRequest(
+                1L,
+                "Title"
+        );
+
+        producer.sendPostRequest("articles_setup", "id", request);
+
+        await()
+                .atMost(10, SECONDS)
+                .until(() -> {
+                    checkKafkaConsumer(postConsumer, postFuture);
+                    return postFuture.isDone();
+                });
+
+        assertThat(postFuture.get().topic()).isEqualTo("articles_setup");
+        assertThat(postFuture.get().key()).isEqualTo("id");
+        assertThat(postFuture.get().value()).isEqualTo(request);
+        postConsumer.close();
     }
 
     private <K, V> void checkKafkaConsumer(KafkaConsumer<K, V> consumer,

@@ -91,4 +91,4 @@ backend:
 
 huggingface:
   api:
-    token: {HF_TOKEN}
+    token: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttest

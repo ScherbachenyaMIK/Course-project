@@ -4,10 +4,12 @@ import edu.KafkaIntegrationTest;
 import edu.cofiguration.NoJpaConfig;
 import edu.model.web.AuthRequest;
 import edu.model.web.ScrapperGetRequest;
+import edu.model.web.request.ArticleSetupRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
 import edu.model.web.request.LoginRequest;
 import edu.service.AuthResolver;
 import edu.service.GetRequestsResolver;
+import edu.service.PostRequestsHandler;
 import edu.web.BackendProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,9 @@ class ListenerTest extends KafkaIntegrationTest {
     @MockBean
     private BackendProducer backendProducer;
 
+    @MockBean
+    private PostRequestsHandler postRequestsHandler;
+
     @Autowired
     private GetRequestsListener getRequestsListener;
 
@@ -45,7 +50,10 @@ class ListenerTest extends KafkaIntegrationTest {
     private KafkaTemplate<String, ScrapperGetRequest> scrapperKafkaTemplate;
 
     @Autowired
-    private KafkaTemplate<String, AuthRequest> authkafkaTemplate;
+    private KafkaTemplate<String, AuthRequest> authKafkaTemplate;
+
+    @Autowired
+    private KafkaTemplate<String, ArticleSetupRequest> articleSetupKafkaTemplate;
 
     @Test
     void listenScrapper() {
@@ -76,7 +84,7 @@ class ListenerTest extends KafkaIntegrationTest {
                 new LoginRequest("test", "test")
         );
 
-        authkafkaTemplate.send(message);
+        authKafkaTemplate.send(message);
 
         await()
                 .atMost(10, SECONDS)
@@ -87,5 +95,26 @@ class ListenerTest extends KafkaIntegrationTest {
 
         verify(backendProducer, times(1))
                 .sendAuthResponse(any());
+    }
+
+    @Test
+    void listenArticleSetup() {
+        ProducerRecord<String, ArticleSetupRequest> message = new ProducerRecord<>(
+                "articles_setup",
+                "id",
+                new ArticleSetupRequest(1L, "test")
+        );
+
+        articleSetupKafkaTemplate.send(message);
+
+        await()
+                .atMost(10, SECONDS)
+                .untilAsserted(
+                        () -> verify(postRequestsHandler, times(1))
+                                .handleArticleSetupRequest(any())
+                );
+
+        verify(backendProducer, times(1))
+                .sendDTOMessage(any());
     }
 }

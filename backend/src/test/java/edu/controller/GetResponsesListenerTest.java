@@ -1,10 +1,12 @@
 package edu.controller;
 
 import edu.KafkaIntegrationTest;
+import edu.model.web.dto.AIResponseDTO;
 import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
 import edu.model.web.dto.ArticleInformationDTO;
 import edu.model.web.dto.ArticlePreviewDTO;
+import edu.model.web.dto.UserDTO;
 import edu.service.ResponseHandler;
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -37,6 +39,12 @@ class GetResponsesListenerTest extends KafkaIntegrationTest {
 
     @Autowired
     private KafkaTemplate<String, ArticleDTO> kafkaArticleTemplate;
+
+    @Autowired
+    private KafkaTemplate<String, UserDTO> kafkaUserTemplate;
+
+    @Autowired
+    private KafkaTemplate<String, AIResponseDTO> kafkaAITemplate;
 
     @Test
     void listenFeed() {
@@ -110,6 +118,55 @@ class GetResponsesListenerTest extends KafkaIntegrationTest {
                 .untilAsserted(
                         () -> verify(handler, times(1))
                                 .completeResponseArticle(any(), any(), any())
+                );
+    }
+
+    @Test
+    void listenProfile() {
+        ProducerRecord<String, UserDTO> message = new ProducerRecord<>(
+                "profile_showing",
+                "id",
+                new UserDTO(
+                        1L,
+                        "username",
+                        "name",
+                        "email",
+                        "05.05.2025 20:15",
+                        "description",
+                        "role",
+                        'M',
+                        "05.05.1975 20:15",
+                        List.of()
+                )
+        );
+
+        kafkaUserTemplate.send(message);
+
+        await()
+                .atMost(10, SECONDS)
+                .untilAsserted(
+                        () -> verify(handler, times(1))
+                                .completeResponseProfile(any(), any(), any())
+                );
+    }
+
+    @Test
+    void listenAI() {
+        ProducerRecord<String, AIResponseDTO> message = new ProducerRecord<>(
+                "ai_responses",
+                "id",
+                new AIResponseDTO(
+                        "AI response"
+                )
+        );
+
+        kafkaAITemplate.send(message);
+
+        await()
+                .atMost(10, SECONDS)
+                .untilAsserted(
+                        () -> verify(handler, times(1))
+                                .completeResponseAI(any(), any())
                 );
     }
 }

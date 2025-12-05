@@ -2,6 +2,7 @@ package edu.cofiguration;
 
 import edu.controller.AuthRequestsListener;
 import edu.controller.GetRequestsListener;
+import edu.controller.PostRequestsListener;
 import edu.web.BackendProducer;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
@@ -26,6 +27,8 @@ public class NoKafkaConfig {
         private AuthRequestsListener authRequestsListener;
         @MockBean
         private GetRequestsListener getRequestsListener;
+        @MockBean
+        private PostRequestsListener postRequestsListener;
         @MockBean
         private BackendProducer backendProducer;
 }

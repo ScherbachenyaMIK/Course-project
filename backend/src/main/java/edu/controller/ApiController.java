@@ -1,5 +1,6 @@
 package edu.controller;
 
+import edu.model.web.dto.AIResponseDTO;
 import edu.model.web.request.AIRequest;
 import edu.model.web.request.CheckAvailabilityRequest;
 import edu.model.web.response.CheckAvailabilityResponse;
@@ -45,14 +46,14 @@ public class ApiController {
 
     @SuppressWarnings("unchecked")
     @GetMapping("/ai/sample")
-    public CompletableFuture<ResponseEntity<CheckAvailabilityResponse>> getSampleAI() {
+    public CompletableFuture<ResponseEntity<AIResponseDTO>> getSampleAI() {
         String correlationId = UUID.randomUUID().toString();
         scrapperProducer.sendGetRequest(
                 "get_info",
                 correlationId,
                 new AIRequest("", "Sample")
         );
-        return (CompletableFuture<ResponseEntity<CheckAvailabilityResponse>>)
+        return (CompletableFuture<ResponseEntity<AIResponseDTO>>)
                 (CompletableFuture<?>) responseHandler.getApiResponse(correlationId);
     }
 }

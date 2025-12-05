@@ -19,14 +19,12 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ArticlesController.class)
+@WebMvcTest(UsersController.class)
 @Import({SecurityConfig.class, NoKafkaConfig.class})
-class ArticlesControllerTest {
+class UsersControllerTest {
     @MockBean
     private ResponseHandler responseHandler;
 
@@ -38,13 +36,13 @@ class ArticlesControllerTest {
 
     @SneakyThrows
     @Test
-    void getArticle() {
+    void getProfile() {
         when(responseHandler.getResponse(anyString(), anyBoolean()))
                 .thenReturn(CompletableFuture.completedFuture(
-                        new ModelAndView("Article"))
+                        new ModelAndView("user"))
                 );
 
-        mockMvc.perform(get("/articles/1"))
+        mockMvc.perform(get("/users/anonymousUser"))
                 .andExpect(status().isOk())
                 .andExpect(request().asyncStarted())
                 .andDo(result -> assertThat(result.getAsyncResult())
@@ -54,17 +52,10 @@ class ArticlesControllerTest {
 
     @SneakyThrows
     @Test
-    void postArticle() {
-        when(responseHandler.getResponse(anyString(), anyBoolean()))
-                .thenReturn(CompletableFuture.completedFuture(
-                        new ModelAndView("Article"))
-                );
-
-        mockMvc.perform(post("/articles/1"))
-                .andExpect(status().isOk())
-                .andExpect(request().asyncStarted())
-                .andDo(result -> assertThat(result.getAsyncResult())
-                        .isExactlyInstanceOf(ModelAndView.class))
+    void getProfileNoResourceException() {
+        mockMvc.perform(get("/users/someUser"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/checked-error?HttpCode=404"))
                 .andDo(print());
     }
 }

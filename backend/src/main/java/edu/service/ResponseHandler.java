@@ -70,6 +70,7 @@ public class ResponseHandler {
         }
     }
 
+    @SuppressWarnings("ReturnCount")
     public void completeResponseArticle(String correlationId,
                                         ArticleDTO article, String modelName) {
         ImmutablePair<CompletableFuture<ModelAndView>, Boolean>

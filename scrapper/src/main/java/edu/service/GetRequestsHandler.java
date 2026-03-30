@@ -36,10 +36,24 @@ public class GetRequestsHandler {
 
     public DTO handleArticleRequest(ArticleRequest request) {
         Article article = articlesService.getArticle(request.id());
-        if (article == null || !article.getVisibility()) {
+        if (article == null) {
+            return ArticleDTOEntityConverter.emptyDTO();
+        }
+        if (!article.getVisibility() && !isAuthorOrAdmin(article, request.currentUsername())) {
             return ArticleDTOEntityConverter.emptyDTO();
         }
         return ArticleDTOEntityConverter.convert(article);
+    }
+
+    private boolean isAuthorOrAdmin(Article article, String currentUsername) {
+        if (currentUsername == null) {
+            return false;
+        }
+        if (article.getAuthor().getUsername().equals(currentUsername)) {
+            return true;
+        }
+        User currentUser = usersService.findUserByUsername(currentUsername);
+        return currentUser != null && "ADMIN".equals(currentUser.getUserRole());
     }
 
     public DTO handleProfileRequest(ProfileRequest request) {

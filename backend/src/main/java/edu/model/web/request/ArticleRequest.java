@@ -4,6 +4,7 @@ import edu.model.web.ScrapperGetRequest;
 
 public record ArticleRequest(
         Long id,
-        int commentCount
+        int commentCount,
+        String currentUsername
 ) implements ScrapperGetRequest {
 }

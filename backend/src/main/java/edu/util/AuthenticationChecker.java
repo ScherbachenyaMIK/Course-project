@@ -17,6 +17,17 @@ public class AuthenticationChecker {
         return checkUserAuthentication("USER");
     }
 
+    public static String getCurrentUsername() {
+        Object principal = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        if ("anonymousUser".equals(principal.toString())) {
+            return null;
+        }
+        return principal.toString();
+    }
+
     private static boolean checkUserAuthentication(String role) {
         return "USER".equals(role);
     }

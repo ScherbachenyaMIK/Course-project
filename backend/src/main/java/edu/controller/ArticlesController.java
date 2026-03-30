@@ -36,7 +36,8 @@ public class ArticlesController {
                 correlationId,
                 new ArticleRequest(
                         id,
-                        applicationConfig.initialCommentsCount()
+                        applicationConfig.initialCommentsCount(),
+                        AuthenticationChecker.getCurrentUsername()
                 ));
         return responseHandler.getResponse(correlationId, AuthenticationChecker.checkAuthorities());
     }

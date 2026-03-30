@@ -154,12 +154,114 @@ class GetRequestsHandlerTest {
         ArticleRequest request =
                 new ArticleRequest(
                         1L,
-                        5
+                        5,
+                        null
                 );
         ArticleDTO response = ArticleDTOEntityConverter.convert(articleList.getFirst());
 
         when(articlesService.getArticle(1L))
                 .thenReturn(articleList.getFirst());
+
+        DTO result = getRequestsHandler.handleArticleRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
+        assertThat(result).isEqualTo(response);
+    }
+
+    @Test
+    void handleArticleRequestNotFound() {
+        ArticleRequest request =
+                new ArticleRequest(
+                        999L,
+                        5,
+                        null
+                );
+
+        when(articlesService.getArticle(999L))
+                .thenReturn(null);
+
+        DTO result = getRequestsHandler.handleArticleRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
+        assertThat(result).isEqualTo(ArticleDTOEntityConverter.emptyDTO());
+    }
+
+    @Test
+    void handleArticleRequestHiddenReturnsEmptyForAnonymous() {
+        ArticleRequest request =
+                new ArticleRequest(
+                        2L,
+                        5,
+                        null
+                );
+
+        when(articlesService.getArticle(2L))
+                .thenReturn(articleList.get(1));
+
+        DTO result = getRequestsHandler.handleArticleRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
+        assertThat(result).isEqualTo(ArticleDTOEntityConverter.emptyDTO());
+    }
+
+    @Test
+    void handleArticleRequestHiddenReturnsEmptyForOtherUser() {
+        ArticleRequest request =
+                new ArticleRequest(
+                        2L,
+                        5,
+                        "otherUser"
+                );
+
+        when(articlesService.getArticle(2L))
+                .thenReturn(articleList.get(1));
+        when(usersService.findUserByUsername("otherUser"))
+                .thenReturn(User.builder().userRole("USER").build());
+
+        DTO result = getRequestsHandler.handleArticleRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
+        assertThat(result).isEqualTo(ArticleDTOEntityConverter.emptyDTO());
+    }
+
+    @Test
+    void handleArticleRequestHiddenVisibleToAuthor() {
+        ArticleRequest request =
+                new ArticleRequest(
+                        2L,
+                        5,
+                        "username"
+                );
+        ArticleDTO response = ArticleDTOEntityConverter.convert(articleList.get(1));
+
+        when(articlesService.getArticle(2L))
+                .thenReturn(articleList.get(1));
+
+        DTO result = getRequestsHandler.handleArticleRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
+        assertThat(result).isEqualTo(response);
+    }
+
+    @Test
+    void handleArticleRequestHiddenVisibleToAdmin() {
+        User adminUser = User.builder()
+                .id(2L)
+                .username("admin")
+                .userRole("ADMIN")
+                .build();
+        ArticleRequest request =
+                new ArticleRequest(
+                        2L,
+                        5,
+                        "admin"
+                );
+        ArticleDTO response = ArticleDTOEntityConverter.convert(articleList.get(1));
+
+        when(articlesService.getArticle(2L))
+                .thenReturn(articleList.get(1));
+        when(usersService.findUserByUsername("admin"))
+                .thenReturn(adminUser);
 
         DTO result = getRequestsHandler.handleArticleRequest(request);
 

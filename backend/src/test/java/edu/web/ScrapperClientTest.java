@@ -15,11 +15,11 @@ import reactor.test.StepVerifier;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 class ScrapperClientTest {
-    private static final int PORT = 8080;
+    private static final int PORT = 1080;
     private static final String HOST = "localhost";
 
     private ScrapperClient scrapperClient = new ScrapperClient(
-            "http://localhost:8080",
+            "http://localhost:1080",
             10485760,
             10
     );

@@ -20,6 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.ModelAndView;
 
+import org.springframework.web.servlet.resource.NoResourceFoundException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
@@ -164,6 +166,32 @@ class ResponseHandlerTest {
                         "model",
                         "view")
                 .isEqualTo(expected);
+    }
+
+    @SneakyThrows
+    @Test
+    void getResponseArticleNotFound() {
+        ArticleDTO emptyArticle = new ArticleDTO(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        CompletableFuture<ModelAndView> future = handler.getResponse(id, false);
+
+        handler.completeResponseArticle(id, emptyArticle, "");
+
+        await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until(future::isDone);
+
+        assertThatThrownBy(future::get)
+                .isInstanceOf(ExecutionException.class)
+                .hasCauseInstanceOf(NoResourceFoundException.class);
     }
 
     @SneakyThrows

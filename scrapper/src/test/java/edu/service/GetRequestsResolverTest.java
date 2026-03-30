@@ -98,7 +98,8 @@ class GetRequestsResolverTest {
                 "key",
                 new ArticleRequest(
                         1L,
-                        5
+                        5,
+                        null
                 )
         );
         DTO article = new ArticleDTO(

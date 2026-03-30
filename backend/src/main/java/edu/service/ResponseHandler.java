@@ -74,17 +74,19 @@ public class ResponseHandler {
                                         ArticleDTO article, String modelName) {
         ImmutablePair<CompletableFuture<ModelAndView>, Boolean>
                 entry = pendingResponses.remove(correlationId);
+        if (entry == null) {
+            return;
+        }
         if (article.title() == null) {
             entry.getLeft().completeExceptionally(
                     new NoResourceFoundException(HttpMethod.GET, "/articles/{id}")
             );
+            return;
         }
         ModelAndView modelAndView = new ModelAndView(modelName);
-        if (entry != null) {
-            modelAndView.addObject("article", article);
-            modelAndView.addObject(IS_AUTHENTICATED_ATTRIBUTE_NAME, entry.getRight());
-            entry.getLeft().complete(modelAndView);
-        }
+        modelAndView.addObject("article", article);
+        modelAndView.addObject(IS_AUTHENTICATED_ATTRIBUTE_NAME, entry.getRight());
+        entry.getLeft().complete(modelAndView);
     }
 
     public void completeResponseProfile(String correlationId,

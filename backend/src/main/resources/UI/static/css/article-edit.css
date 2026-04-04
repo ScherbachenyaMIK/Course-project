@@ -1,0 +1,246 @@
+.edit-container {
+    padding: 2vh 5vw 4vh;
+}
+.bento-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 22vw;
+    grid-template-rows: auto auto 1fr auto auto;
+    gap: 1.5vh 1.5vw;
+    grid-template-areas:
+        "title      title       attributes"
+        "tags       categories  attributes"
+        "editor     editor      ai"
+        "editor     editor      attachments"
+        "actions    actions     actions";
+}
+.bento-title       { grid-area: title; }
+.bento-attributes  { grid-area: attributes; }
+.bento-tags        { grid-area: tags; }
+.bento-categories  { grid-area: categories; }
+.bento-editor      { grid-area: editor; }
+.bento-ai          { grid-area: ai; }
+.bento-attachments { grid-area: attachments; }
+.bento-actions     { grid-area: actions; }
+
+.bento-title,
+.bento-attributes,
+.bento-tags,
+.bento-categories,
+.bento-editor,
+.bento-ai,
+.bento-attachments {
+    background: var(--color-white);
+    box-shadow: 0 0.6vh 1vh rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 1.8vh 2vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+.bento-header {
+    font-family: "Georgia", sans-serif;
+    font-size: 1.8vh;
+    font-weight: 700;
+    color: var(--color-main-emerald);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.bento-input {
+    font-family: "Georgia", sans-serif;
+    font-size: 2.2vh;
+    color: var(--color-black);
+    border: none;
+    border-bottom: 2px solid var(--color-gray);
+    background: transparent;
+    padding: 0.8vh 0;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.bento-input:focus {
+    border-bottom-color: var(--color-main-emerald);
+}
+
+.bento-textarea {
+    font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-black);
+    border: 1px solid var(--color-gray);
+    border-radius: 6px;
+    background: var(--color-gray-field);
+    padding: 1.5vh 1vw;
+    resize: vertical;
+    min-height: 40vh;
+    flex: 1;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.bento-textarea:focus {
+    border-color: var(--color-main-emerald);
+}
+
+.attr-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5vh 0;
+    border-bottom: 1px solid var(--color-gray-field);
+}
+.attr-label {
+    font-family: "Georgia", sans-serif;
+    font-size: 1.6vh;
+    color: var(--color-gray-label);
+}
+.attr-value {
+    font-family: "Georgia", sans-serif;
+    font-size: 1.6vh;
+    font-weight: 600;
+    color: var(--color-black);
+}
+.attr-select {
+    font-family: "Georgia", sans-serif;
+    font-size: 1.6vh;
+    font-weight: 600;
+    color: var(--color-black);
+    border: 1px solid var(--color-gray);
+    border-radius: 4px;
+    background: var(--color-gray-field);
+    padding: 0.4vh 0.5vw;
+    outline: none;
+    cursor: pointer;
+}
+.attr-select:focus {
+    border-color: var(--color-main-emerald);
+}
+.attr-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5vw;
+}
+.attr-number-input {
+    font-family: "Georgia", sans-serif;
+    font-size: 1.6vh;
+    font-weight: 600;
+    color: var(--color-black);
+    border: 1px solid var(--color-gray);
+    border-radius: 4px;
+    background: var(--color-gray-field);
+    padding: 0.4vh 0.5vw;
+    width: 4vw;
+    outline: none;
+    text-align: center;
+}
+.attr-number-input:focus {
+    border-color: var(--color-main-emerald);
+}
+
+.ai-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    flex: 1;
+}
+.ai-prompt-input {
+    font-family: "Georgia", sans-serif;
+    font-size: 1.8vh;
+    color: var(--color-black);
+    border: 1px solid var(--color-gray);
+    border-radius: 6px;
+    background: var(--color-gray-field);
+    padding: 1vh;
+    resize: none;
+    height: 8vh;
+    outline: none;
+}
+.ai-prompt-input:focus {
+    border-color: var(--color-main-emerald);
+}
+.ai-send-button {
+    align-self: flex-end;
+    background: var(--color-main-emerald);
+    color: var(--color-pink);
+    font-family: "Georgia", sans-serif;
+    font-size: 1.8vh;
+    padding: 0.8vh 2vw;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.ai-send-button:hover {
+    background: var(--color-button-green);
+}
+.ai-result {
+    font-family: "Georgia", sans-serif;
+    font-size: 1.6vh;
+    color: var(--color-gray-label);
+    min-height: 4vh;
+    padding: 1vh;
+    border: 1px dashed var(--color-gray);
+    border-radius: 6px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.attachments-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.attachments-placeholder {
+    font-family: "Georgia", sans-serif;
+    font-size: 1.6vh;
+    color: var(--color-gray-label);
+    text-align: center;
+    border: 2px dashed var(--color-gray);
+    border-radius: 8px;
+    padding: 3vh 2vw;
+    width: 100%;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+.attachments-placeholder:hover {
+    border-color: var(--color-main-emerald);
+}
+
+.bento-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2vw;
+    padding: 1vh 0;
+}
+.action-button {
+    font-family: "Georgia", sans-serif;
+    font-size: 2.5vh;
+    padding: 1.2vh 3vw;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    border: none;
+    transition: background 0.2s;
+}
+.save-button {
+    background: var(--color-main-emerald);
+    color: var(--color-pink);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+.save-button:hover {
+    background: var(--color-button-green);
+}
+.cancel-button {
+    background: var(--color-gray);
+    color: var(--color-black);
+}
+.cancel-button:hover {
+    background: var(--color-gray-label);
+    color: var(--color-white);
+}
+.error-message {
+    color: red;
+    font-family: "Georgia", sans-serif;
+    font-size: 1.8vh;
+    display: none;
+}

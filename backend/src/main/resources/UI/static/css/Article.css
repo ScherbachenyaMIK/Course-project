@@ -184,3 +184,21 @@
 :root {
   --icon-height: 2vh;
 }
+
+.edit-article-button {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 1vh;
+  padding: 1vh 2vw;
+  background: var(--color-main-emerald);
+  color: var(--color-pink);
+  font-family: "Georgia", sans-serif;
+  font-size: 2vh;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.edit-article-button:hover {
+  background: var(--color-button-green);
+}

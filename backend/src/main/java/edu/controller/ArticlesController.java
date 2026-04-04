@@ -1,6 +1,7 @@
 package edu.controller;
 
 import edu.configuration.ApplicationConfig;
+import edu.model.web.request.ArticleEditRequest;
 import edu.model.web.request.ArticleRequest;
 import edu.model.web.request.ArticleSetupRequest;
 import edu.service.ResponseHandler;
@@ -21,6 +22,9 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/articles")
 public class ArticlesController {
     private static final String REDIRECT_LOGIN_URL = "redirect:/login";
+    private static final String GET_INFO_TOPIC = "get_info";
+    private static final String ARTICLE_ID_KEY = "articleId";
+    private static final String CURRENT_USERNAME_KEY = "currentUsername";
 
     @Autowired
     private ScrapperProducer scrapperProducer;
@@ -33,16 +37,25 @@ public class ArticlesController {
 
     @GetMapping("/{id}")
     public CompletableFuture<ModelAndView> getArticle(@PathVariable Long id) {
+        String currentUsername = AuthenticationChecker.getCurrentUsername();
+        boolean isAuth = AuthenticationChecker.checkAuthorities();
         String correlationId = UUID.randomUUID().toString();
         scrapperProducer.sendGetRequest(
-                "get_info",
+                GET_INFO_TOPIC,
                 correlationId,
                 new ArticleRequest(
                         id,
                         applicationConfig.initialCommentsCount(),
-                        AuthenticationChecker.getCurrentUsername()
+                        currentUsername
                 ));
-        return responseHandler.getResponse(correlationId, AuthenticationChecker.checkAuthorities());
+        return responseHandler.getResponse(correlationId, isAuth)
+                .thenApply(mav -> {
+                    if (mav != null) {
+                        mav.addObject(ARTICLE_ID_KEY, id);
+                        mav.addObject(CURRENT_USERNAME_KEY, currentUsername);
+                    }
+                    return mav;
+                });
     }
 
     @GetMapping("/new")
@@ -71,12 +84,69 @@ public class ArticlesController {
                 "articles_setup",
                 correlationId,
                 new ArticleSetupRequest(
-                        username,
-                        title,
-                        content,
-                        tags,
-                        categories
+                        username, title, content, tags, categories
                 ));
         return responseHandler.getResponse(correlationId, true);
+    }
+
+    @GetMapping("/{id}/edit")
+    public CompletableFuture<ModelAndView> getArticleEditForm(@PathVariable Long id) {
+        String currentUsername = AuthenticationChecker.getCurrentUsername();
+        if (currentUsername == null) {
+            CompletableFuture<ModelAndView> future = new CompletableFuture<>();
+            future.complete(new ModelAndView(REDIRECT_LOGIN_URL));
+            return future;
+        }
+        String correlationId = UUID.randomUUID().toString();
+        scrapperProducer.sendGetRequest(
+                GET_INFO_TOPIC,
+                correlationId,
+                new ArticleRequest(
+                        id,
+                        0,
+                        currentUsername
+                ));
+        return responseHandler.getResponse(correlationId, true)
+                .thenApply(mav -> {
+                    if (mav != null) {
+                        mav.setViewName("ArticleEdit");
+                        mav.addObject(ARTICLE_ID_KEY, id);
+                    }
+                    return mav;
+                });
+    }
+
+    @PostMapping("/{id}/edit")
+    public CompletableFuture<ModelAndView> editArticle(
+            @PathVariable Long id,
+            @RequestParam String title,
+            @RequestParam String content,
+            @RequestParam(required = false, defaultValue = "") String tags,
+            @RequestParam(required = false, defaultValue = "") String categories,
+            @RequestParam(required = false, defaultValue = "draft") String status,
+            @RequestParam(required = false, defaultValue = "30") Integer timeToRead
+    ) {
+        String username = AuthenticationChecker.getCurrentUsername();
+        if (username == null) {
+            CompletableFuture<ModelAndView> future = new CompletableFuture<>();
+            future.complete(new ModelAndView(REDIRECT_LOGIN_URL));
+            return future;
+        }
+        String correlationId = UUID.randomUUID().toString();
+        scrapperProducer.sendPostRequest(
+                "articles_editing",
+                correlationId,
+                new ArticleEditRequest(
+                        id, username, title, content, tags, categories,
+                        status, timeToRead
+                ));
+        return responseHandler.getResponse(correlationId, true)
+                .thenApply(mav -> {
+                    if (mav != null) {
+                        mav.addObject(ARTICLE_ID_KEY, id);
+                        mav.addObject(CURRENT_USERNAME_KEY, username);
+                    }
+                    return mav;
+                });
     }
 }

@@ -48,6 +48,9 @@
                         <div class="information-label" th:text="${article.information.comments}">Количество комментариев</div>
                     </div>
                 </div>
+                <a th:if="${currentUsername != null and currentUsername == article.author}"
+                   th:href="@{'/articles/' + ${articleId} + '/edit'}"
+                   class="edit-article-button">Редактировать</a>
             </div>
         </div>
         <div class="vertical-box-right">

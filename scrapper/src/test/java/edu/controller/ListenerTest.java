@@ -4,6 +4,7 @@ import edu.KafkaIntegrationTest;
 import edu.cofiguration.NoJpaConfig;
 import edu.model.web.AuthRequest;
 import edu.model.web.ScrapperGetRequest;
+import edu.model.web.request.ArticleEditRequest;
 import edu.model.web.request.ArticleSetupRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
 import edu.model.web.request.LoginRequest;
@@ -22,6 +23,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -54,6 +56,9 @@ class ListenerTest extends KafkaIntegrationTest {
 
     @Autowired
     private KafkaTemplate<String, ArticleSetupRequest> articleSetupKafkaTemplate;
+
+    @Autowired
+    private KafkaTemplate<String, ArticleEditRequest> articleEditKafkaTemplate;
 
     @Test
     void listenScrapper() {
@@ -115,6 +120,27 @@ class ListenerTest extends KafkaIntegrationTest {
                 );
 
         verify(backendProducer, times(1))
+                .sendDTOMessage(any());
+    }
+
+    @Test
+    void listenArticleEdit() {
+        ProducerRecord<String, ArticleEditRequest> message = new ProducerRecord<>(
+                "articles_editing",
+                "id",
+                new ArticleEditRequest(1L, "username", "title", "content", "", "", "draft", 30)
+        );
+
+        articleEditKafkaTemplate.send(message);
+
+        await()
+                .atMost(10, SECONDS)
+                .untilAsserted(
+                        () -> verify(postRequestsHandler, times(1))
+                                .handleArticleEditRequest(any())
+                );
+
+        verify(backendProducer, atLeast(1))
                 .sendDTOMessage(any());
     }
 }

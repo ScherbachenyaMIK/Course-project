@@ -76,4 +76,34 @@ class ArticlesControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
     }
+
+    @SneakyThrows
+    @Test
+    void getArticleEditFormUnauthenticated() {
+        mockMvc.perform(get("/articles/1/edit"))
+                .andExpect(status().isOk())
+                .andExpect(request().asyncStarted())
+                .andDo(result -> {
+                    ModelAndView mav = (ModelAndView) result.getAsyncResult();
+                    assertThat(mav.getViewName()).isEqualTo("redirect:/login");
+                })
+                .andDo(print());
+    }
+
+    @SneakyThrows
+    @Test
+    void editArticleUnauthenticated() {
+        mockMvc.perform(post("/articles/1/edit")
+                        .param("title", "Updated Title")
+                        .param("content", "Updated Content")
+                        .param("tags", "java")
+                        .param("categories", "Tech"))
+                .andExpect(status().isOk())
+                .andExpect(request().asyncStarted())
+                .andDo(result -> {
+                    ModelAndView mav = (ModelAndView) result.getAsyncResult();
+                    assertThat(mav.getViewName()).isEqualTo("redirect:/login");
+                })
+                .andDo(print());
+    }
 }

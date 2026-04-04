@@ -6,6 +6,7 @@ import edu.model.db.entity.Tag;
 import edu.model.db.entity.User;
 import edu.model.web.DTO;
 import edu.model.web.dto.ArticleDTO;
+import edu.model.web.request.ArticleEditRequest;
 import edu.model.web.request.ArticleSetupRequest;
 import edu.util.ArticleDTOEntityConverter;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class PostRequestsHandlerTest {
@@ -122,6 +124,83 @@ class PostRequestsHandlerTest {
 
         assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
         assertThat(result).isEqualTo(response);
+    }
+
+    @Test
+    void handleArticleEditRequest() {
+        ArticleEditRequest request =
+                new ArticleEditRequest(
+                        1L, "username", "new title",
+                        "new content", "tag1", "cat1",
+                        "published", 15
+                );
+
+        when(articlesService.getArticle(1L))
+                .thenReturn(article);
+        when(tagsService.findOrCreate("tag1"))
+                .thenReturn(new Tag(1L, "tag1", new HashSet<>()));
+        when(categoriesService.findByName("cat1"))
+                .thenReturn(new Category(1L, "cat1", "descr", new HashSet<>()));
+        when(articlesService.setupArticle(any()))
+                .thenReturn(article);
+
+        DTO result = postRequestsHandler.handleArticleEditRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
+        assertThat(article.getVisibility()).isTrue();
+        assertThat(article.getStatus()).isEqualTo("published");
+        assertThat(article.getTimeToRead()).isEqualTo(15);
+    }
+
+    @Test
+    void handleArticleEditRequestDraftSetsVisibilityFalse() {
+        ArticleEditRequest request =
+                new ArticleEditRequest(
+                        1L, "username", "title",
+                        "content", "", "", "draft", 30
+                );
+
+        when(articlesService.getArticle(1L))
+                .thenReturn(article);
+        when(articlesService.setupArticle(any()))
+                .thenReturn(article);
+
+        postRequestsHandler.handleArticleEditRequest(request);
+
+        assertThat(article.getVisibility()).isFalse();
+        assertThat(article.getStatus()).isEqualTo("draft");
+    }
+
+    @Test
+    void handleArticleEditRequestWrongUser() {
+        ArticleEditRequest request =
+                new ArticleEditRequest(
+                        1L, "wronguser", "title",
+                        "content", "", "", "draft", 30
+                );
+
+        when(articlesService.getArticle(1L))
+                .thenReturn(article);
+
+        DTO result = postRequestsHandler.handleArticleEditRequest(request);
+
+        assertThat(result).isEqualTo(ArticleDTOEntityConverter.emptyDTO());
+    }
+
+    @Test
+    void handleArticleEditRequestArticleNotFound() {
+        ArticleEditRequest request =
+                new ArticleEditRequest(
+                        99L, "username", "title",
+                        "content", "", "", "draft", 30
+                );
+
+        when(articlesService.getArticle(99L))
+                .thenReturn(null);
+
+        DTO result = postRequestsHandler.handleArticleEditRequest(request);
+
+        assertThat(result).isEqualTo(ArticleDTOEntityConverter.emptyDTO());
     }
 
     @Test

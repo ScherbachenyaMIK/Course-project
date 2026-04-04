@@ -1,6 +1,7 @@
 package edu.controller;
 
 import edu.model.web.DTO;
+import edu.model.web.request.ArticleEditRequest;
 import edu.model.web.request.ArticleSetupRequest;
 import edu.service.PostRequestsHandler;
 import edu.util.KafkaConsumerLogger;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PostRequestsListener {
+    private static final String ARTICLES_SHOWING_TOPIC = "articles_showing";
     @Autowired
     private KafkaConsumerLogger kafkaConsumerLogger;
 
@@ -28,10 +30,24 @@ public class PostRequestsListener {
         kafkaConsumerLogger.logRequest("articles_setup", record);
         ProducerRecord<String, DTO> response =
                 new ProducerRecord<>(
-                        "articles_showing",
+                        ARTICLES_SHOWING_TOPIC,
                         null,
                         record.key(),
                         handler.handleArticleSetupRequest(record.value())
+                );
+        backendProducer.sendDTOMessage(response);
+    }
+
+    @SuppressWarnings("IllegalIdentifierName")
+    @KafkaListener(topics = "articles_editing")
+    public void listenEdit(ConsumerRecord<String, ArticleEditRequest> record) {
+        kafkaConsumerLogger.logRequest("articles_editing", record);
+        ProducerRecord<String, DTO> response =
+                new ProducerRecord<>(
+                        ARTICLES_SHOWING_TOPIC,
+                        null,
+                        record.key(),
+                        handler.handleArticleEditRequest(record.value())
                 );
         backendProducer.sendDTOMessage(response);
     }

@@ -2,6 +2,7 @@ package edu.cofiguration;
 
 import edu.service.ArticlesService;
 import edu.service.CategoriesService;
+import edu.service.CommentsService;
 import edu.service.ImagesService;
 import edu.service.TagsService;
 import edu.service.UsersService;
@@ -38,4 +39,6 @@ public class NoJpaConfig {
     private TagsService tagsService;
     @MockBean
     private CategoriesService categoriesService;
+    @MockBean
+    private CommentsService commentsService;
 }

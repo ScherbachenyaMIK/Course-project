@@ -2,12 +2,17 @@ package edu.service;
 
 import edu.model.db.entity.Article;
 import edu.model.db.entity.Category;
+import edu.model.db.entity.Comment;
 import edu.model.db.entity.Tag;
 import edu.model.db.entity.User;
 import edu.model.web.DTO;
 import edu.model.web.dto.ArticleDTO;
+import edu.model.web.dto.CommentDTO;
 import edu.model.web.request.ArticleEditRequest;
 import edu.model.web.request.ArticleSetupRequest;
+import edu.model.web.request.CommentRequest;
+import edu.model.web.request.LikeRequest;
+import edu.model.web.request.ViewRequest;
 import edu.util.ArticleDTOEntityConverter;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -33,6 +38,8 @@ class PostRequestsHandlerTest {
     private TagsService tagsService;
     @Mock
     private CategoriesService categoriesService;
+    @Mock
+    private CommentsService commentsService;
     @InjectMocks
     private PostRequestsHandler postRequestsHandler;
 
@@ -105,7 +112,7 @@ class PostRequestsHandlerTest {
                         "tag1, tag2",
                         "cat1, cat2"
                 );
-        ArticleDTO response = ArticleDTOEntityConverter.convert(article);
+        ArticleDTO response = ArticleDTOEntityConverter.convert(article, java.util.Collections.emptyList());
 
         when(usersService.findUserByUsername("username"))
                 .thenReturn(user);
@@ -237,5 +244,63 @@ class PostRequestsHandlerTest {
         DTO result = postRequestsHandler.handleArticleSetupRequest(request);
 
         assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
+    }
+
+    @Test
+    void handleViewRequest() {
+        ViewRequest request = new ViewRequest(1L);
+        postRequestsHandler.handleViewRequest(request);
+        verify(articlesService).incrementViews(1L);
+    }
+
+    @Test
+    void handleLikeRequest() {
+        LikeRequest request = new LikeRequest(1L, "username");
+        postRequestsHandler.handleLikeRequest(request);
+        verify(articlesService).incrementLikes(1L);
+    }
+
+    @Test
+    void handleCommentRequest() {
+        CommentRequest request = new CommentRequest(1L, "username", "Great article!");
+        Comment saved = Comment.builder()
+                .id(1L)
+                .user(user)
+                .article(article)
+                .commentText("Great article!")
+                .commentDate(LocalDateTime.now())
+                .build();
+
+        when(articlesService.getArticle(1L)).thenReturn(article);
+        when(usersService.findUserByUsername("username")).thenReturn(user);
+        when(commentsService.save(any())).thenReturn(saved);
+
+        DTO result = postRequestsHandler.handleCommentRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(CommentDTO.class);
+        CommentDTO commentDTO = (CommentDTO) result;
+        assertThat(commentDTO.author()).isEqualTo("username");
+        assertThat(commentDTO.text()).isEqualTo("Great article!");
+    }
+
+    @Test
+    void handleCommentRequestArticleNotFound() {
+        CommentRequest request = new CommentRequest(99L, "username", "text");
+
+        when(articlesService.getArticle(99L)).thenReturn(null);
+
+        DTO result = postRequestsHandler.handleCommentRequest(request);
+        assertThat(result).isEqualTo(ArticleDTOEntityConverter.emptyDTO());
+    }
+
+    @Test
+    void handleCommentRequestUserNotFound() {
+        CommentRequest request = new CommentRequest(1L, "unknown", "text");
+
+        when(articlesService.getArticle(1L)).thenReturn(article);
+        when(usersService.findUserByUsername("unknown")).thenReturn(null);
+
+        DTO result = postRequestsHandler.handleCommentRequest(request);
+        assertThat(result).isEqualTo(ArticleDTOEntityConverter.emptyDTO());
     }
 }

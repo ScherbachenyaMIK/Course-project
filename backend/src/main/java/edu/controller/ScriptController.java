@@ -65,4 +65,12 @@ public class ScriptController {
                 .contentType(MediaType.valueOf(mediaType))
                 .body(resource);
     }
+
+    @GetMapping("/article.js")
+    public ResponseEntity<Resource> getArticleScript() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/js/article.js");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .body(resource);
+    }
 }

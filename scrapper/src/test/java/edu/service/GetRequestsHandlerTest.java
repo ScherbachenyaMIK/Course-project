@@ -37,6 +37,8 @@ class GetRequestsHandlerTest {
     @Mock
     private UsersService usersService;
     @Mock
+    private CommentsService commentsService;
+    @Mock
     private HuggingFaceWebClient webClient;
     @InjectMocks
     private GetRequestsHandler getRequestsHandler;
@@ -157,10 +159,12 @@ class GetRequestsHandlerTest {
                         5,
                         null
                 );
-        ArticleDTO response = ArticleDTOEntityConverter.convert(articleList.getFirst());
+        ArticleDTO response = ArticleDTOEntityConverter.convert(articleList.getFirst(), java.util.Collections.emptyList());
 
         when(articlesService.getArticle(1L))
                 .thenReturn(articleList.getFirst());
+        when(commentsService.getArticleComments(1L))
+                .thenReturn(java.util.Collections.emptyList());
 
         DTO result = getRequestsHandler.handleArticleRequest(request);
 
@@ -232,10 +236,12 @@ class GetRequestsHandlerTest {
                         5,
                         "username"
                 );
-        ArticleDTO response = ArticleDTOEntityConverter.convert(articleList.get(1));
+        ArticleDTO response = ArticleDTOEntityConverter.convert(articleList.get(1), java.util.Collections.emptyList());
 
         when(articlesService.getArticle(2L))
                 .thenReturn(articleList.get(1));
+        when(commentsService.getArticleComments(2L))
+                .thenReturn(java.util.Collections.emptyList());
 
         DTO result = getRequestsHandler.handleArticleRequest(request);
 
@@ -256,12 +262,14 @@ class GetRequestsHandlerTest {
                         5,
                         "admin"
                 );
-        ArticleDTO response = ArticleDTOEntityConverter.convert(articleList.get(1));
+        ArticleDTO response = ArticleDTOEntityConverter.convert(articleList.get(1), java.util.Collections.emptyList());
 
         when(articlesService.getArticle(2L))
                 .thenReturn(articleList.get(1));
         when(usersService.findUserByUsername("admin"))
                 .thenReturn(adminUser);
+        when(commentsService.getArticleComments(2L))
+                .thenReturn(java.util.Collections.emptyList());
 
         DTO result = getRequestsHandler.handleArticleRequest(request);
 

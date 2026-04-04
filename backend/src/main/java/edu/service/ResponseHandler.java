@@ -4,6 +4,7 @@ import edu.configuration.ApplicationConfig;
 import edu.model.web.dto.AIResponseDTO;
 import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
+import edu.model.web.dto.CommentDTO;
 import edu.model.web.dto.UserDTO;
 import edu.model.web.response.CheckAvailabilityResponse;
 import java.util.concurrent.CompletableFuture;
@@ -113,6 +114,15 @@ public class ResponseHandler {
         CompletableFuture<ResponseEntity<?>> future = pendingApiResponses.remove(correlationId);
         if (future != null) {
             future.complete(ResponseEntity.ok(response.response()));
+        }
+    }
+
+    public void completeCommentResponse(String correlationId,
+                                        CommentDTO comment) {
+        CompletableFuture<ResponseEntity<?>> future =
+                pendingApiResponses.remove(correlationId);
+        if (future != null) {
+            future.complete(ResponseEntity.ok(comment));
         }
     }
 }

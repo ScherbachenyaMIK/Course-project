@@ -3,6 +3,7 @@ package edu.controller;
 import edu.model.web.dto.AIResponseDTO;
 import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
+import edu.model.web.dto.CommentDTO;
 import edu.model.web.dto.UserDTO;
 import edu.service.ResponseHandler;
 import edu.util.KafkaConsumerLogger;
@@ -45,5 +46,12 @@ public class GetResponsesListener {
     public void listenAI(ConsumerRecord<String, AIResponseDTO> record) {
         kafkaConsumerLogger.logRequest("ai_responses", record);
         responseHandler.completeResponseAI(record.key(), record.value());
+    }
+
+    @SuppressWarnings("IllegalIdentifierName")
+    @KafkaListener(topics = "comments_showing")
+    public void listenComment(ConsumerRecord<String, CommentDTO> record) {
+        kafkaConsumerLogger.logRequest("comments_showing", record);
+        responseHandler.completeCommentResponse(record.key(), record.value());
     }
 }

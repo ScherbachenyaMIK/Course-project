@@ -10,6 +10,6 @@ public record ArticleDTO(
         String content,
         ArticleInformationDTO information,
         String lastUpdateDate,
-        ArrayList<String> comments
+        ArrayList<CommentDTO> comments
 ) {
 }

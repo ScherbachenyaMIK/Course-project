@@ -23,4 +23,12 @@ public class ArticlesService {
     public List<Article> getArticlesSlice(int count) {
         return repository.findAllByVisibilityTrue(PageRequest.of(0, count)).stream().toList();
     }
+
+    public void incrementViews(Long articleId) {
+        repository.incrementViews(articleId);
+    }
+
+    public void incrementLikes(Long articleId) {
+        repository.incrementLikes(articleId);
+    }
 }

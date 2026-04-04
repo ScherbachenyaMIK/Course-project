@@ -77,12 +77,11 @@
                         <div class="information-label" th:text="${article.information.status}">Статус статьи</div>
                     </div>
                 </div>
-                <div class="create-button" onclick="document.getElementById('create-article-form').submit();">
+                <a href="/articles/new" class="create-button">
                     <div class="create-button-text">Создать статью</div>
-                </div>
+                </a>
             </form>
         </div>
-        <form id="create-article-form" th:action="@{'/articles/' + ${user.id}}" method="post" style="display:none;"></form>
         <div class="vertical-box-right">
             <div class="information-block-1">
             </div>

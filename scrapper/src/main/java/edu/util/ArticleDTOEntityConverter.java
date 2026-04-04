@@ -25,8 +25,8 @@ public class ArticleDTOEntityConverter {
         informationBuilder.creationDate(article.getLastUpdateDate().atZone(ZoneId.systemDefault()));
         informationBuilder.status(article.getStatus());
         informationBuilder.tags(article.getTags().stream()
-                .map(tag -> "#" + tag.getName())
-                .collect(Collectors.joining(" "))
+                .map(tag -> tag.getName())
+                .collect(Collectors.joining(", "))
         );
         informationBuilder.categories(article.getCategories().stream()
                         .map(Category::getName)

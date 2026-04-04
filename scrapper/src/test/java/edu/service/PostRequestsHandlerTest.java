@@ -6,6 +6,7 @@ import edu.model.db.entity.Tag;
 import edu.model.db.entity.User;
 import edu.model.web.DTO;
 import edu.model.web.dto.ArticleDTO;
+import edu.model.web.request.ArticleEditRequest;
 import edu.model.web.request.ArticleSetupRequest;
 import edu.util.ArticleDTOEntityConverter;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class PostRequestsHandlerTest {
@@ -27,6 +29,10 @@ class PostRequestsHandlerTest {
     private ArticlesService articlesService;
     @Mock
     private UsersService usersService;
+    @Mock
+    private TagsService tagsService;
+    @Mock
+    private CategoriesService categoriesService;
     @InjectMocks
     private PostRequestsHandler postRequestsHandler;
 
@@ -70,13 +76,13 @@ class PostRequestsHandlerTest {
                             Set.of(
                                     new Category(
                                             1L,
-                                            "tag1",
+                                            "cat1",
                                             "descr",
                                             new HashSet<>()
                                     ),
                                     new Category(
                                             2L,
-                                            "tag2",
+                                            "cat2",
                                             "descr",
                                             new HashSet<>()
                                     )
@@ -93,21 +99,143 @@ class PostRequestsHandlerTest {
     void handleArticleSetupRequest() {
         ArticleSetupRequest request =
                 new ArticleSetupRequest(
-                        1L,
-                        "title"
+                        "username",
+                        "title",
+                        "content",
+                        "tag1, tag2",
+                        "cat1, cat2"
                 );
         ArticleDTO response = ArticleDTOEntityConverter.convert(article);
 
-        when(usersService.findUserById(1L))
+        when(usersService.findUserByUsername("username"))
                 .thenReturn(user);
-        when(articlesService.setupArticle(
-                any()
-        ))
+        when(tagsService.findOrCreate("tag1"))
+                .thenReturn(new Tag(1L, "tag1", new HashSet<>()));
+        when(tagsService.findOrCreate("tag2"))
+                .thenReturn(new Tag(2L, "tag2", new HashSet<>()));
+        when(categoriesService.findByName("cat1"))
+                .thenReturn(new Category(1L, "cat1", "descr", new HashSet<>()));
+        when(categoriesService.findByName("cat2"))
+                .thenReturn(new Category(2L, "cat2", "descr", new HashSet<>()));
+        when(articlesService.setupArticle(any()))
                 .thenReturn(article);
 
         DTO result = postRequestsHandler.handleArticleSetupRequest(request);
 
         assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
         assertThat(result).isEqualTo(response);
+    }
+
+    @Test
+    void handleArticleEditRequest() {
+        ArticleEditRequest request =
+                new ArticleEditRequest(
+                        1L, "username", "new title",
+                        "new content", "tag1", "cat1",
+                        "published", 15
+                );
+
+        when(articlesService.getArticle(1L))
+                .thenReturn(article);
+        when(tagsService.findOrCreate("tag1"))
+                .thenReturn(new Tag(1L, "tag1", new HashSet<>()));
+        when(categoriesService.findByName("cat1"))
+                .thenReturn(new Category(1L, "cat1", "descr", new HashSet<>()));
+        when(articlesService.setupArticle(any()))
+                .thenReturn(article);
+
+        DTO result = postRequestsHandler.handleArticleEditRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
+        assertThat(article.getVisibility()).isTrue();
+        assertThat(article.getStatus()).isEqualTo("published");
+        assertThat(article.getTimeToRead()).isEqualTo(15);
+    }
+
+    @Test
+    void handleArticleEditRequestDraftSetsVisibilityFalse() {
+        ArticleEditRequest request =
+                new ArticleEditRequest(
+                        1L, "username", "title",
+                        "content", "", "", "draft", 30
+                );
+
+        when(articlesService.getArticle(1L))
+                .thenReturn(article);
+        when(articlesService.setupArticle(any()))
+                .thenReturn(article);
+
+        postRequestsHandler.handleArticleEditRequest(request);
+
+        assertThat(article.getVisibility()).isFalse();
+        assertThat(article.getStatus()).isEqualTo("draft");
+    }
+
+    @Test
+    void handleArticleEditRequestWrongUser() {
+        ArticleEditRequest request =
+                new ArticleEditRequest(
+                        1L, "wronguser", "title",
+                        "content", "", "", "draft", 30
+                );
+
+        when(articlesService.getArticle(1L))
+                .thenReturn(article);
+
+        DTO result = postRequestsHandler.handleArticleEditRequest(request);
+
+        assertThat(result).isEqualTo(ArticleDTOEntityConverter.emptyDTO());
+    }
+
+    @Test
+    void handleArticleEditRequestArticleNotFound() {
+        ArticleEditRequest request =
+                new ArticleEditRequest(
+                        99L, "username", "title",
+                        "content", "", "", "draft", 30
+                );
+
+        when(articlesService.getArticle(99L))
+                .thenReturn(null);
+
+        DTO result = postRequestsHandler.handleArticleEditRequest(request);
+
+        assertThat(result).isEqualTo(ArticleDTOEntityConverter.emptyDTO());
+    }
+
+    @Test
+    void handleArticleSetupRequestWithEmptyTagsAndCategories() {
+        ArticleSetupRequest request =
+                new ArticleSetupRequest(
+                        "username",
+                        "title",
+                        "content",
+                        "",
+                        ""
+                );
+
+        Article articleNoTags = Article.builder()
+                .author(user)
+                .id(1L)
+                .title("title")
+                .textContent("content")
+                .visibility(true)
+                .likes(5)
+                .views(5)
+                .timeToRead(5)
+                .lastUpdateDate(LocalDateTime.now())
+                .creationDate(LocalDateTime.now())
+                .tags(new HashSet<>())
+                .categories(new HashSet<>())
+                .build();
+
+        when(usersService.findUserByUsername("username"))
+                .thenReturn(user);
+        when(articlesService.setupArticle(any()))
+                .thenReturn(articleNoTags);
+
+        DTO result = postRequestsHandler.handleArticleSetupRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
     }
 }

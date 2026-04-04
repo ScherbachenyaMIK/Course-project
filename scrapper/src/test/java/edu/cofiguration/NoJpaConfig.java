@@ -1,7 +1,9 @@
 package edu.cofiguration;
 
 import edu.service.ArticlesService;
+import edu.service.CategoriesService;
 import edu.service.ImagesService;
+import edu.service.TagsService;
 import edu.service.UsersService;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
@@ -32,4 +34,8 @@ public class NoJpaConfig {
     private ImagesService imagesService;
     @MockBean
     private ArticlesService articlesService;
+    @MockBean
+    private TagsService tagsService;
+    @MockBean
+    private CategoriesService categoriesService;
 }

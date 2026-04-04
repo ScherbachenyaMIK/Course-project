@@ -54,17 +54,56 @@ class ArticlesControllerTest {
 
     @SneakyThrows
     @Test
-    void postArticle() {
+    void getArticleCreateForm() {
+        mockMvc.perform(get("/articles/new"))
+                .andExpect(status().is3xxRedirection())
+                .andDo(print());
+    }
+
+    @SneakyThrows
+    @Test
+    void createArticle() {
         when(responseHandler.getResponse(anyString(), anyBoolean()))
                 .thenReturn(CompletableFuture.completedFuture(
                         new ModelAndView("Article"))
                 );
 
-        mockMvc.perform(post("/articles/1"))
+        mockMvc.perform(post("/articles/new")
+                        .param("title", "Test Title")
+                        .param("content", "Test Content")
+                        .param("tags", "java, spring")
+                        .param("categories", "Tech"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @SneakyThrows
+    @Test
+    void getArticleEditFormUnauthenticated() {
+        mockMvc.perform(get("/articles/1/edit"))
                 .andExpect(status().isOk())
                 .andExpect(request().asyncStarted())
-                .andDo(result -> assertThat(result.getAsyncResult())
-                        .isExactlyInstanceOf(ModelAndView.class))
+                .andDo(result -> {
+                    ModelAndView mav = (ModelAndView) result.getAsyncResult();
+                    assertThat(mav.getViewName()).isEqualTo("redirect:/login");
+                })
+                .andDo(print());
+    }
+
+    @SneakyThrows
+    @Test
+    void editArticleUnauthenticated() {
+        mockMvc.perform(post("/articles/1/edit")
+                        .param("title", "Updated Title")
+                        .param("content", "Updated Content")
+                        .param("tags", "java")
+                        .param("categories", "Tech"))
+                .andExpect(status().isOk())
+                .andExpect(request().asyncStarted())
+                .andDo(result -> {
+                    ModelAndView mav = (ModelAndView) result.getAsyncResult();
+                    assertThat(mav.getViewName()).isEqualTo("redirect:/login");
+                })
                 .andDo(print());
     }
 }

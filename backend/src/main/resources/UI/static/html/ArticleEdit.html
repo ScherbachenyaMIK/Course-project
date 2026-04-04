@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{Page :: common_head(~{::meta},'Edit Article',~{::link},~{::script})}">
+    <meta name="description" content="Редактирование статьи на AI-Powered Content Hub">
+    <meta name="keywords" content="редактирование статей, контент платформа, создание контента, AI content hub">
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/styles/article-edit.css}">
+    <script src="/scripts/article-edit.js" defer></script>
+</head>
+<body>
+<div th:replace="~{Page :: common_body(~{::content})}">
+    <div th:fragment="content" class="edit-container">
+        <form id="edit-form" class="bento-grid" method="post"
+              th:action="@{'/articles/' + ${articleId} + '/edit'}">
+
+            <div class="bento-title">
+                <div class="bento-header">Заголовок</div>
+                <input id="title-input" name="title" class="bento-input" type="text"
+                       th:value="${article.title}" placeholder="Заголовок статьи" maxlength="255">
+            </div>
+
+            <div class="bento-attributes">
+                <div class="bento-header">Атрибуты</div>
+                <div class="attr-row">
+                    <span class="attr-label">Статус:</span>
+                    <select id="status-input" name="status" class="attr-select">
+                        <option value="draft" th:selected="${article.information.status == 'draft'}">draft</option>
+                        <option value="not finished" th:selected="${article.information.status == 'not finished'}">not finished</option>
+                        <option value="finished" th:selected="${article.information.status == 'finished'}">finished</option>
+                        <option value="published" th:selected="${article.information.status == 'published'}">published</option>
+                    </select>
+                </div>
+                <div class="attr-row">
+                    <span class="attr-label">Время чтения:</span>
+                    <div class="attr-input-group">
+                        <input id="time-to-read-input" name="timeToRead" class="attr-number-input"
+                               type="number" min="1" max="999"
+                               th:value="${article.information.timeToRead}">
+                        <span class="attr-label">мин</span>
+                    </div>
+                </div>
+                <div class="attr-row">
+                    <span class="attr-label">Просмотры:</span>
+                    <span class="attr-value" th:text="${article.information.views}">0</span>
+                </div>
+                <div class="attr-row">
+                    <span class="attr-label">Лайки:</span>
+                    <span class="attr-value" th:text="${article.information.likes}">0</span>
+                </div>
+                <div class="attr-row">
+                    <span class="attr-label">Создана:</span>
+                    <span class="attr-value" th:text="${article.information.creationDate}">—</span>
+                </div>
+            </div>
+
+            <div class="bento-tags">
+                <div class="bento-header">Теги</div>
+                <input id="tags-input" name="tags" class="bento-input" type="text"
+                       th:value="${article.information.tags}" placeholder="через запятую: java, spring">
+            </div>
+
+            <div class="bento-categories">
+                <div class="bento-header">Категории</div>
+                <input id="categories-input" name="categories" class="bento-input" type="text"
+                       th:value="${article.information.categories}" placeholder="через запятую: Технологии, Наука">
+            </div>
+
+            <div class="bento-editor">
+                <div class="bento-header">Содержание статьи</div>
+                <textarea id="content-input" name="content" class="bento-textarea"
+                          placeholder="Текст вашей статьи..." th:text="${article.content}"></textarea>
+            </div>
+
+            <div class="bento-ai">
+                <div class="bento-header">AI-ассистент</div>
+                <div class="ai-body">
+                    <textarea id="ai-prompt" class="ai-prompt-input"
+                              placeholder="Опишите, что нужно сделать с текстом..."></textarea>
+                    <div id="ai-send" class="ai-send-button">
+                        <span>Отправить</span>
+                    </div>
+                    <div id="ai-result" class="ai-result"></div>
+                </div>
+            </div>
+
+            <div class="bento-attachments">
+                <div class="bento-header">Вложения</div>
+                <div class="attachments-body">
+                    <div class="attachments-placeholder">
+                        Перетащите файлы сюда или нажмите для загрузки
+                    </div>
+                </div>
+            </div>
+
+            <div class="bento-actions">
+                <div id="error-message" class="error-message"></div>
+                <button id="save-button" class="action-button save-button" type="submit">
+                    <span>Сохранить</span>
+                </button>
+                <a th:href="@{'/articles/' + ${articleId}}" class="action-button cancel-button">
+                    <span>Отмена</span>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

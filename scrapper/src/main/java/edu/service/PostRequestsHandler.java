@@ -1,9 +1,15 @@
 package edu.service;
 
 import edu.model.db.entity.Article;
+import edu.model.db.entity.Category;
+import edu.model.db.entity.Tag;
 import edu.model.web.DTO;
+import edu.model.web.request.ArticleEditRequest;
 import edu.model.web.request.ArticleSetupRequest;
 import edu.util.ArticleDTOEntityConverter;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +21,83 @@ public class PostRequestsHandler {
     @Autowired
     private UsersService usersService;
 
+    @Autowired
+    private TagsService tagsService;
+
+    @Autowired
+    private CategoriesService categoriesService;
+
     public DTO handleArticleSetupRequest(ArticleSetupRequest request) {
-        Article.ArticleBuilder articleBuilder = Article.builder();
-        articleBuilder.title(request.title());
-        articleBuilder.author(usersService.findUserById(request.authorId()));
-        articleBuilder.textContent("");
+        Set<Tag> tagSet = parseTags(request.tags());
+        Set<Category> categorySet = parseCategories(request.categories());
 
-        Article article = articlesService.setupArticle(articleBuilder.build());
+        Article article = Article.builder()
+                .title(request.title())
+                .author(usersService.findUserByUsername(request.username()))
+                .textContent(request.content() != null ? request.content() : "")
+                .tags(tagSet)
+                .categories(categorySet)
+                .build();
 
-        return ArticleDTOEntityConverter.convert(article);
+        Article saved = articlesService.setupArticle(article);
+        return ArticleDTOEntityConverter.convert(saved);
+    }
+
+    @SuppressWarnings("ReturnCount")
+    public DTO handleArticleEditRequest(ArticleEditRequest request) {
+        Article article = articlesService.getArticle(request.articleId());
+        if (article == null) {
+            return ArticleDTOEntityConverter.emptyDTO();
+        }
+        if (!article.getAuthor().getUsername().equals(request.username())) {
+            return ArticleDTOEntityConverter.emptyDTO();
+        }
+
+        article.setTitle(request.title());
+        article.setTextContent(request.content() != null ? request.content() : "");
+        article.setTags(parseTags(request.tags()));
+        article.setCategories(parseCategories(request.categories()));
+        if (request.status() != null && !request.status().isBlank()) {
+            article.setStatus(request.status());
+            article.setVisibility("published".equals(request.status()));
+        }
+        if (request.timeToRead() != null) {
+            article.setTimeToRead(request.timeToRead());
+        }
+        article.setLastUpdateDate(LocalDateTime.now());
+
+        Article saved = articlesService.setupArticle(article);
+        return ArticleDTOEntityConverter.convert(saved);
+    }
+
+    private Set<Tag> parseTags(String tags) {
+        Set<Tag> tagSet = new HashSet<>();
+        if (tags == null || tags.isBlank()) {
+            return tagSet;
+        }
+        for (String tagName : tags.split(",")) {
+            String trimmed = tagName.trim();
+            if (!trimmed.isEmpty()) {
+                tagSet.add(tagsService.findOrCreate(trimmed));
+            }
+        }
+        return tagSet;
+    }
+
+    private Set<Category> parseCategories(String categories) {
+        Set<Category> categorySet = new HashSet<>();
+        if (categories == null || categories.isBlank()) {
+            return categorySet;
+        }
+        for (String catName : categories.split(",")) {
+            String trimmed = catName.trim();
+            if (!trimmed.isEmpty()) {
+                Category category = categoriesService.findByName(trimmed);
+                if (category != null) {
+                    categorySet.add(category);
+                }
+            }
+        }
+        return categorySet;
     }
 }

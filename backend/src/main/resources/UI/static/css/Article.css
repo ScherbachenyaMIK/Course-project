@@ -130,6 +130,16 @@
   white-space: pre-line;
   word-break: break-word;
 }
+.text-content ul,
+.text-content ol {
+  padding-left: 2em;
+}
+.text-content li {
+  display: list-item;
+  list-style: disc inside;
+  padding-left: 1em;
+  margin-left: 1em;
+}
 .text-content img {
   display: block;
   margin-left: auto;
@@ -183,4 +193,22 @@
 
 :root {
   --icon-height: 2vh;
+}
+
+.edit-article-button {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 1vh;
+  padding: 1vh 2vw;
+  background: var(--color-main-emerald);
+  color: var(--color-pink);
+  font-family: "Georgia", sans-serif;
+  font-size: 2vh;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.edit-article-button:hover {
+  background: var(--color-button-green);
 }

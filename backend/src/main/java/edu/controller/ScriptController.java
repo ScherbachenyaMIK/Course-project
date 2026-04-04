@@ -49,4 +49,20 @@ public class ScriptController {
                 .contentType(MediaType.valueOf(mediaType))
                 .body(resource);
     }
+
+    @GetMapping("/article-create.js")
+    public ResponseEntity<Resource> getArticleCreateScript() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/js/article-create.js");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .body(resource);
+    }
+
+    @GetMapping("/article-edit.js")
+    public ResponseEntity<Resource> getArticleEditScript() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/js/article-edit.js");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .body(resource);
+    }
 }

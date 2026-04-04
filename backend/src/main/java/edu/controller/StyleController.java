@@ -91,4 +91,22 @@ public class StyleController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Error.css\"")
                 .body(resource);
     }
+
+    @GetMapping("/article-create.css")
+    public ResponseEntity<Resource> getArticleCreate() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/css/article-create.css");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"article-create.css\"")
+                .body(resource);
+    }
+
+    @GetMapping("/article-edit.css")
+    public ResponseEntity<Resource> getArticleEdit() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/css/article-edit.css");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"article-edit.css\"")
+                .body(resource);
+    }
 }

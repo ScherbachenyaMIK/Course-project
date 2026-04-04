@@ -13,12 +13,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 @RequestMapping("/articles")
 public class ArticlesController {
+    private static final String REDIRECT_LOGIN_URL = "redirect:/login";
+
     @Autowired
     private ScrapperProducer scrapperProducer;
 
@@ -42,16 +45,38 @@ public class ArticlesController {
         return responseHandler.getResponse(correlationId, AuthenticationChecker.checkAuthorities());
     }
 
-    @PostMapping("/{authorId}")
-    public CompletableFuture<ModelAndView> postArticle(@PathVariable Long authorId) {
+    @GetMapping("/new")
+    public ModelAndView getArticleCreateForm() {
+        if (!AuthenticationChecker.checkAuthorities()) {
+            return new ModelAndView(REDIRECT_LOGIN_URL);
+        }
+        return new ModelAndView("ArticleCreate");
+    }
+
+    @PostMapping("/new")
+    public CompletableFuture<ModelAndView> createArticle(
+            @RequestParam String title,
+            @RequestParam String content,
+            @RequestParam(required = false, defaultValue = "") String tags,
+            @RequestParam(required = false, defaultValue = "") String categories
+    ) {
+        String username = AuthenticationChecker.getCurrentUsername();
+        if (username == null) {
+            CompletableFuture<ModelAndView> future = new CompletableFuture<>();
+            future.complete(new ModelAndView(REDIRECT_LOGIN_URL));
+            return future;
+        }
         String correlationId = UUID.randomUUID().toString();
         scrapperProducer.sendPostRequest(
                 "articles_setup",
                 correlationId,
                 new ArticleSetupRequest(
-                        authorId,
-                        "Title"
+                        username,
+                        title,
+                        content,
+                        tags,
+                        categories
                 ));
-        return responseHandler.getResponse(correlationId, AuthenticationChecker.checkAuthorities());
+        return responseHandler.getResponse(correlationId, true);
     }
 }

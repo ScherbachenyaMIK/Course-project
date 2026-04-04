@@ -133,4 +133,17 @@ class StyleControllerTest {
         assertThat(result.getHeader("Content-Disposition"))
                 .isEqualTo("inline; filename=\"Profile.css\"");
     }
+
+    @Test
+    void getArticleCreate() throws Exception {
+        MockHttpServletResponse result = mockMvc.perform(get("/styles/article-create.css"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(result.getContentType())
+                .isEqualTo("text/css");
+        assertThat(result.getHeader("Content-Disposition"))
+                .isEqualTo("inline; filename=\"article-create.css\"");
+    }
 }

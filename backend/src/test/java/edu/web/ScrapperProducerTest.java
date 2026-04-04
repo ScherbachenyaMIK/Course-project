@@ -107,8 +107,11 @@ class ScrapperProducerTest extends KafkaIntegrationTest {
         postConsumer.subscribe(Collections.singletonList("articles_setup"));
 
         ArticleSetupRequest request = new ArticleSetupRequest(
-                1L,
-                "Title"
+                "username",
+                "Title",
+                "Content",
+                "tag1, tag2",
+                "cat1"
         );
 
         producer.sendPostRequest("articles_setup", "id", request);

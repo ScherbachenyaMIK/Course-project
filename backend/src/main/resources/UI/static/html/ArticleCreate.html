@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{Form :: common_head(~{::meta},'New Article',~{::link},~{::script})}">
+    <meta name="description" content="Создайте новую статью на AI-Powered Content Hub">
+    <meta name="keywords" content="публикация статей, контент платформа, создание контента, новая статья, AI content hub">
+
+    <link rel="stylesheet" href="/styles/article-create.css">
+
+    <script src="/scripts/article-create.js" defer></script>
+</head>
+<body>
+<div th:replace="~{Form :: common_body('Новая статья',~{::content})}">
+    <form th:fragment="content" id="article-create-form" class="content-area" method="post" action="/articles/new">
+        <div id="title" class="field">
+            <div class="field-space-content">
+                <div class="field-label">Заголовок*</div>
+                <input id="title-input" name="title" class="line-input" type="text"
+                       placeholder="заголовок статьи" maxlength="255">
+            </div>
+        </div>
+        <div id="content-field" class="field field-textarea">
+            <div class="field-space-content">
+                <div class="field-label">Содержание*</div>
+                <textarea id="content-input" name="content" class="line-input textarea-input"
+                          placeholder="текст вашей статьи..." rows="10"></textarea>
+            </div>
+        </div>
+        <div id="tags" class="field">
+            <div class="field-space-content">
+                <div class="field-label">Теги</div>
+                <input id="tags-input" name="tags" class="line-input" type="text"
+                       placeholder="через запятую: java, spring, kafka">
+            </div>
+        </div>
+        <div id="categories-field" class="field">
+            <div class="field-space-content">
+                <div class="field-label">Категории</div>
+                <input id="categories-input" name="categories" class="line-input" type="text"
+                       placeholder="через запятую: Технологии, Наука">
+            </div>
+        </div>
+        <div id="error-message" class="error-message"></div>
+        <div>
+            <div>Обязательные поля помечены *</div>
+        </div>
+        <button id="publish-button" class="publish-button" type="submit">
+            <div class="publish-button-text">Опубликовать</div>
+        </button>
+        <div class="redirect-content">
+            <a href="/">Вернуться на главную</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

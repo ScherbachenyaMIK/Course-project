@@ -89,14 +89,32 @@ public class Article {
     @SuppressWarnings({"MagicNumber", "MultipleStringLiterals"})
     @PrePersist
     protected void onCreate() {
-        this.timeToRead = 30;
-        this.creationDate = LocalDateTime.now();
-        this.lastUpdateDate = LocalDateTime.now();
-        this.visibility = false;
-        this.status = "draft";
-        this.views = 0;
-        this.likes = 0;
-        this.categories = new HashSet<>();
-        this.tags = new HashSet<>();
+        if (this.timeToRead == null) {
+            this.timeToRead = 30;
+        }
+        if (this.creationDate == null) {
+            this.creationDate = LocalDateTime.now();
+        }
+        if (this.lastUpdateDate == null) {
+            this.lastUpdateDate = LocalDateTime.now();
+        }
+        if (this.visibility == null) {
+            this.visibility = false;
+        }
+        if (this.status == null) {
+            this.status = "draft";
+        }
+        if (this.views == null) {
+            this.views = 0;
+        }
+        if (this.likes == null) {
+            this.likes = 0;
+        }
+        if (this.categories == null) {
+            this.categories = new HashSet<>();
+        }
+        if (this.tags == null) {
+            this.tags = new HashSet<>();
+        }
     }
 }

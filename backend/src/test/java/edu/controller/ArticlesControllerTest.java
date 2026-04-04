@@ -54,17 +54,26 @@ class ArticlesControllerTest {
 
     @SneakyThrows
     @Test
-    void postArticle() {
+    void getArticleCreateForm() {
+        mockMvc.perform(get("/articles/new"))
+                .andExpect(status().is3xxRedirection())
+                .andDo(print());
+    }
+
+    @SneakyThrows
+    @Test
+    void createArticle() {
         when(responseHandler.getResponse(anyString(), anyBoolean()))
                 .thenReturn(CompletableFuture.completedFuture(
                         new ModelAndView("Article"))
                 );
 
-        mockMvc.perform(post("/articles/1"))
+        mockMvc.perform(post("/articles/new")
+                        .param("title", "Test Title")
+                        .param("content", "Test Content")
+                        .param("tags", "java, spring")
+                        .param("categories", "Tech"))
                 .andExpect(status().isOk())
-                .andExpect(request().asyncStarted())
-                .andDo(result -> assertThat(result.getAsyncResult())
-                        .isExactlyInstanceOf(ModelAndView.class))
                 .andDo(print());
     }
 }

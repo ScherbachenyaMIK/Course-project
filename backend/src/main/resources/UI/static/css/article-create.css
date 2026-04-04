@@ -1,0 +1,128 @@
+.form {
+  height: auto;
+  min-height: 100vh;
+  overflow-y: visible;
+  align-items: flex-start;
+  padding: 4vh 0;
+}
+.form-content {
+  margin: auto;
+}
+.content-area {
+  padding: 5vh;
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.field {
+  background: var(--color-gray-field);
+  border-radius: 15px;
+  padding: 2vh 3vh;
+  display: flex;
+  flex-direction: row;
+  gap: 1vh;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.field:focus-within {
+  outline: 2px solid var(--color-black);
+}
+.field-textarea {
+  align-items: flex-start;
+}
+.field-space-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex: 1;
+  position: relative;
+}
+.field-label {
+  color: var(--color-gray-label);
+  text-align: left;
+  font-family: "Georgia", sans-serif;
+  font-size: 2vh;
+  font-weight: 400;
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.line-input {
+  color: var(--color-gray-input);
+  text-align: left;
+  font-family: "Georgia", sans-serif;
+  font-size: 2.7vh;
+  font-weight: 400;
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border: none;
+  background: rgba(0, 0, 0, 0);
+}
+.line-input:focus {
+  color: var(--color-black);
+  outline: none;
+}
+.textarea-input {
+  resize: vertical;
+  min-height: 20vh;
+  max-height: 60vh;
+  line-height: 1.5;
+}
+.error-message {
+  color: red;
+  margin-top: 10px;
+  text-align: center;
+  display: none;
+}
+.publish-button {
+  flex-shrink: 0;
+  width: 50%;
+  height: 9vh;
+  position: relative;
+  background: var(--color-main-emerald);
+  border-radius: 8px;
+  box-shadow: 0px 4px 4.5px 4px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  border: none;
+}
+.publish-button-text {
+  color: var(--color-pink);
+  text-align: center;
+  font-family: "Georgia", sans-serif;
+  font-size: 4.5vh;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+.publish-button:hover {
+  background: var(--color-button-green);
+}
+.publish-button:active {
+  background: var(--color-pink);
+}
+.publish-button:active .publish-button-text {
+  color: var(--color-button-green);
+}
+.redirect-content {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5vh;
+}

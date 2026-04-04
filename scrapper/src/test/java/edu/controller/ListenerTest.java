@@ -102,7 +102,7 @@ class ListenerTest extends KafkaIntegrationTest {
         ProducerRecord<String, ArticleSetupRequest> message = new ProducerRecord<>(
                 "articles_setup",
                 "id",
-                new ArticleSetupRequest(1L, "test")
+                new ArticleSetupRequest("username", "test", "content", "", "")
         );
 
         articleSetupKafkaTemplate.send(message);

@@ -21,4 +21,6 @@
 	<include file="13-create-table-Images.sql"/>
 	<include file="14-insert-data-Categories.sql"/>
 	<include file="15-create-index-by-names-Categories.sql"/>
+	<include file="16-create-extension-pgvector.sql"/>
+	<include file="17-alter-table-Articles-add-search-vector.sql"/>
 </databaseChangeLog>

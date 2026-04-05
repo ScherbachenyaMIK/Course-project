@@ -4,18 +4,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import edu.model.web.DTO;
 import java.net.URI;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import lombok.Builder;
 
 @Builder
-public record ArticleDTO(
-        URI authorIconUri,
+public record CommentDTO(
         String author,
-        String title,
-        String content,
-        ArticleInformationDTO information,
+        URI authorIconUri,
+        String text,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm")
-        ZonedDateTime lastUpdateDate,
-        ArrayList<CommentDTO> comments
+        ZonedDateTime date
 ) implements DTO {
 }

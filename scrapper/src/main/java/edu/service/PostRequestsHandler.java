@@ -2,18 +2,29 @@ package edu.service;
 
 import edu.model.db.entity.Article;
 import edu.model.db.entity.Category;
+import edu.model.db.entity.Comment;
 import edu.model.db.entity.Tag;
+import edu.model.db.entity.User;
 import edu.model.web.DTO;
+import edu.model.web.dto.CommentDTO;
 import edu.model.web.request.ArticleEditRequest;
 import edu.model.web.request.ArticleSetupRequest;
+import edu.model.web.request.CommentRequest;
+import edu.model.web.request.LikeRequest;
+import edu.model.web.request.ViewRequest;
 import edu.util.ArticleDTOEntityConverter;
+import java.net.URI;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Log4j2
 public class PostRequestsHandler {
     @Autowired
     private ArticlesService articlesService;
@@ -26,6 +37,9 @@ public class PostRequestsHandler {
 
     @Autowired
     private CategoriesService categoriesService;
+
+    @Autowired
+    private CommentsService commentsService;
 
     public DTO handleArticleSetupRequest(ArticleSetupRequest request) {
         Set<Tag> tagSet = parseTags(request.tags());
@@ -40,7 +54,7 @@ public class PostRequestsHandler {
                 .build();
 
         Article saved = articlesService.setupArticle(article);
-        return ArticleDTOEntityConverter.convert(saved);
+        return ArticleDTOEntityConverter.convert(saved, Collections.emptyList());
     }
 
     @SuppressWarnings("ReturnCount")
@@ -67,7 +81,43 @@ public class PostRequestsHandler {
         article.setLastUpdateDate(LocalDateTime.now());
 
         Article saved = articlesService.setupArticle(article);
-        return ArticleDTOEntityConverter.convert(saved);
+        return ArticleDTOEntityConverter.convert(saved, Collections.emptyList());
+    }
+
+    public void handleViewRequest(ViewRequest request) {
+        articlesService.incrementViews(request.articleId());
+    }
+
+    public void handleLikeRequest(LikeRequest request) {
+        articlesService.incrementLikes(request.articleId());
+    }
+
+    @SuppressWarnings("ReturnCount")
+    public DTO handleCommentRequest(CommentRequest request) {
+        Article article = articlesService.getArticle(request.articleId());
+        if (article == null) {
+            return ArticleDTOEntityConverter.emptyDTO();
+        }
+        User user = usersService.findUserByUsername(request.username());
+        if (user == null) {
+            return ArticleDTOEntityConverter.emptyDTO();
+        }
+
+        Comment comment = Comment.builder()
+                .article(article)
+                .user(user)
+                .commentText(request.text())
+                .build();
+        Comment saved = commentsService.save(comment);
+
+        return CommentDTO.builder()
+                .author(saved.getUser().getUsername())
+                .authorIconUri(URI.create(
+                        "/resources/user_icon/"
+                                + saved.getUser().getId().toString()))
+                .text(saved.getCommentText())
+                .date(saved.getCommentDate().atZone(ZoneId.systemDefault()))
+                .build();
     }
 
     private Set<Tag> parseTags(String tags) {

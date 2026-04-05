@@ -3,6 +3,9 @@ package edu.controller;
 import edu.model.web.DTO;
 import edu.model.web.request.ArticleEditRequest;
 import edu.model.web.request.ArticleSetupRequest;
+import edu.model.web.request.CommentRequest;
+import edu.model.web.request.LikeRequest;
+import edu.model.web.request.ViewRequest;
 import edu.service.PostRequestsHandler;
 import edu.util.KafkaConsumerLogger;
 import edu.web.BackendProducer;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PostRequestsListener {
     private static final String ARTICLES_SHOWING_TOPIC = "articles_showing";
+    private static final String COMMENTS_SHOWING_TOPIC = "comments_showing";
     @Autowired
     private KafkaConsumerLogger kafkaConsumerLogger;
 
@@ -48,6 +52,34 @@ public class PostRequestsListener {
                         null,
                         record.key(),
                         handler.handleArticleEditRequest(record.value())
+                );
+        backendProducer.sendDTOMessage(response);
+    }
+
+    @SuppressWarnings("IllegalIdentifierName")
+    @KafkaListener(topics = "article_views")
+    public void listenView(ConsumerRecord<String, ViewRequest> record) {
+        kafkaConsumerLogger.logRequest("article_views", record);
+        handler.handleViewRequest(record.value());
+    }
+
+    @SuppressWarnings("IllegalIdentifierName")
+    @KafkaListener(topics = "article_likes")
+    public void listenLike(ConsumerRecord<String, LikeRequest> record) {
+        kafkaConsumerLogger.logRequest("article_likes", record);
+        handler.handleLikeRequest(record.value());
+    }
+
+    @SuppressWarnings("IllegalIdentifierName")
+    @KafkaListener(topics = "commenting")
+    public void listenComment(ConsumerRecord<String, CommentRequest> record) {
+        kafkaConsumerLogger.logRequest("commenting", record);
+        ProducerRecord<String, DTO> response =
+                new ProducerRecord<>(
+                        COMMENTS_SHOWING_TOPIC,
+                        null,
+                        record.key(),
+                        handler.handleCommentRequest(record.value())
                 );
         backendProducer.sendDTOMessage(response);
     }

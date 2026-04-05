@@ -1,6 +1,7 @@
 package edu.service;
 
 import edu.model.db.entity.Article;
+import edu.model.db.entity.Comment;
 import edu.model.db.entity.User;
 import edu.model.web.DTO;
 import edu.model.web.dto.AIResponseDTO;
@@ -27,6 +28,9 @@ public class GetRequestsHandler {
     private UsersService usersService;
 
     @Autowired
+    private CommentsService commentsService;
+
+    @Autowired
     private HuggingFaceWebClient webClient;
 
     public DTO handleFindArticlesRequest(ArticlesForFeedRequest request) {
@@ -42,7 +46,8 @@ public class GetRequestsHandler {
         if (!article.getVisibility() && !isAuthorOrAdmin(article, request.currentUsername())) {
             return ArticleDTOEntityConverter.emptyDTO();
         }
-        return ArticleDTOEntityConverter.convert(article);
+        List<Comment> comments = commentsService.getArticleComments(request.id());
+        return ArticleDTOEntityConverter.convert(article, comments);
     }
 
     private boolean isAuthorOrAdmin(Article article, String currentUsername) {

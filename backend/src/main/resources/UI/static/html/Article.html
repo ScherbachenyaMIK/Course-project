@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{Page :: common_head(~{::meta},'Article',~{::link},~{})}">
+<head th:replace="~{Page :: common_head(~{::meta},'Article',~{::link},~{::script})}">
     <meta name="description" content="AI-Powered Content Hub — инновационная платформа для публикации авторских статей с использованием инструментов искусственного интеллекта. Создавайте, редактируйте и улучшайте контент с помощью ИИ. Подходит для блогеров, писателей и всех, кто хочет делиться своими идеями онлайн.">
-    <meta name="keywords" content="публикация статей, контент платформа, ИИ инструменты, искусственный интеллект, создание контента, редактирование, авторские статьи, блог, AI content hub">
+    <meta name="keywords" content="публикация статей, контент платформа, ИИ инструменты, искусственный интеллект, создание контента, редактирова��ие, авторские статьи, блог, AI content hub">
     <link rel="stylesheet" type="text/css" media="all" th:href="@{/styles/article.css}">
+    <script src="/scripts/article.js" defer></script>
 </head>
 <body>
 <div th:replace="~{Page :: common_body(~{::content})}">
     <div th:fragment="content" class="horizontal-box">
+        <div id="article-data"
+             th:attr="data-article-id=${articleId},data-authenticated=${isAuthenticated}"
+             style="display:none;"></div>
         <div class="vertical-box-left">
             <div class="article-area">
                 <div class="icon-with-label">
@@ -21,7 +25,7 @@
                 <div class="icon-with-label">
                     <img class="information-icon" src="/resources/clock_icon.png" alt="Время прочтения в минутах">
                     <div class="information-label">Время прочтения:</div>
-                    <div class="information-label" th:text="${article.information.timeToRead} + ' минут'">Время прочтения в минутах</div>
+                    <div class="information-label" th:text="${article.information.timeToRead} + ' минут'">В��емя прочтения �� минутах</div>
                 </div>
                 <div class="icon-with-label">
                     <img class="information-icon" src="/resources/created_icon.png" alt="Дата и время создания">
@@ -39,18 +43,47 @@
                         <img class="information-icon" src="/resources/views_icon.png" alt="Количество просмотров">
                         <div class="information-label" th:text="${article.information.views}">Количество просмотров</div>
                     </div>
-                    <div class="icon-with-label">
+                    <div id="like-button" class="icon-with-label like-button" th:classappend="${isAuthenticated ? '' : 'like-disabled'}">
                         <img class="information-icon" src="/resources/likes_icon.png" alt="Количество лайков">
-                        <div class="information-label" th:text="${article.information.likes}">Количество лайков</div>
+                        <div id="like-count" class="information-label" th:text="${article.information.likes}">Количество лайков</div>
                     </div>
                     <div class="icon-with-label">
                         <img class="information-icon" src="/resources/comments_icon.png" alt="Количество комментариев">
-                        <div class="information-label" th:text="${article.information.comments}">Количество комментариев</div>
+                        <div id="comments-count" class="information-label" th:text="${article.information.comments}">Количество комментариев</div>
                     </div>
                 </div>
                 <a th:if="${currentUsername != null and currentUsername == article.author}"
                    th:href="@{'/articles/' + ${articleId} + '/edit'}"
                    class="edit-article-button">Редактировать</a>
+            </div>
+
+            <div class="comments-section">
+                <div class="comments-title">Комментарии</div>
+
+                <div th:if="${isAuthenticated}" class="comment-form-wrapper">
+                    <form id="comment-form" class="comment-form">
+                        <textarea id="comment-input" class="comment-input"
+                                  placeholder="Напишите комментарий..." rows="3"></textarea>
+                        <button type="submit" class="comment-submit-button">Отправить</button>
+                    </form>
+                </div>
+                <div th:unless="${isAuthenticated}" class="comment-login-hint">
+                    Войдите, чтобы оставить комментарий
+                </div>
+
+                <div id="comments-list" class="comments-list">
+                    <div th:each="comment : ${article.comments}" class="comment-item">
+                        <div class="comment-header">
+                            <img class="comment-author-icon" th:src="${comment.authorIconUri}" alt="Аватар">
+                            <span class="comment-author-name" th:text="${comment.author}">Автор</span>
+                            <span class="comment-date" th:text="${comment.date}">Дата</span>
+                        </div>
+                        <div class="comment-text" th:text="${comment.text}">Текст комментария</div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(article.comments)}" class="no-comments">
+                        Пока нет комментариев
+                    </div>
+                </div>
             </div>
         </div>
         <div class="vertical-box-right">

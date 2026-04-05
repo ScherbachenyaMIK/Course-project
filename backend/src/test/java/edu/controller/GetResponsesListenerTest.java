@@ -6,6 +6,7 @@ import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
 import edu.model.web.dto.ArticleInformationDTO;
 import edu.model.web.dto.ArticlePreviewDTO;
+import edu.model.web.dto.CommentDTO;
 import edu.model.web.dto.UserDTO;
 import edu.service.ResponseHandler;
 import java.net.URI;
@@ -87,7 +88,10 @@ class GetResponsesListenerTest extends KafkaIntegrationTest {
 
     @Test
     void listenArticle() {
-        ArrayList<String> comments = new ArrayList<>(List.of("Wow", "Amazing"));
+        ArrayList<CommentDTO> comments = new ArrayList<>(List.of(
+                new CommentDTO("author1", URI.create("/resources/user_icon/1"), "Wow", "05.05.2025 20:15"),
+                new CommentDTO("author2", URI.create("/resources/user_icon/2"), "Amazing", "05.05.2025 20:16")
+        ));
         ProducerRecord<String, ArticleDTO> message = new ProducerRecord<>(
                 "articles_showing",
                 "id",

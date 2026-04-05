@@ -54,6 +54,12 @@ kafka-config:
     ai_responses:
       partitions: 20
       replicas: 2
+    article_views:
+      partitions: 10
+      replicas: 1
+    article_likes:
+      partitions: 10
+      replicas: 1
 
 spring:
   application:

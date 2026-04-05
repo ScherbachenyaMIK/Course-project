@@ -57,6 +57,12 @@ kafka-config:
     ai_responses:
       partitions: 5
       replicas: 1
+    article_views:
+      partitions: 5
+      replicas: 1
+    article_likes:
+      partitions: 5
+      replicas: 1
 
 security:
   open-endpoints:
@@ -68,6 +74,7 @@ security:
     - "/scripts/*"
     - "/resources/*"
     - "/api/availability"
+    - "/api/articles/*/view"
   secured-endpoints:
     - "/authorized"
   auth-key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttest

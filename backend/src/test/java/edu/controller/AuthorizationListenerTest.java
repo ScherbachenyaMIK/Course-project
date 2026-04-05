@@ -3,6 +3,7 @@ package edu.controller;
 import edu.KafkaIntegrationTest;
 import edu.model.web.AuthResponse;
 import edu.model.web.response.CheckAvailabilityResponse;
+import edu.model.web.response.ConfirmEmailResponse;
 import edu.model.web.response.LoginResponse;
 import edu.model.web.response.RegisterResponse;
 import edu.service.ResponseHandler;
@@ -119,6 +120,36 @@ class AuthorizationListenerTest extends KafkaIntegrationTest {
                     RegisterResponse response = (RegisterResponse) result.get();
                     assertThat(response.success())
                             .isFalse();
+                });
+    }
+
+    @Test
+    void listenConfirmResponse() {
+        String id = "id5";
+        ProducerRecord<String, AuthResponse> message = new ProducerRecord<>(
+                "authorization",
+                id,
+                new ConfirmEmailResponse(true)
+        );
+
+        CompletableFuture<AuthResponse> result = CompletableFuture.supplyAsync(() -> {
+            try {
+                return listener.waitForResponse(id);
+            } catch (ExecutionException | InterruptedException | TimeoutException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        kafkaTemplate.send(message);
+
+        await()
+                .atMost(10, SECONDS)
+                .untilAsserted(() -> {
+                    assertThat(result.isDone())
+                            .isTrue();
+                    ConfirmEmailResponse response = (ConfirmEmailResponse) result.get();
+                    assertThat(response.success())
+                            .isTrue();
                 });
     }
 

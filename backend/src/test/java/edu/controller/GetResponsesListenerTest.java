@@ -47,6 +47,9 @@ class GetResponsesListenerTest extends KafkaIntegrationTest {
     @Autowired
     private KafkaTemplate<String, AIResponseDTO> kafkaAITemplate;
 
+    @Autowired
+    private KafkaTemplate<String, CommentDTO> kafkaCommentTemplate;
+
     @Test
     void listenFeed() {
         ProducerRecord<String, ArticleFeedDTO> message = new ProducerRecord<>(
@@ -151,6 +154,63 @@ class GetResponsesListenerTest extends KafkaIntegrationTest {
                 .untilAsserted(
                         () -> verify(handler, times(1))
                                 .completeResponseProfile(any(), any(), any())
+                );
+    }
+
+    @Test
+    void listenSearch() {
+        ProducerRecord<String, ArticleFeedDTO> message = new ProducerRecord<>(
+                "articles_searching",
+                "id",
+                new ArticleFeedDTO(
+                        List.of(
+                                new ArticlePreviewDTO(
+                                        null,
+                                        "Author 1",
+                                        "Title 1",
+                                        new ArticleInformationDTO(
+                                                "tags",
+                                                "categories",
+                                                30,
+                                                ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME),
+                                                "status",
+                                                0,
+                                                0,
+                                                0
+                                        ),
+                                        null,
+                                        "Article 1",
+                                        null
+                                )
+                        )
+                )
+        );
+
+        kafkaFeedTemplate.send(message);
+
+        await()
+                .atMost(10, SECONDS)
+                .untilAsserted(
+                        () -> verify(handler, times(1))
+                                .completeResponseFeed(any(), any(), any())
+                );
+    }
+
+    @Test
+    void listenComment() {
+        ProducerRecord<String, CommentDTO> message = new ProducerRecord<>(
+                "comments_showing",
+                "id",
+                new CommentDTO("author1", URI.create("/resources/user_icon/1"), "Wow", "05.05.2025 20:15")
+        );
+
+        kafkaCommentTemplate.send(message);
+
+        await()
+                .atMost(10, SECONDS)
+                .untilAsserted(
+                        () -> verify(handler, times(1))
+                                .completeCommentResponse(any(), any())
                 );
     }
 

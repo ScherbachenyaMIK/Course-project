@@ -7,7 +7,10 @@ import edu.model.web.ScrapperGetRequest;
 import edu.model.web.request.ArticleEditRequest;
 import edu.model.web.request.ArticleSetupRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
+import edu.model.web.request.CommentRequest;
+import edu.model.web.request.LikeRequest;
 import edu.model.web.request.LoginRequest;
+import edu.model.web.request.ViewRequest;
 import edu.service.AuthResolver;
 import edu.service.GetRequestsResolver;
 import edu.service.PostRequestsHandler;
@@ -59,6 +62,15 @@ class ListenerTest extends KafkaIntegrationTest {
 
     @Autowired
     private KafkaTemplate<String, ArticleEditRequest> articleEditKafkaTemplate;
+
+    @Autowired
+    private KafkaTemplate<String, ViewRequest> viewKafkaTemplate;
+
+    @Autowired
+    private KafkaTemplate<String, LikeRequest> likeKafkaTemplate;
+
+    @Autowired
+    private KafkaTemplate<String, CommentRequest> commentKafkaTemplate;
 
     @Test
     void listenScrapper() {
@@ -138,6 +150,63 @@ class ListenerTest extends KafkaIntegrationTest {
                 .untilAsserted(
                         () -> verify(postRequestsHandler, times(1))
                                 .handleArticleEditRequest(any())
+                );
+
+        verify(backendProducer, atLeast(1))
+                .sendDTOMessage(any());
+    }
+
+    @Test
+    void listenView() {
+        ProducerRecord<String, ViewRequest> message = new ProducerRecord<>(
+                "article_views",
+                "id",
+                new ViewRequest(1L)
+        );
+
+        viewKafkaTemplate.send(message);
+
+        await()
+                .atMost(10, SECONDS)
+                .untilAsserted(
+                        () -> verify(postRequestsHandler, times(1))
+                                .handleViewRequest(any())
+                );
+    }
+
+    @Test
+    void listenLike() {
+        ProducerRecord<String, LikeRequest> message = new ProducerRecord<>(
+                "article_likes",
+                "id",
+                new LikeRequest(1L, "username")
+        );
+
+        likeKafkaTemplate.send(message);
+
+        await()
+                .atMost(10, SECONDS)
+                .untilAsserted(
+                        () -> verify(postRequestsHandler, times(1))
+                                .handleLikeRequest(any())
+                );
+    }
+
+    @Test
+    void listenComment() {
+        ProducerRecord<String, CommentRequest> message = new ProducerRecord<>(
+                "commenting",
+                "id",
+                new CommentRequest(1L, "username", "text")
+        );
+
+        commentKafkaTemplate.send(message);
+
+        await()
+                .atMost(10, SECONDS)
+                .untilAsserted(
+                        () -> verify(postRequestsHandler, times(1))
+                                .handleCommentRequest(any())
                 );
 
         verify(backendProducer, atLeast(1))

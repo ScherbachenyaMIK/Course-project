@@ -71,6 +71,7 @@ security:
     - "/users/*"
     - "/login"
     - "/register"
+    - "/search"
     - "/confirm"
     - "/checked-error"
     - "/styles/*"

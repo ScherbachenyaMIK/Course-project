@@ -28,6 +28,13 @@ public class GetResponsesListener {
     }
 
     @SuppressWarnings("IllegalIdentifierName")
+    @KafkaListener(topics = "articles_searching")
+    public void listenSearch(ConsumerRecord<String, ArticleFeedDTO> record) {
+        kafkaConsumerLogger.logRequest("articles_searching", record);
+        responseHandler.completeResponseFeed(record.key(), record.value(), "Search");
+    }
+
+    @SuppressWarnings("IllegalIdentifierName")
     @KafkaListener(topics = "articles_showing")
     public void listenArticle(ConsumerRecord<String, ArticleDTO> record) {
         kafkaConsumerLogger.logRequest("articles_showing", record);

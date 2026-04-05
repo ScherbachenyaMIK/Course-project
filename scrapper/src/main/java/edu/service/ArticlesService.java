@@ -31,4 +31,13 @@ public class ArticlesService {
     public void incrementLikes(Long articleId) {
         repository.incrementLikes(articleId);
     }
+
+    public List<Article> searchArticles(String query, int minLikes, int minViews,
+                                        int minComments, String sort, int limit) {
+        return repository.searchArticles(
+                query == null ? "" : query.trim(),
+                minLikes, minViews, minComments,
+                sort == null ? "" : sort,
+                limit);
+    }
 }

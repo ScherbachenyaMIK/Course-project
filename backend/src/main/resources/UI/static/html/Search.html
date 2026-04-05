@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{Page :: common_head(~{::meta},'Search',~{::link},~{::script})}">
+    <meta name="description" content="Поиск статей по ключевым словам с фильтрацией и сортировкой.">
+
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/styles/home.css}">
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/styles/search.css}">
+
+    <script src="/scripts/page.js" defer></script>
+</head>
+<body>
+<div th:replace="~{Page :: common_body(~{::content})}">
+    <div th:fragment="content" class="search-page">
+        <form class="search-form" method="get" action="/search">
+            <div class="search-form-row">
+                <label class="searching-label" for="query">Запрос:</label>
+                <input id="query" name="query" type="text" class="searching-input"
+                       th:value="${query}" placeholder="Что ищем?">
+            </div>
+            <div class="search-form-row">
+                <label for="minLikes">Мин. лайков:</label>
+                <input id="minLikes" name="minLikes" type="number" min="0" th:value="${minLikes}">
+
+                <label for="minViews">Мин. просмотров:</label>
+                <input id="minViews" name="minViews" type="number" min="0" th:value="${minViews}">
+
+                <label for="minComments">Мин. комментариев:</label>
+                <input id="minComments" name="minComments" type="number" min="0" th:value="${minComments}">
+            </div>
+            <div class="search-form-row">
+                <label for="sort">Сортировка:</label>
+                <select id="sort" name="sort">
+                    <option value="relevance"  th:selected="${sort == 'relevance'}">по релевантности</option>
+                    <option value="popularity" th:selected="${sort == 'popularity'}">по популярности</option>
+                    <option value="updated"    th:selected="${sort == 'updated'}">по дате обновления</option>
+                    <option value="likes"      th:selected="${sort == 'likes'}">по лайкам</option>
+                    <option value="views"      th:selected="${sort == 'views'}">по просмотрам</option>
+                    <option value="comments"   th:selected="${sort == 'comments'}">по комментариям</option>
+                </select>
+
+                <label for="limit">Результатов:</label>
+                <input id="limit" name="limit" type="number" min="1" max="100" th:value="${limit}">
+
+                <button type="submit" class="search-submit">Найти</button>
+            </div>
+        </form>
+
+        <div class="articles-area">
+            <div th:if="${#lists.isEmpty(articles)}" class="no-results">
+                Ничего не найдено.
+            </div>
+            <div class="article" th:each="article : ${articles}">
+                <div class="icon-with-label">
+                    <img class="author-icon" th:src="${article.authorIconUri}" alt="Аватар автора">
+                    <div class="author-name" th:text="${article.author}">Автор</div>
+                </div>
+                <div class="article-title" th:text="${article.title}">Название</div>
+                <div class="article-tags" th:text="${article.information.tags}">#теги</div>
+                <div class="article-categories" th:text="${article.information.categories}">Категории</div>
+                <div class="information-row">
+                    <div class="icon-with-label">
+                        <img class="information-icon" src="/resources/clock_icon.png" alt="Время">
+                        <div class="information-label" th:text="${article.information.timeToRead} + ' минут'">Время</div>
+                    </div>
+                    <div class="icon-with-label">
+                        <img class="information-icon" src="/resources/created_icon.png" alt="Обновлено">
+                        <div class="information-label" th:text="${article.information.creationDate}">Дата</div>
+                    </div>
+                    <div class="icon-with-label">
+                        <img class="information-icon" src="/resources/status_icon.png" alt="Статус">
+                        <div class="information-label" th:text="${article.information.status}">Статус</div>
+                    </div>
+                </div>
+                <img class="article-preview" th:src="${article.previewImageUri}" alt="Обложка">
+                <div class="article-fragment" th:utext="${article.fragment}">Фрагмент</div>
+                <a th:href="${article.articleUri}" class="more-button">
+                    <div class="more-button-text">Читать далее &gt;</div>
+                </a>
+                <div class="information-row">
+                    <div class="icon-with-label">
+                        <img class="information-icon" src="/resources/views_icon.png" alt="Просмотры">
+                        <div class="information-label" th:text="${article.information.views}">Просмотры</div>
+                    </div>
+                    <div class="icon-with-label">
+                        <img class="information-icon" src="/resources/likes_icon.png" alt="Лайки">
+                        <div class="information-label" th:text="${article.information.likes}">Лайки</div>
+                    </div>
+                    <div class="icon-with-label">
+                        <img class="information-icon" src="/resources/comments_icon.png" alt="Комментарии">
+                        <div class="information-label" th:text="${article.information.comments}">Комментарии</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

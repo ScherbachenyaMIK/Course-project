@@ -1,34 +1,44 @@
 package edu.util;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @SuppressWarnings("HideUtilityClassConstructor")
 public class AuthenticationChecker {
-    @SuppressWarnings("MultipleStringLiterals")
     public static boolean checkAuthorities() {
-        if ("anonymousUser".equals(
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication()
-                        .getPrincipal()
-                        .toString())) {
-            return checkUserAuthentication("NONE");
-        }
-        return checkUserAuthentication("USER");
+        return isAuthenticated();
     }
 
     public static String getCurrentUsername() {
-        Object principal = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-        if ("anonymousUser".equals(principal.toString())) {
+        Authentication authentication = currentAuthentication();
+        if (authentication == null) {
             return null;
         }
-        return principal.toString();
+        return authentication.getName();
     }
 
-    private static boolean checkUserAuthentication(String role) {
-        return "USER".equals(role);
+    public static boolean hasRole(String role) {
+        Authentication authentication = currentAuthentication();
+        if (authentication == null) {
+            return false;
+        }
+        String authority = "ROLE_" + role;
+        return authentication.getAuthorities().stream()
+                .anyMatch(granted -> authority.equals(granted.getAuthority()));
+    }
+
+    private static boolean isAuthenticated() {
+        return currentAuthentication() != null;
+    }
+
+    private static Authentication currentAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null
+                || !authentication.isAuthenticated()
+                || authentication instanceof AnonymousAuthenticationToken) {
+            return null;
+        }
+        return authentication;
     }
 }

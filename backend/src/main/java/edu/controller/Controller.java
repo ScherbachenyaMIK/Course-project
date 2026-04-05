@@ -3,12 +3,15 @@ package edu.controller;
 import edu.configuration.ApplicationConfig;
 import edu.configuration.SecurityConfig;
 import edu.model.web.request.ArticlesForFeedRequest;
+import edu.model.web.request.ConfirmEmailRequest;
 import edu.model.web.request.LoginRequest;
 import edu.model.web.request.RegisterRequest;
 import edu.model.web.response.AuthenticationResponse;
+import edu.model.web.response.ConfirmEmailResponse;
 import edu.model.web.response.RegisterResponse;
 import edu.security.CustomAuthenticationManager;
 import edu.security.JwtProvider;
+import edu.service.EmailService;
 import edu.service.ResponseHandler;
 import edu.util.AuthenticationChecker;
 import edu.web.ScrapperProducer;
@@ -59,6 +62,9 @@ public class Controller {
 
     @Autowired
     private JwtProvider jwtProvider;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/")
     public CompletableFuture<ModelAndView> getHome() {
@@ -127,7 +133,34 @@ public class Controller {
         } catch (ExecutionException | InterruptedException | TimeoutException e) {
             response = new RegisterResponse(false);
         }
+        if (response.success()) {
+            emailService.sendConfirmationEmail(request.username(), request.email());
+        }
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/confirm")
+    public ModelAndView confirmEmail(@RequestParam("token") String token) {
+        String errorUrl = "redirect:/checked-error?HttpCode=400";
+        if (!jwtProvider.validateToken(token)
+                || !JwtProvider.PURPOSE_EMAIL_CONFIRM.equals(jwtProvider.extractPurpose(token))) {
+            return new ModelAndView(errorUrl
+                    + "&ResponseDescription=Invalid+or+expired+confirmation+link");
+        }
+        String username = jwtProvider.extractUsername(token);
+        String correlationId = UUID.randomUUID().toString();
+        scrapperProducer.sendAuthRequest(correlationId, new ConfirmEmailRequest(username));
+        ConfirmEmailResponse response;
+        try {
+            response = (ConfirmEmailResponse) authorizationListener.waitForResponse(correlationId);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
+            response = new ConfirmEmailResponse(false);
+        }
+        if (response == null || !response.success()) {
+            return new ModelAndView(errorUrl
+                    + "&ResponseDescription=Email+confirmation+failed");
+        }
+        return new ModelAndView("redirect:/login");
     }
 
     @DeleteMapping("/login")
@@ -159,7 +192,14 @@ public class Controller {
     }
 
     private Cookie prepareCookie(Authentication authentication) {
-        String token = jwtProvider.generateToken(authentication.getName());
+        String rolePrefix = "ROLE_";
+        String role = authentication.getAuthorities().stream()
+                .map(a -> a.getAuthority())
+                .filter(a -> a.startsWith(rolePrefix))
+                .map(a -> a.substring(rolePrefix.length()))
+                .findFirst()
+                .orElse("USER");
+        String token = jwtProvider.generateToken(authentication.getName(), role);
         Cookie jwtCookie = new Cookie(JWT_TOKEN_NAME, token);
         jwtCookie.setHttpOnly(true);
         jwtCookie.setSecure(true);

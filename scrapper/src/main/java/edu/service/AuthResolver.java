@@ -4,6 +4,7 @@ import edu.configuration.ApplicationConfig;
 import edu.model.web.AuthRequest;
 import edu.model.web.AuthResponse;
 import edu.model.web.request.CheckAvailabilityRequest;
+import edu.model.web.request.ConfirmEmailRequest;
 import edu.model.web.request.LoginRequest;
 import edu.model.web.request.RegisterRequest;
 import edu.model.web.response.RegisterResponse;
@@ -33,45 +34,20 @@ public class AuthResolver {
         Objects.requireNonNull(record.value(), "Value must not be null");
         String type = record.value().getClass().toString();
         type = type.substring(type.lastIndexOf('.') + 1);
-        switch (type) {
-            case "LoginRequest":
-                return new ProducerRecord<>(
-                        TOPIC_NAME,
-                        record.key(),
-                        authHandler
-                                .handleLogin(
-                                        (LoginRequest) record.value()
-                                )
-                );
-            case "CheckAvailabilityRequest":
-                return new ProducerRecord<>(
-                        TOPIC_NAME,
-                        record.key(),
-                        authHandler
-                                .handleAvailability(
-                                        (CheckAvailabilityRequest) record.value()
-                                )
-                );
-            case "RegisterRequest":
-                if (checkTimeout(record)) {
-                    return new ProducerRecord<>(
-                            TOPIC_NAME,
-                            record.key(),
-                            authHandler
-                                    .handleRegister(
-                                            (RegisterRequest) record.value()
-                                    )
-                    );
-                } else {
-                    return new ProducerRecord<>(
-                            TOPIC_NAME,
-                            record.key(),
-                            new RegisterResponse(false)
-                    );
-                }
-            default:
-                throw new IllegalArgumentException("Unknown request type: " + type);
-        }
+        AuthResponse response = switch (type) {
+            case "LoginRequest" -> authHandler.handleLogin((LoginRequest) record.value());
+            case "CheckAvailabilityRequest" -> authHandler.handleAvailability(
+                    (CheckAvailabilityRequest) record.value()
+            );
+            case "RegisterRequest" -> checkTimeout(record)
+                    ? authHandler.handleRegister((RegisterRequest) record.value())
+                    : new RegisterResponse(false);
+            case "ConfirmEmailRequest" -> authHandler.handleConfirmEmail(
+                    (ConfirmEmailRequest) record.value()
+            );
+            default -> throw new IllegalArgumentException("Unknown request type: " + type);
+        };
+        return new ProducerRecord<>(TOPIC_NAME, record.key(), response);
     }
 
     @SuppressWarnings({"MagicNumber", "IllegalIdentifierName"})

@@ -72,7 +72,7 @@ class ApiControllerTest {
         mockMvc.perform(get("/api/get/username"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
-                .andExpect(content().string("anonymousUser"))
+                .andExpect(content().string(""))
                 .andExpect(result -> assertThat(result.getResponse().getContentType()))
                 .andDo(print());
     }

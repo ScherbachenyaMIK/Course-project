@@ -67,7 +67,9 @@ class JwtAuthenticationFilterTest {
                 "test"
         )});
         when(jwtProvider.validateToken(anyString())).thenReturn(true);
+        when(jwtProvider.extractPurpose(anyString())).thenReturn(JwtProvider.PURPOSE_AUTH);
         when(jwtProvider.extractUsername(anyString())).thenReturn("test");
+        when(jwtProvider.extractRole(anyString())).thenReturn(null);
         SecurityContextHolder.getContext().setAuthentication(null);
 
         filter.doFilterInternal(request, response, chain);

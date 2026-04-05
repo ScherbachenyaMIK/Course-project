@@ -17,7 +17,7 @@ class JwtProviderTest {
 
     @Test
     void extractUsername() {
-        String token = provider.generateToken("test");
+        String token = provider.generateToken("test", "USER");
         String result = provider.extractUsername(token);
 
         assertThat(result).isEqualTo("test");
@@ -33,7 +33,7 @@ class JwtProviderTest {
 
     @Test
     void validateToken() {
-        String token = provider.generateToken("test");
+        String token = provider.generateToken("test", "USER");
         boolean result = provider.validateToken(token);
 
         assertThat(result).isTrue();

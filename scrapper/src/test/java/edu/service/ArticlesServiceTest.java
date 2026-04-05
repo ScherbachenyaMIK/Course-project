@@ -210,4 +210,30 @@ class ArticlesServiceTest extends PostgreIntegrationTest {
                 )
                 .isEqualTo(tArticle);
     }
+
+    @Test
+    @Order(7)
+    void searchArticlesByQuery() {
+        List<Article> results = service.searchArticles("title", 0, 0, 0, "relevance", 10);
+
+        assertThat(results).isNotEmpty();
+        assertThat(results).allMatch(a -> a.getTitle().contains("title"));
+    }
+
+    @Test
+    @Order(8)
+    void searchArticlesEmptyQueryReturnsVisible() {
+        List<Article> results = service.searchArticles("", 0, 0, 0, "updated", 10);
+
+        assertThat(results).isNotEmpty();
+        assertThat(results).allMatch(a -> Boolean.TRUE.equals(a.getVisibility()));
+    }
+
+    @Test
+    @Order(9)
+    void searchArticlesFilterByMinLikesExcludesAll() {
+        List<Article> results = service.searchArticles("", 1_000_000, 0, 0, "likes", 10);
+
+        assertThat(results).isEmpty();
+    }
 }

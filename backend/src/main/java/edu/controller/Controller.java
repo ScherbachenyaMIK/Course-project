@@ -2,6 +2,7 @@ package edu.controller;
 
 import edu.configuration.ApplicationConfig;
 import edu.configuration.SecurityConfig;
+import edu.model.web.request.ArticleSearchRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
 import edu.model.web.request.ConfirmEmailRequest;
 import edu.model.web.request.LoginRequest;
@@ -42,6 +43,8 @@ public class Controller {
 
     private static final String JWT_TOKEN_NAME = "JWT_TOKEN";
 
+    private static final String GET_INFO_TOPIC = "get_info";
+
     @Autowired
     private ScrapperProducer scrapperProducer;
 
@@ -70,12 +73,47 @@ public class Controller {
     public CompletableFuture<ModelAndView> getHome() {
         String correlationId = UUID.randomUUID().toString();
         scrapperProducer.sendGetRequest(
-                "get_info",
+                GET_INFO_TOPIC,
                 correlationId,
                 new ArticlesForFeedRequest(
                         applicationConfig.initialSearchingCount()
                 ));
         return responseHandler.getResponse(correlationId, AuthenticationChecker.checkAuthorities());
+    }
+
+    @SuppressWarnings("ParameterNumber")
+    @GetMapping("/search")
+    public CompletableFuture<ModelAndView> getSearch(
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "minLikes", required = false) Integer minLikes,
+            @RequestParam(value = "minViews", required = false) Integer minViews,
+            @RequestParam(value = "minComments", required = false) Integer minComments,
+            @RequestParam(value = "sort", required = false, defaultValue = "relevance") String sort,
+            @RequestParam(value = "limit", required = false, defaultValue = "20") int limit
+    ) {
+        String correlationId = UUID.randomUUID().toString();
+        scrapperProducer.sendGetRequest(
+                GET_INFO_TOPIC,
+                correlationId,
+                new ArticleSearchRequest(
+                        query == null ? "" : query,
+                        minLikes, minViews, minComments,
+                        sort, limit
+                ));
+        CompletableFuture<ModelAndView> future = responseHandler.getResponse(
+                correlationId, AuthenticationChecker.checkAuthorities());
+        return future.thenApply(mav -> {
+            if (mav == null) {
+                return null;
+            }
+            mav.addObject("query", query == null ? "" : query);
+            mav.addObject("minLikes", minLikes);
+            mav.addObject("minViews", minViews);
+            mav.addObject("minComments", minComments);
+            mav.addObject("sort", sort);
+            mav.addObject("limit", limit);
+            return mav;
+        });
     }
 
     @GetMapping("/login")

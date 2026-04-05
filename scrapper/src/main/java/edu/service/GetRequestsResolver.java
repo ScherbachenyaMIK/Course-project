@@ -4,6 +4,7 @@ import edu.model.web.DTO;
 import edu.model.web.ScrapperGetRequest;
 import edu.model.web.request.AIRequest;
 import edu.model.web.request.ArticleRequest;
+import edu.model.web.request.ArticleSearchRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
 import edu.model.web.request.ProfileRequest;
 import java.util.Objects;
@@ -17,7 +18,7 @@ public class GetRequestsResolver {
     @Autowired
     private GetRequestsHandler getRequestsHandler;
 
-    @SuppressWarnings("IllegalIdentifierName")
+    @SuppressWarnings({"IllegalIdentifierName", "ReturnCount"})
     public ProducerRecord<String, DTO> resolve(ConsumerRecord<String, ScrapperGetRequest> record) {
         Objects.requireNonNull(record.key(), "Key must not be null");
         Objects.requireNonNull(record.value(), "Value must not be null");
@@ -31,6 +32,16 @@ public class GetRequestsResolver {
                         getRequestsHandler
                                 .handleFindArticlesRequest(
                                         (ArticlesForFeedRequest) record.value()
+                                )
+                );
+            }
+            case "ArticleSearchRequest" -> {
+                return new ProducerRecord<>(
+                        "articles_searching",
+                        record.key(),
+                        getRequestsHandler
+                                .handleSearchRequest(
+                                        (ArticleSearchRequest) record.value()
                                 )
                 );
             }

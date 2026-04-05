@@ -8,6 +8,7 @@ import edu.model.web.dto.AIResponseDTO;
 import edu.model.web.dto.ArticleFeedDTO;
 import edu.model.web.request.AIRequest;
 import edu.model.web.request.ArticleRequest;
+import edu.model.web.request.ArticleSearchRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
 import edu.model.web.request.ProfileRequest;
 import edu.util.ArticleDTOEntityConverter;
@@ -35,6 +36,18 @@ public class GetRequestsHandler {
 
     public DTO handleFindArticlesRequest(ArticlesForFeedRequest request) {
         List<Article> articles = articlesService.getArticlesSlice(request.count());
+        return new ArticleFeedDTO(ArticlePreviewDTOEntityConverter.convert(articles));
+    }
+
+    public DTO handleSearchRequest(ArticleSearchRequest request) {
+        List<Article> articles = articlesService.searchArticles(
+                request.query(),
+                request.minLikes() == null ? 0 : request.minLikes(),
+                request.minViews() == null ? 0 : request.minViews(),
+                request.minComments() == null ? 0 : request.minComments(),
+                request.sort(),
+                request.limit() <= 0 ? 20 : request.limit()
+        );
         return new ArticleFeedDTO(ArticlePreviewDTOEntityConverter.convert(articles));
     }
 

@@ -7,6 +7,7 @@ import edu.model.web.dto.ArticleFeedDTO;
 import edu.model.web.dto.ArticleInformationDTO;
 import edu.model.web.dto.ArticlePreviewDTO;
 import edu.model.web.request.ArticleRequest;
+import edu.model.web.request.ArticleSearchRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -139,6 +140,22 @@ class GetRequestsResolverTest {
                         "key",
                         "value"
                 ).isEqualTo(expected);
+    }
+
+    @Test
+    void resolveArticleSearchRequest() {
+        ConsumerRecord<String, ScrapperGetRequest> record = new ConsumerRecord<>(
+                "topic", 1, 0, "key",
+                new ArticleSearchRequest("java", 0, 0, 0, "relevance", 20)
+        );
+        DTO feed = new ArticleFeedDTO(List.of());
+        when(handler.handleSearchRequest(any())).thenReturn(feed);
+
+        ProducerRecord<String, DTO> response = resolver.resolve(record);
+
+        assertThat(response.topic()).isEqualTo("articles_searching");
+        assertThat(response.key()).isEqualTo("key");
+        assertThat(response.value()).isEqualTo(feed);
     }
 
     @Test

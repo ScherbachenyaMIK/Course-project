@@ -11,6 +11,7 @@ import edu.model.web.dto.ArticleFeedDTO;
 import edu.model.web.dto.UserDTO;
 import edu.model.web.request.AIRequest;
 import edu.model.web.request.ArticleRequest;
+import edu.model.web.request.ArticleSearchRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
 import edu.model.web.request.ProfileRequest;
 import edu.util.ArticleDTOEntityConverter;
@@ -344,6 +345,32 @@ class GetRequestsHandlerTest {
 
         assertThat(result).isExactlyInstanceOf(AIResponseDTO.class);
         assertThat(result).isEqualTo(response);
+    }
+
+    @Test
+    void handleSearchRequestWithAllFilters() {
+        ArticleSearchRequest request = new ArticleSearchRequest(
+                "java", 2, 3, 1, "likes", 10);
+        when(articlesService.searchArticles("java", 2, 3, 1, "likes", 10))
+                .thenReturn(articleList);
+
+        DTO result = getRequestsHandler.handleSearchRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleFeedDTO.class);
+        assertThat(((ArticleFeedDTO) result).articlePreviewDTOList()).hasSize(3);
+    }
+
+    @Test
+    void handleSearchRequestNullFiltersDefaultToZero() {
+        ArticleSearchRequest request = new ArticleSearchRequest(
+                null, null, null, null, null, 0);
+        when(articlesService.searchArticles(null, 0, 0, 0, null, 20))
+                .thenReturn(List.of());
+
+        DTO result = getRequestsHandler.handleSearchRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleFeedDTO.class);
+        assertThat(((ArticleFeedDTO) result).articlePreviewDTOList()).isEmpty();
     }
 
     @Test

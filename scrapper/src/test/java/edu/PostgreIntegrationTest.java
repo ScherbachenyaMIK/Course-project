@@ -18,13 +18,16 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
 public class PostgreIntegrationTest {
     public static PostgreSQLContainer<?> POSTGRES;
 
     static {
-        POSTGRES = new PostgreSQLContainer<>("postgres:16")
+        POSTGRES = new PostgreSQLContainer<>(
+                DockerImageName.parse("pgvector/pgvector:pg16")
+                        .asCompatibleSubstituteFor("postgres"))
                 .withDatabaseName("scrapper")
                 .withUsername("postgres")
                 .withPassword("postgres");

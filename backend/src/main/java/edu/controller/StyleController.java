@@ -109,4 +109,13 @@ public class StyleController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"article-edit.css\"")
                 .body(resource);
     }
+
+    @GetMapping("/search.css")
+    public ResponseEntity<Resource> getSearch() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/css/search.css");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"search.css\"")
+                .body(resource);
+    }
 }

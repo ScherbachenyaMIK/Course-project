@@ -1,6 +1,7 @@
 package edu.controller;
 
 import edu.configuration.ApplicationConfig;
+import edu.model.web.dto.ArticleDTO;
 import edu.model.web.request.ArticleEditRequest;
 import edu.model.web.request.ArticleRequest;
 import edu.model.web.request.ArticleSetupRequest;
@@ -108,10 +109,16 @@ public class ArticlesController {
                 ));
         return responseHandler.getResponse(correlationId, true)
                 .thenApply(mav -> {
-                    if (mav != null) {
-                        mav.setViewName("ArticleEdit");
-                        mav.addObject(ARTICLE_ID_KEY, id);
+                    if (mav == null) {
+                        return null;
                     }
+                    Object articleObj = mav.getModel().get("article");
+                    if (!(articleObj instanceof ArticleDTO article)
+                            || !currentUsername.equals(article.author())) {
+                        return new ModelAndView("redirect:/articles/" + id);
+                    }
+                    mav.setViewName("ArticleEdit");
+                    mav.addObject(ARTICLE_ID_KEY, id);
                     return mav;
                 });
     }

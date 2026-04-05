@@ -46,4 +46,28 @@ class JwtProviderTest {
 
         assertThat(result).isFalse();
     }
+
+    @Test
+    void extractRoleFromAuthToken() {
+        String token = provider.generateToken("test", "ADMIN");
+
+        assertThat(provider.extractRole(token)).isEqualTo("ADMIN");
+        assertThat(provider.extractPurpose(token)).isEqualTo(JwtProvider.PURPOSE_AUTH);
+    }
+
+    @Test
+    void extractRoleReturnsNullForConfirmationToken() {
+        String token = provider.generateEmailConfirmationToken("test", 60_000);
+
+        assertThat(provider.extractRole(token)).isNull();
+        assertThat(provider.extractPurpose(token)).isEqualTo(JwtProvider.PURPOSE_EMAIL_CONFIRM);
+        assertThat(provider.extractUsername(token)).isEqualTo("test");
+    }
+
+    @Test
+    void generateEmailConfirmationTokenValidates() {
+        String token = provider.generateEmailConfirmationToken("alice", 60_000);
+
+        assertThat(provider.validateToken(token)).isTrue();
+    }
 }

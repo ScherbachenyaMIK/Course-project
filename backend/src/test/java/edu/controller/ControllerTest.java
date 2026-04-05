@@ -316,7 +316,7 @@ class ControllerTest {
     @SneakyThrows
     @Test
     void getPageWithAuthority() {
-        String jwtToken = jwtProvider.generateToken("test");
+        String jwtToken = jwtProvider.generateToken("test", "USER");
 
         mockMvc.perform(get("/authorized")
                         .cookie(new Cookie("JWT_TOKEN", jwtToken)))

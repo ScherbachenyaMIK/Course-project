@@ -9,7 +9,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +30,8 @@ public class UsersController {
 
     @GetMapping("/{username}")
     public CompletableFuture<ModelAndView> getProfile(@PathVariable String username) throws NoResourceFoundException {
-        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(username)) {
+        String currentUsername = AuthenticationChecker.getCurrentUsername();
+        if (currentUsername == null || !currentUsername.equals(username)) {
             throw new NoResourceFoundException(HttpMethod.GET, "/users/" + username);
         }
 

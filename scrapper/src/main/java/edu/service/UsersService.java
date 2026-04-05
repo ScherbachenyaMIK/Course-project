@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UsersService {
     static private final String NONE_ROLE = "NONE";
     static private final String NOT_CONFIRMED = "NOT_CONFIRMED";
+    static private final String USER_ROLE = "USER";
 
     @Autowired
     private UsersRepository repository;
@@ -61,6 +62,20 @@ public class UsersService {
 
     public User findUserByUsername(String username) {
         return repository.findUserByUsername(username);
+    }
+
+    @Transactional
+    public boolean confirmEmail(String username) {
+        User user = repository.findUserByUsername(username);
+        if (user == null) {
+            return false;
+        }
+        if (!NOT_CONFIRMED.equals(user.getUserRole())) {
+            return true;
+        }
+        user.setUserRole(USER_ROLE);
+        repository.save(user);
+        return true;
     }
 
     public boolean isExistsByUsername(String username) {

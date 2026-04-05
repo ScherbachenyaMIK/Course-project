@@ -2,6 +2,7 @@ package edu.configuration;
 
 import edu.controller.AuthorizationListener;
 import edu.controller.GetResponsesListener;
+import edu.service.EmailService;
 import edu.web.ScrapperProducer;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
@@ -29,4 +30,6 @@ public class NoKafkaConfig {
         private AuthorizationListener authorizationListener;
         @MockBean
         private GetResponsesListener getResponsesListener;
+        @MockBean
+        private EmailService emailService;
 }

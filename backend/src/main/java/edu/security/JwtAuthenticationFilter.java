@@ -6,9 +6,12 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,21 +29,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("JWT_TOKEN".equals(cookie.getName())) {
-                    String token = cookie.getValue();
-                    String username = null;
-
-                    if (jwtProvider.validateToken(token)) {
-                        username = jwtProvider.extractUsername(token);
-                    }
-                    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                        UsernamePasswordAuthenticationToken auth =
-                                new UsernamePasswordAuthenticationToken(username, null, List.of());
-                        SecurityContextHolder.getContext().setAuthentication(auth);
-                    }
+                    authenticate(cookie.getValue());
                     break;
                 }
             }
         }
         chain.doFilter(request, response);
+    }
+
+    private void authenticate(String token) {
+        if (jwtProvider.validateToken(token)
+                && JwtProvider.PURPOSE_AUTH.equals(jwtProvider.extractPurpose(token))
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
+            String username = jwtProvider.extractUsername(token);
+            if (username != null) {
+                String role = jwtProvider.extractRole(token);
+                List<GrantedAuthority> authorities = role != null
+                        ? List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                        : Collections.emptyList();
+                SecurityContextHolder.getContext().setAuthentication(
+                        new UsernamePasswordAuthenticationToken(username, null, authorities)
+                );
+            }
+        }
     }
 }

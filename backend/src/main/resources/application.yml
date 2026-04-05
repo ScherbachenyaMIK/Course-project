@@ -71,6 +71,7 @@ security:
     - "/users/*"
     - "/login"
     - "/register"
+    - "/confirm"
     - "/checked-error"
     - "/styles/*"
     - "/scripts/*"
@@ -81,6 +82,13 @@ security:
     - "/authorized"
   auth-key: ${AUTH_KEY}
   expiration: 24h
+
+resend:
+  api-key: ${RESEND_API_KEY}
+  from: "AI hub <onboarding@resend.dev>"
+  confirmation:
+    expiration: 24h
+    base-url: "http://localhost:${BACKEND_PORT}"
 
 spring:
   application:

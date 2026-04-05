@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public class CustomAuthenticationManager implements AuthenticationManager {
     @Autowired
@@ -33,7 +34,11 @@ public class CustomAuthenticationManager implements AuthenticationManager {
                     authorizationListener.waitForResponse(correlationId);
 
             if (response.success()) {
-                return new UsernamePasswordAuthenticationToken(username, password, List.of());
+                return new UsernamePasswordAuthenticationToken(
+                        username,
+                        password,
+                        List.of(new SimpleGrantedAuthority("ROLE_" + response.role()))
+                );
             } else {
                 throw new BadCredentialsException("Invalid credentials");
             }

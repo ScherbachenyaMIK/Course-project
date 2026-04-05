@@ -3,6 +3,7 @@ package edu.controller;
 import edu.configuration.ApplicationConfig;
 import edu.model.web.AuthResponse;
 import edu.model.web.response.CheckAvailabilityResponse;
+import edu.model.web.response.ConfirmEmailResponse;
 import edu.model.web.response.LoginResponse;
 import edu.model.web.response.RegisterResponse;
 import edu.service.ResponseHandler;
@@ -58,6 +59,13 @@ public class AuthorizationListener {
         );
     }
 
+    private void completeResponse(String correlationId, AuthResponse response) {
+        CompletableFuture<AuthResponse> future = pendingResponses.remove(correlationId);
+        if (future != null) {
+            future.complete(response);
+        }
+    }
+
     private void completeLoginResponse(String correlationId, LoginResponse response) {
         CompletableFuture<AuthResponse> future = pendingResponses.remove(correlationId);
         if (future != null) {
@@ -91,6 +99,7 @@ public class AuthorizationListener {
                         (RegisterResponse) value
                 );
             }
+            case "ConfirmEmailResponse" -> completeResponse(key, (ConfirmEmailResponse) value);
             default -> throw new IllegalArgumentException("Unknown response type: " + type);
         }
     }

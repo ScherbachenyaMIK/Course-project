@@ -5,12 +5,12 @@ import edu.model.web.request.AIRequest;
 import edu.model.web.request.CheckAvailabilityRequest;
 import edu.model.web.response.CheckAvailabilityResponse;
 import edu.service.ResponseHandler;
+import edu.util.AuthenticationChecker;
 import edu.web.ScrapperProducer;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,7 +41,8 @@ public class ApiController {
 
     @GetMapping("/get/username")
     public ResponseEntity<String> getUsername() {
-        return ResponseEntity.ok(SecurityContextHolder.getContext().getAuthentication().getName());
+        String username = AuthenticationChecker.getCurrentUsername();
+        return ResponseEntity.ok(username != null ? username : "");
     }
 
     @SuppressWarnings("unchecked")

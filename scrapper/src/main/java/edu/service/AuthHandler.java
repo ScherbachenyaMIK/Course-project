@@ -1,9 +1,11 @@
 package edu.service;
 
 import edu.model.web.request.CheckAvailabilityRequest;
+import edu.model.web.request.ConfirmEmailRequest;
 import edu.model.web.request.LoginRequest;
 import edu.model.web.request.RegisterRequest;
 import edu.model.web.response.CheckAvailabilityResponse;
+import edu.model.web.response.ConfirmEmailResponse;
 import edu.model.web.response.LoginResponse;
 import edu.model.web.response.RegisterResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,5 +47,9 @@ public class AuthHandler {
 
     public RegisterResponse handleRegister(RegisterRequest request) {
         return new RegisterResponse(service.registerNewUser(request));
+    }
+
+    public ConfirmEmailResponse handleConfirmEmail(ConfirmEmailRequest request) {
+        return new ConfirmEmailResponse(service.confirmEmail(request.username()));
     }
 }

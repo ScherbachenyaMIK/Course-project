@@ -45,6 +45,8 @@ public class GetRequestsHandler {
                 request.minLikes() == null ? 0 : request.minLikes(),
                 request.minViews() == null ? 0 : request.minViews(),
                 request.minComments() == null ? 0 : request.minComments(),
+                request.tags() == null ? List.of() : request.tags(),
+                request.categories() == null ? List.of() : request.categories(),
                 request.sort(),
                 request.limit() <= 0 ? 20 : request.limit()
         );

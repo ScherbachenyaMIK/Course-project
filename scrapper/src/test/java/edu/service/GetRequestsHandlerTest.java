@@ -350,8 +350,13 @@ class GetRequestsHandlerTest {
     @Test
     void handleSearchRequestWithAllFilters() {
         ArticleSearchRequest request = new ArticleSearchRequest(
-                "java", 2, 3, 1, "likes", 10);
-        when(articlesService.searchArticles("java", 2, 3, 1, "likes", 10))
+                "java", 2, 3, 1,
+                List.of("tag1"), List.of("cat1"),
+                "likes", 10);
+        when(articlesService.searchArticles(
+                "java", 2, 3, 1,
+                List.of("tag1"), List.of("cat1"),
+                "likes", 10))
                 .thenReturn(articleList);
 
         DTO result = getRequestsHandler.handleSearchRequest(request);
@@ -363,14 +368,53 @@ class GetRequestsHandlerTest {
     @Test
     void handleSearchRequestNullFiltersDefaultToZero() {
         ArticleSearchRequest request = new ArticleSearchRequest(
-                null, null, null, null, null, 0);
-        when(articlesService.searchArticles(null, 0, 0, 0, null, 20))
+                null, null, null, null, null, null, null, 0);
+        when(articlesService.searchArticles(
+                null, 0, 0, 0,
+                List.of(), List.of(),
+                null, 20))
                 .thenReturn(List.of());
 
         DTO result = getRequestsHandler.handleSearchRequest(request);
 
         assertThat(result).isExactlyInstanceOf(ArticleFeedDTO.class);
         assertThat(((ArticleFeedDTO) result).articlePreviewDTOList()).isEmpty();
+    }
+
+    @Test
+    void handleSearchRequestWithTagsOnly() {
+        ArticleSearchRequest request = new ArticleSearchRequest(
+                "", null, null, null,
+                List.of("tag1", "tag2"), List.of(),
+                "relevance", 20);
+        when(articlesService.searchArticles(
+                "", 0, 0, 0,
+                List.of("tag1", "tag2"), List.of(),
+                "relevance", 20))
+                .thenReturn(articleList.subList(0, 1));
+
+        DTO result = getRequestsHandler.handleSearchRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleFeedDTO.class);
+        assertThat(((ArticleFeedDTO) result).articlePreviewDTOList()).hasSize(1);
+    }
+
+    @Test
+    void handleSearchRequestWithCategoriesOnly() {
+        ArticleSearchRequest request = new ArticleSearchRequest(
+                "", null, null, null,
+                List.of(), List.of("cat1"),
+                "updated", 10);
+        when(articlesService.searchArticles(
+                "", 0, 0, 0,
+                List.of(), List.of("cat1"),
+                "updated", 10))
+                .thenReturn(articleList);
+
+        DTO result = getRequestsHandler.handleSearchRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleFeedDTO.class);
+        assertThat(((ArticleFeedDTO) result).articlePreviewDTOList()).hasSize(3);
     }
 
     @Test

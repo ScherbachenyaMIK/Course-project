@@ -18,6 +18,15 @@
                        th:value="${query}" placeholder="Что ищем?">
             </div>
             <div class="search-form-row">
+                <label for="tags">Теги:</label>
+                <input id="tags" name="tags" type="text" class="searching-input"
+                       th:value="${tags}" placeholder="тег1, тег2, ...">
+
+                <label for="categories">Категории:</label>
+                <input id="categories" name="categories" type="text" class="searching-input"
+                       th:value="${categories}" placeholder="категория1, категория2, ...">
+            </div>
+            <div class="search-form-row">
                 <label for="minLikes">Мин. лайков:</label>
                 <input id="minLikes" name="minLikes" type="number" min="0" th:value="${minLikes}">
 

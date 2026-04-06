@@ -32,6 +32,7 @@ public interface ArticlesRepository extends JpaRepository<Article, Long> {
     @Query("UPDATE Article a SET a.likes = a.likes + 1 WHERE a.id = :id")
     void incrementLikes(@Param("id") Long id);
 
+    @SuppressWarnings("ParameterNumber")
     @Query(value = """
             SELECT a.* FROM articles a
             LEFT JOIN (
@@ -43,6 +44,20 @@ public interface ArticlesRepository extends JpaRepository<Article, Long> {
               AND a.likes >= :minLikes
               AND a.views >= :minViews
               AND COALESCE(c.comment_count, 0) >= :minComments
+              AND (:tagsEmpty = TRUE OR a.article_id IN (
+                  SELECT at2.article_id FROM articles_tags at2
+                  JOIN tags t ON t.tag_id = at2.tag_id
+                  WHERE t.tag_name IN (:tags)
+                  GROUP BY at2.article_id
+                  HAVING COUNT(DISTINCT t.tag_name) = :tagsCount
+              ))
+              AND (:categoriesEmpty = TRUE OR a.article_id IN (
+                  SELECT ac2.article_id FROM articles_categories ac2
+                  JOIN categories cat ON cat.category_id = ac2.category_id
+                  WHERE cat.category_name IN (:categories)
+                  GROUP BY ac2.article_id
+                  HAVING COUNT(DISTINCT cat.category_name) = :categoriesCount
+              ))
             ORDER BY
                 CASE WHEN :sort = 'likes'       THEN a.likes END DESC,
                 CASE WHEN :sort = 'views'       THEN a.views END DESC,
@@ -60,6 +75,12 @@ public interface ArticlesRepository extends JpaRepository<Article, Long> {
             @Param("minLikes") int minLikes,
             @Param("minViews") int minViews,
             @Param("minComments") int minComments,
+            @Param("tags") List<String> tags,
+            @Param("tagsEmpty") boolean tagsEmpty,
+            @Param("tagsCount") long tagsCount,
+            @Param("categories") List<String> categories,
+            @Param("categoriesEmpty") boolean categoriesEmpty,
+            @Param("categoriesCount") long categoriesCount,
             @Param("sort") String sort,
             @Param("lim") int limit
     );

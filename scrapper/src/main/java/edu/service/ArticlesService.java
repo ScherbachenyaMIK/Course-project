@@ -32,11 +32,21 @@ public class ArticlesService {
         repository.incrementLikes(articleId);
     }
 
+    @SuppressWarnings("ParameterNumber")
     public List<Article> searchArticles(String query, int minLikes, int minViews,
-                                        int minComments, String sort, int limit) {
+                                        int minComments, List<String> tags,
+                                        List<String> categories, String sort, int limit) {
+        List<String> safeTags = tags == null ? List.of() : tags;
+        List<String> safeCategories = categories == null ? List.of() : categories;
         return repository.searchArticles(
                 query == null ? "" : query.trim(),
                 minLikes, minViews, minComments,
+                safeTags.isEmpty() ? List.of("") : safeTags,
+                safeTags.isEmpty(),
+                safeTags.size(),
+                safeCategories.isEmpty() ? List.of("") : safeCategories,
+                safeCategories.isEmpty(),
+                safeCategories.size(),
                 sort == null ? "" : sort,
                 limit);
     }

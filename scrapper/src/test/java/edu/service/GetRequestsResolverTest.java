@@ -146,7 +146,7 @@ class GetRequestsResolverTest {
     void resolveArticleSearchRequest() {
         ConsumerRecord<String, ScrapperGetRequest> record = new ConsumerRecord<>(
                 "topic", 1, 0, "key",
-                new ArticleSearchRequest("java", 0, 0, 0, "relevance", 20)
+                new ArticleSearchRequest("java", 0, 0, 0, List.of(), List.of(), "relevance", 20)
         );
         DTO feed = new ArticleFeedDTO(List.of());
         when(handler.handleSearchRequest(any())).thenReturn(feed);

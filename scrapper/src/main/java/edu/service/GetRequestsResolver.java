@@ -55,6 +55,14 @@ public class GetRequestsResolver {
                                 )
                 );
             }
+            case "CategoriesRequest" -> {
+                return new ProducerRecord<>(
+                        "categories_showing",
+                        record.key(),
+                        getRequestsHandler
+                                .handleCategoriesRequest()
+                );
+            }
             case "ProfileRequest" -> {
                 return new ProducerRecord<>(
                         "profile_showing",

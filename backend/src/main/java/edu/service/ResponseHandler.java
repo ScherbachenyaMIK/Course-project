@@ -4,6 +4,7 @@ import edu.configuration.ApplicationConfig;
 import edu.model.web.dto.AIResponseDTO;
 import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
+import edu.model.web.dto.CategoriesDTO;
 import edu.model.web.dto.CommentDTO;
 import edu.model.web.dto.UserDTO;
 import edu.model.web.response.CheckAvailabilityResponse;
@@ -66,6 +67,18 @@ public class ResponseHandler {
         ModelAndView modelAndView = new ModelAndView(modelName);
         if (entry != null) {
             modelAndView.addObject("articles", articles.articlePreviewDTOList());
+            modelAndView.addObject(IS_AUTHENTICATED_ATTRIBUTE_NAME, entry.getRight());
+            entry.getLeft().complete(modelAndView);
+        }
+    }
+
+    public void completeResponseCategories(String correlationId,
+                                          CategoriesDTO categoriesDTO, String modelName) {
+        ImmutablePair<CompletableFuture<ModelAndView>, Boolean>
+                entry = pendingResponses.remove(correlationId);
+        ModelAndView modelAndView = new ModelAndView(modelName);
+        if (entry != null) {
+            modelAndView.addObject("categories", categoriesDTO.categories());
             modelAndView.addObject(IS_AUTHENTICATED_ATTRIBUTE_NAME, entry.getRight());
             entry.getLeft().complete(modelAndView);
         }

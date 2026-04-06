@@ -4,6 +4,8 @@ import edu.configuration.NoKafkaConfig;
 import edu.model.web.dto.AIResponseDTO;
 import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
+import edu.model.web.dto.CategoriesDTO;
+import edu.model.web.dto.CategoryItemDTO;
 import edu.model.web.dto.UserDTO;
 import edu.model.web.response.CheckAvailabilityResponse;
 import java.util.List;
@@ -216,6 +218,32 @@ class ResponseHandlerTest {
         CompletableFuture<ModelAndView> future = handler.getResponse(id, false);
 
         handler.completeResponseProfile(id, userDTO, "user");
+
+        await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until(future::isDone);
+
+        assertThat(future.get())
+                .usingRecursiveComparison()
+                .comparingOnlyFields(
+                        "model",
+                        "view")
+                .isEqualTo(expected);
+    }
+
+    @SneakyThrows
+    @Test
+    void getResponseCategories() {
+        CategoriesDTO categoriesDTO = new CategoriesDTO(List.of(
+                new CategoryItemDTO("Биология", "Живые организмы")
+        ));
+        ModelAndView expected = new ModelAndView("Categories");
+        expected.addObject("categories", categoriesDTO.categories());
+        expected.addObject("isAuthenticated", false);
+
+        CompletableFuture<ModelAndView> future = handler.getResponse(id, false);
+
+        handler.completeResponseCategories(id, categoriesDTO, "Categories");
 
         await()
                 .atMost(10, TimeUnit.SECONDS)

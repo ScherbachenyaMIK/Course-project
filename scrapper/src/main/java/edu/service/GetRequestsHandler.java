@@ -6,6 +6,8 @@ import edu.model.db.entity.User;
 import edu.model.web.DTO;
 import edu.model.web.dto.AIResponseDTO;
 import edu.model.web.dto.ArticleFeedDTO;
+import edu.model.web.dto.CategoriesDTO;
+import edu.model.web.dto.CategoryItemDTO;
 import edu.model.web.request.AIRequest;
 import edu.model.web.request.ArticleRequest;
 import edu.model.web.request.ArticleSearchRequest;
@@ -32,6 +34,9 @@ public class GetRequestsHandler {
     private CommentsService commentsService;
 
     @Autowired
+    private CategoriesService categoriesService;
+
+    @Autowired
     private HuggingFaceWebClient webClient;
 
     public DTO handleFindArticlesRequest(ArticlesForFeedRequest request) {
@@ -45,6 +50,8 @@ public class GetRequestsHandler {
                 request.minLikes() == null ? 0 : request.minLikes(),
                 request.minViews() == null ? 0 : request.minViews(),
                 request.minComments() == null ? 0 : request.minComments(),
+                request.tags() == null ? List.of() : request.tags(),
+                request.categories() == null ? List.of() : request.categories(),
                 request.sort(),
                 request.limit() <= 0 ? 20 : request.limit()
         );
@@ -72,6 +79,13 @@ public class GetRequestsHandler {
         }
         User currentUser = usersService.findUserByUsername(currentUsername);
         return currentUser != null && "ADMIN".equals(currentUser.getUserRole());
+    }
+
+    public DTO handleCategoriesRequest() {
+        List<CategoryItemDTO> items = categoriesService.findAllSorted().stream()
+                .map(c -> new CategoryItemDTO(c.getName(), c.getDescription()))
+                .toList();
+        return new CategoriesDTO(items);
     }
 
     public DTO handleProfileRequest(ProfileRequest request) {

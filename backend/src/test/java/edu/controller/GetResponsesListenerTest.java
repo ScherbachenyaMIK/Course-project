@@ -6,6 +6,8 @@ import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
 import edu.model.web.dto.ArticleInformationDTO;
 import edu.model.web.dto.ArticlePreviewDTO;
+import edu.model.web.dto.CategoriesDTO;
+import edu.model.web.dto.CategoryItemDTO;
 import edu.model.web.dto.CommentDTO;
 import edu.model.web.dto.UserDTO;
 import edu.service.ResponseHandler;
@@ -49,6 +51,9 @@ class GetResponsesListenerTest extends KafkaIntegrationTest {
 
     @Autowired
     private KafkaTemplate<String, CommentDTO> kafkaCommentTemplate;
+
+    @Autowired
+    private KafkaTemplate<String, CategoriesDTO> kafkaCategoriesTemplate;
 
     @Test
     void listenFeed() {
@@ -211,6 +216,26 @@ class GetResponsesListenerTest extends KafkaIntegrationTest {
                 .untilAsserted(
                         () -> verify(handler, times(1))
                                 .completeCommentResponse(any(), any())
+                );
+    }
+
+    @Test
+    void listenCategories() {
+        ProducerRecord<String, CategoriesDTO> message = new ProducerRecord<>(
+                "categories_showing",
+                "id",
+                new CategoriesDTO(List.of(
+                        new CategoryItemDTO("Биология", "Живые организмы")
+                ))
+        );
+
+        kafkaCategoriesTemplate.send(message);
+
+        await()
+                .atMost(10, SECONDS)
+                .untilAsserted(
+                        () -> verify(handler, times(1))
+                                .completeResponseCategories(any(), any(), any())
                 );
     }
 

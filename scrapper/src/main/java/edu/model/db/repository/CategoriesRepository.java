@@ -1,6 +1,7 @@
 package edu.model.db.repository;
 
 import edu.model.db.entity.Category;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +10,6 @@ public interface CategoriesRepository extends JpaRepository<Category, Long> {
     Category findCategoryById(Long id);
 
     Category findCategoryByName(String categoryName);
+
+    List<Category> findAllByOrderByNameAsc();
 }

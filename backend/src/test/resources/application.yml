@@ -63,6 +63,9 @@ kafka-config:
     article_likes:
       partitions: 5
       replicas: 1
+    categories_showing:
+      partitions: 5
+      replicas: 1
 
 security:
   open-endpoints:

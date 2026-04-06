@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{Page :: common_head(~{::meta},'Categories',~{::link},~{::script})}">
+    <meta name="description" content="Все категории статей — алфавитный указатель тем.">
+
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/styles/home.css}">
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/styles/categories.css}">
+
+    <script src="/scripts/page.js" defer></script>
+    <script src="/scripts/categories.js" defer></script>
+</head>
+<body>
+<div th:replace="~{Page :: common_body(~{::content})}">
+    <div th:fragment="content" class="categories-page">
+        <h1 class="categories-title">Все категории</h1>
+        <div class="categories-subtitle"
+             th:text="'Найдено категорий: ' + ${#lists.size(categories)}">
+            Найдено категорий: 0
+        </div>
+
+        <div id="alphabet-nav" class="alphabet-nav"></div>
+
+        <div id="categories-container">
+            <th:block th:each="cat,iter : ${categories}">
+                <th:block th:with="letter=${cat.name.substring(0,1).toUpperCase()},
+                           prevLetter=${iter.index > 0 ? categories[iter.index - 1].name.substring(0,1).toUpperCase() : ''}">
+                    <div th:if="${iter.index == 0 || !letter.equals(prevLetter)}"
+                         class="letter-header" th:id="'letter-' + ${letter}" th:text="${letter}">А</div>
+                </th:block>
+                <a class="category-card" th:href="@{/search(categories=${cat.name})}">
+                    <div class="category-name" th:text="${cat.name}">Категория</div>
+                    <div class="category-desc"
+                         th:if="${cat.description != null and !cat.description.isEmpty()}"
+                         th:text="${cat.description}">Описание категории</div>
+                </a>
+            </th:block>
+        </div>
+
+        <div th:if="${#lists.isEmpty(categories)}" class="no-results">
+            Категории пока не добавлены.
+        </div>
+    </div>
+</div>
+</body>
+</html>

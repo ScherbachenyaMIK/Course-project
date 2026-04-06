@@ -18,6 +18,7 @@ import edu.util.AuthenticationChecker;
 import edu.web.ScrapperProducer;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -81,6 +82,18 @@ public class Controller {
         return responseHandler.getResponse(correlationId, AuthenticationChecker.checkAuthorities());
     }
 
+    @GetMapping("/categories")
+    public CompletableFuture<ModelAndView> getCategories() {
+        String correlationId = UUID.randomUUID().toString();
+        scrapperProducer.sendGetRequest(
+                GET_INFO_TOPIC,
+                correlationId,
+                new edu.model.web.request.CategoriesRequest()
+        );
+        return responseHandler.getResponse(
+                correlationId, AuthenticationChecker.checkAuthorities());
+    }
+
     @SuppressWarnings("ParameterNumber")
     @GetMapping("/search")
     public CompletableFuture<ModelAndView> getSearch(
@@ -88,9 +101,13 @@ public class Controller {
             @RequestParam(value = "minLikes", required = false) Integer minLikes,
             @RequestParam(value = "minViews", required = false) Integer minViews,
             @RequestParam(value = "minComments", required = false) Integer minComments,
+            @RequestParam(value = "tags", required = false) String tags,
+            @RequestParam(value = "categories", required = false) String categories,
             @RequestParam(value = "sort", required = false, defaultValue = "relevance") String sort,
             @RequestParam(value = "limit", required = false, defaultValue = "20") int limit
     ) {
+        List<String> tagList = parseCommaSeparated(tags);
+        List<String> categoryList = parseCommaSeparated(categories);
         String correlationId = UUID.randomUUID().toString();
         scrapperProducer.sendGetRequest(
                 GET_INFO_TOPIC,
@@ -98,6 +115,7 @@ public class Controller {
                 new ArticleSearchRequest(
                         query == null ? "" : query,
                         minLikes, minViews, minComments,
+                        tagList, categoryList,
                         sort, limit
                 ));
         CompletableFuture<ModelAndView> future = responseHandler.getResponse(
@@ -110,10 +128,22 @@ public class Controller {
             mav.addObject("minLikes", minLikes);
             mav.addObject("minViews", minViews);
             mav.addObject("minComments", minComments);
+            mav.addObject("tags", tags == null ? "" : tags);
+            mav.addObject("categories", categories == null ? "" : categories);
             mav.addObject("sort", sort);
             mav.addObject("limit", limit);
             return mav;
         });
+    }
+
+    private List<String> parseCommaSeparated(String input) {
+        if (input == null || input.isBlank()) {
+            return List.of();
+        }
+        return java.util.Arrays.stream(input.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
     }
 
     @GetMapping("/login")

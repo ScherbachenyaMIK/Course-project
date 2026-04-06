@@ -8,6 +8,8 @@ import edu.model.web.DTO;
 import edu.model.web.dto.AIResponseDTO;
 import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
+import edu.model.web.dto.CategoriesDTO;
+import edu.model.web.dto.CategoryItemDTO;
 import edu.model.web.dto.UserDTO;
 import edu.model.web.request.AIRequest;
 import edu.model.web.request.ArticleRequest;
@@ -39,6 +41,8 @@ class GetRequestsHandlerTest {
     private UsersService usersService;
     @Mock
     private CommentsService commentsService;
+    @Mock
+    private CategoriesService categoriesService;
     @Mock
     private HuggingFaceWebClient webClient;
     @InjectMocks
@@ -350,8 +354,13 @@ class GetRequestsHandlerTest {
     @Test
     void handleSearchRequestWithAllFilters() {
         ArticleSearchRequest request = new ArticleSearchRequest(
-                "java", 2, 3, 1, "likes", 10);
-        when(articlesService.searchArticles("java", 2, 3, 1, "likes", 10))
+                "java", 2, 3, 1,
+                List.of("tag1"), List.of("cat1"),
+                "likes", 10);
+        when(articlesService.searchArticles(
+                "java", 2, 3, 1,
+                List.of("tag1"), List.of("cat1"),
+                "likes", 10))
                 .thenReturn(articleList);
 
         DTO result = getRequestsHandler.handleSearchRequest(request);
@@ -363,14 +372,80 @@ class GetRequestsHandlerTest {
     @Test
     void handleSearchRequestNullFiltersDefaultToZero() {
         ArticleSearchRequest request = new ArticleSearchRequest(
-                null, null, null, null, null, 0);
-        when(articlesService.searchArticles(null, 0, 0, 0, null, 20))
+                null, null, null, null, null, null, null, 0);
+        when(articlesService.searchArticles(
+                null, 0, 0, 0,
+                List.of(), List.of(),
+                null, 20))
                 .thenReturn(List.of());
 
         DTO result = getRequestsHandler.handleSearchRequest(request);
 
         assertThat(result).isExactlyInstanceOf(ArticleFeedDTO.class);
         assertThat(((ArticleFeedDTO) result).articlePreviewDTOList()).isEmpty();
+    }
+
+    @Test
+    void handleSearchRequestWithTagsOnly() {
+        ArticleSearchRequest request = new ArticleSearchRequest(
+                "", null, null, null,
+                List.of("tag1", "tag2"), List.of(),
+                "relevance", 20);
+        when(articlesService.searchArticles(
+                "", 0, 0, 0,
+                List.of("tag1", "tag2"), List.of(),
+                "relevance", 20))
+                .thenReturn(articleList.subList(0, 1));
+
+        DTO result = getRequestsHandler.handleSearchRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleFeedDTO.class);
+        assertThat(((ArticleFeedDTO) result).articlePreviewDTOList()).hasSize(1);
+    }
+
+    @Test
+    void handleSearchRequestWithCategoriesOnly() {
+        ArticleSearchRequest request = new ArticleSearchRequest(
+                "", null, null, null,
+                List.of(), List.of("cat1"),
+                "updated", 10);
+        when(articlesService.searchArticles(
+                "", 0, 0, 0,
+                List.of(), List.of("cat1"),
+                "updated", 10))
+                .thenReturn(articleList);
+
+        DTO result = getRequestsHandler.handleSearchRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleFeedDTO.class);
+        assertThat(((ArticleFeedDTO) result).articlePreviewDTOList()).hasSize(3);
+    }
+
+    @Test
+    void handleCategoriesRequest() {
+        List<Category> categoryList = List.of(
+                new Category(1L, "Биология", "Живые организмы", new HashSet<>()),
+                new Category(2L, "Архитектура", "Стили зданий", new HashSet<>())
+        );
+        when(categoriesService.findAllSorted()).thenReturn(categoryList);
+
+        DTO result = getRequestsHandler.handleCategoriesRequest();
+
+        assertThat(result).isExactlyInstanceOf(CategoriesDTO.class);
+        CategoriesDTO dto = (CategoriesDTO) result;
+        assertThat(dto.categories()).hasSize(2);
+        assertThat(dto.categories().get(0).name()).isEqualTo("Биология");
+        assertThat(dto.categories().get(1).name()).isEqualTo("Архитектура");
+    }
+
+    @Test
+    void handleCategoriesRequestEmpty() {
+        when(categoriesService.findAllSorted()).thenReturn(List.of());
+
+        DTO result = getRequestsHandler.handleCategoriesRequest();
+
+        assertThat(result).isExactlyInstanceOf(CategoriesDTO.class);
+        assertThat(((CategoriesDTO) result).categories()).isEmpty();
     }
 
     @Test

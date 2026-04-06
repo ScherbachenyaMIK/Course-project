@@ -214,7 +214,8 @@ class ArticlesServiceTest extends PostgreIntegrationTest {
     @Test
     @Order(7)
     void searchArticlesByQuery() {
-        List<Article> results = service.searchArticles("title", 0, 0, 0, "relevance", 10);
+        List<Article> results = service.searchArticles(
+                "title", 0, 0, 0, List.of(), List.of(), "relevance", 10);
 
         assertThat(results).isNotEmpty();
         assertThat(results).allMatch(a -> a.getTitle().contains("title"));
@@ -223,7 +224,8 @@ class ArticlesServiceTest extends PostgreIntegrationTest {
     @Test
     @Order(8)
     void searchArticlesEmptyQueryReturnsVisible() {
-        List<Article> results = service.searchArticles("", 0, 0, 0, "updated", 10);
+        List<Article> results = service.searchArticles(
+                "", 0, 0, 0, List.of(), List.of(), "updated", 10);
 
         assertThat(results).isNotEmpty();
         assertThat(results).allMatch(a -> Boolean.TRUE.equals(a.getVisibility()));
@@ -232,8 +234,41 @@ class ArticlesServiceTest extends PostgreIntegrationTest {
     @Test
     @Order(9)
     void searchArticlesFilterByMinLikesExcludesAll() {
-        List<Article> results = service.searchArticles("", 1_000_000, 0, 0, "likes", 10);
+        List<Article> results = service.searchArticles(
+                "", 1_000_000, 0, 0, List.of(), List.of(), "likes", 10);
 
         assertThat(results).isEmpty();
+    }
+
+    @Test
+    @Order(10)
+    void searchArticlesFilterByNonExistentTagReturnsEmpty() {
+        List<Article> results = service.searchArticles(
+                "", 0, 0, 0,
+                List.of("nonExistentTag"), List.of(),
+                "updated", 10);
+
+        assertThat(results).isEmpty();
+    }
+
+    @Test
+    @Order(11)
+    void searchArticlesFilterByNonExistentCategoryReturnsEmpty() {
+        List<Article> results = service.searchArticles(
+                "", 0, 0, 0,
+                List.of(), List.of("nonExistentCategory"),
+                "updated", 10);
+
+        assertThat(results).isEmpty();
+    }
+
+    @Test
+    @Order(12)
+    void searchArticlesEmptyTagsAndCategoriesReturnsAll() {
+        List<Article> results = service.searchArticles(
+                "", 0, 0, 0, List.of(), List.of(), "updated", 10);
+
+        assertThat(results).isNotEmpty();
+        assertThat(results).allMatch(a -> Boolean.TRUE.equals(a.getVisibility()));
     }
 }

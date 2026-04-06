@@ -38,6 +38,7 @@
     <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
     <git-commit-id-maven-plugin.version>7.0.0</git-commit-id-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
+    <jacoco.destFile>${project.build.directory}/jacoco.exec</jacoco.destFile>
 
     <!-- Linters -->
     <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
@@ -219,6 +220,10 @@
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>${jacoco-maven-plugin.version}</version>
+          <configuration>
+            <destFile>${jacoco.destFile}</destFile>
+            <dataFile>${jacoco.destFile}</dataFile>
+          </configuration>
           <executions>
             <execution>
               <goals>
@@ -286,4 +291,18 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <profiles>
+    <profile>
+      <id>non-ascii-path</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <jacoco.destFile>${java.io.tmpdir}/jacoco/${project.artifactId}.exec</jacoco.destFile>
+      </properties>
+    </profile>
+  </profiles>
 </project>

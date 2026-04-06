@@ -82,6 +82,18 @@ public class Controller {
         return responseHandler.getResponse(correlationId, AuthenticationChecker.checkAuthorities());
     }
 
+    @GetMapping("/categories")
+    public CompletableFuture<ModelAndView> getCategories() {
+        String correlationId = UUID.randomUUID().toString();
+        scrapperProducer.sendGetRequest(
+                GET_INFO_TOPIC,
+                correlationId,
+                new edu.model.web.request.CategoriesRequest()
+        );
+        return responseHandler.getResponse(
+                correlationId, AuthenticationChecker.checkAuthorities());
+    }
+
     @SuppressWarnings("ParameterNumber")
     @GetMapping("/search")
     public CompletableFuture<ModelAndView> getSearch(

@@ -8,6 +8,8 @@ import edu.model.web.DTO;
 import edu.model.web.dto.AIResponseDTO;
 import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
+import edu.model.web.dto.CategoriesDTO;
+import edu.model.web.dto.CategoryItemDTO;
 import edu.model.web.dto.UserDTO;
 import edu.model.web.request.AIRequest;
 import edu.model.web.request.ArticleRequest;
@@ -39,6 +41,8 @@ class GetRequestsHandlerTest {
     private UsersService usersService;
     @Mock
     private CommentsService commentsService;
+    @Mock
+    private CategoriesService categoriesService;
     @Mock
     private HuggingFaceWebClient webClient;
     @InjectMocks
@@ -415,6 +419,33 @@ class GetRequestsHandlerTest {
 
         assertThat(result).isExactlyInstanceOf(ArticleFeedDTO.class);
         assertThat(((ArticleFeedDTO) result).articlePreviewDTOList()).hasSize(3);
+    }
+
+    @Test
+    void handleCategoriesRequest() {
+        List<Category> categoryList = List.of(
+                new Category(1L, "Биология", "Живые организмы", new HashSet<>()),
+                new Category(2L, "Архитектура", "Стили зданий", new HashSet<>())
+        );
+        when(categoriesService.findAllSorted()).thenReturn(categoryList);
+
+        DTO result = getRequestsHandler.handleCategoriesRequest();
+
+        assertThat(result).isExactlyInstanceOf(CategoriesDTO.class);
+        CategoriesDTO dto = (CategoriesDTO) result;
+        assertThat(dto.categories()).hasSize(2);
+        assertThat(dto.categories().get(0).name()).isEqualTo("Биология");
+        assertThat(dto.categories().get(1).name()).isEqualTo("Архитектура");
+    }
+
+    @Test
+    void handleCategoriesRequestEmpty() {
+        when(categoriesService.findAllSorted()).thenReturn(List.of());
+
+        DTO result = getRequestsHandler.handleCategoriesRequest();
+
+        assertThat(result).isExactlyInstanceOf(CategoriesDTO.class);
+        assertThat(((CategoriesDTO) result).categories()).isEmpty();
     }
 
     @Test

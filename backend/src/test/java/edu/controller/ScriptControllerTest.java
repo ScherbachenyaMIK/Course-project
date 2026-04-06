@@ -101,4 +101,15 @@ class ScriptControllerTest {
         assertThat(result.getContentType())
                 .isEqualTo("text/javascript");
     }
+
+    @Test
+    void getCategoriesScript() throws Exception {
+        MockHttpServletResponse result = mockMvc.perform(get("/scripts/categories.js"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(result.getContentType())
+                .isEqualTo("text/javascript");
+    }
 }

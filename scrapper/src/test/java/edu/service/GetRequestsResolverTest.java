@@ -6,9 +6,12 @@ import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
 import edu.model.web.dto.ArticleInformationDTO;
 import edu.model.web.dto.ArticlePreviewDTO;
+import edu.model.web.dto.CategoriesDTO;
+import edu.model.web.dto.CategoryItemDTO;
 import edu.model.web.request.ArticleRequest;
 import edu.model.web.request.ArticleSearchRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
+import edu.model.web.request.CategoriesRequest;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -156,6 +159,24 @@ class GetRequestsResolverTest {
         assertThat(response.topic()).isEqualTo("articles_searching");
         assertThat(response.key()).isEqualTo("key");
         assertThat(response.value()).isEqualTo(feed);
+    }
+
+    @Test
+    void resolveCategoriesRequest() {
+        ConsumerRecord<String, ScrapperGetRequest> record = new ConsumerRecord<>(
+                "topic", 1, 0, "key",
+                new CategoriesRequest()
+        );
+        DTO categories = new CategoriesDTO(List.of(
+                new CategoryItemDTO("Биология", "Живые организмы")
+        ));
+        when(handler.handleCategoriesRequest()).thenReturn(categories);
+
+        ProducerRecord<String, DTO> response = resolver.resolve(record);
+
+        assertThat(response.topic()).isEqualTo("categories_showing");
+        assertThat(response.key()).isEqualTo("key");
+        assertThat(response.value()).isEqualTo(categories);
     }
 
     @Test

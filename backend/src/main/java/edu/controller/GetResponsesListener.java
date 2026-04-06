@@ -3,6 +3,7 @@ package edu.controller;
 import edu.model.web.dto.AIResponseDTO;
 import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
+import edu.model.web.dto.CategoriesDTO;
 import edu.model.web.dto.CommentDTO;
 import edu.model.web.dto.UserDTO;
 import edu.service.ResponseHandler;
@@ -32,6 +33,13 @@ public class GetResponsesListener {
     public void listenSearch(ConsumerRecord<String, ArticleFeedDTO> record) {
         kafkaConsumerLogger.logRequest("articles_searching", record);
         responseHandler.completeResponseFeed(record.key(), record.value(), "Search");
+    }
+
+    @SuppressWarnings("IllegalIdentifierName")
+    @KafkaListener(topics = "categories_showing")
+    public void listenCategories(ConsumerRecord<String, CategoriesDTO> record) {
+        kafkaConsumerLogger.logRequest("categories_showing", record);
+        responseHandler.completeResponseCategories(record.key(), record.value(), "Categories");
     }
 
     @SuppressWarnings("IllegalIdentifierName")

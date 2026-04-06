@@ -42,6 +42,9 @@ kafka-config:
     articles_for_feed:
       partitions: 10
       replicas: 3
+    categories_showing:
+      partitions: 5
+      replicas: 3
     statistics:
       partitions: 20
       replicas: 2

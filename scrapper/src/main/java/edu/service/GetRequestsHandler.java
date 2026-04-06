@@ -6,6 +6,8 @@ import edu.model.db.entity.User;
 import edu.model.web.DTO;
 import edu.model.web.dto.AIResponseDTO;
 import edu.model.web.dto.ArticleFeedDTO;
+import edu.model.web.dto.CategoriesDTO;
+import edu.model.web.dto.CategoryItemDTO;
 import edu.model.web.request.AIRequest;
 import edu.model.web.request.ArticleRequest;
 import edu.model.web.request.ArticleSearchRequest;
@@ -30,6 +32,9 @@ public class GetRequestsHandler {
 
     @Autowired
     private CommentsService commentsService;
+
+    @Autowired
+    private CategoriesService categoriesService;
 
     @Autowired
     private HuggingFaceWebClient webClient;
@@ -74,6 +79,13 @@ public class GetRequestsHandler {
         }
         User currentUser = usersService.findUserByUsername(currentUsername);
         return currentUser != null && "ADMIN".equals(currentUser.getUserRole());
+    }
+
+    public DTO handleCategoriesRequest() {
+        List<CategoryItemDTO> items = categoriesService.findAllSorted().stream()
+                .map(c -> new CategoryItemDTO(c.getName(), c.getDescription()))
+                .toList();
+        return new CategoriesDTO(items);
     }
 
     public DTO handleProfileRequest(ProfileRequest request) {

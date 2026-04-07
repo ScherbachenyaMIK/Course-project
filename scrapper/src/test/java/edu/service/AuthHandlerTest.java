@@ -1,9 +1,11 @@
 package edu.service;
 
 import edu.model.web.request.CheckAvailabilityRequest;
+import edu.model.web.request.ConfirmEmailRequest;
 import edu.model.web.request.LoginRequest;
 import edu.model.web.request.RegisterRequest;
 import edu.model.web.response.CheckAvailabilityResponse;
+import edu.model.web.response.ConfirmEmailResponse;
 import edu.model.web.response.LoginResponse;
 import edu.model.web.response.RegisterResponse;
 import java.time.LocalDate;
@@ -158,5 +160,51 @@ class AuthHandlerTest {
         RegisterResponse result = authHandler.handleRegister(request);
 
         assertThat(result).isEqualTo(response);
+    }
+
+    @Test
+    void handleRegisterFailed() {
+        RegisterRequest request =
+                new RegisterRequest(
+                        "test",
+                        "test",
+                        "test@mail.ru",
+                        "VerySecretPassword",
+                        'M',
+                        LocalDate.now()
+                );
+
+        when(service.registerNewUser(any()))
+                .thenReturn(false);
+
+        RegisterResponse result = authHandler.handleRegister(request);
+
+        assertThat(result).isEqualTo(new RegisterResponse(false));
+    }
+
+    @Test
+    void handleConfirmEmailSuccess() {
+        ConfirmEmailRequest request =
+                new ConfirmEmailRequest("testUser");
+
+        when(service.confirmEmail("testUser"))
+                .thenReturn(true);
+
+        ConfirmEmailResponse result = authHandler.handleConfirmEmail(request);
+
+        assertThat(result).isEqualTo(new ConfirmEmailResponse(true));
+    }
+
+    @Test
+    void handleConfirmEmailFailed() {
+        ConfirmEmailRequest request =
+                new ConfirmEmailRequest("unknownUser");
+
+        when(service.confirmEmail("unknownUser"))
+                .thenReturn(false);
+
+        ConfirmEmailResponse result = authHandler.handleConfirmEmail(request);
+
+        assertThat(result).isEqualTo(new ConfirmEmailResponse(false));
     }
 }

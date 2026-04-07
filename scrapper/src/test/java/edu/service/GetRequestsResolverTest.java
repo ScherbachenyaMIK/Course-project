@@ -2,16 +2,20 @@ package edu.service;
 
 import edu.model.web.DTO;
 import edu.model.web.ScrapperGetRequest;
+import edu.model.web.dto.AIResponseDTO;
 import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
 import edu.model.web.dto.ArticleInformationDTO;
 import edu.model.web.dto.ArticlePreviewDTO;
 import edu.model.web.dto.CategoriesDTO;
 import edu.model.web.dto.CategoryItemDTO;
+import edu.model.web.dto.UserDTO;
+import edu.model.web.request.AIRequest;
 import edu.model.web.request.ArticleRequest;
 import edu.model.web.request.ArticleSearchRequest;
 import edu.model.web.request.ArticlesForFeedRequest;
 import edu.model.web.request.CategoriesRequest;
+import edu.model.web.request.ProfileRequest;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -177,6 +181,52 @@ class GetRequestsResolverTest {
         assertThat(response.topic()).isEqualTo("categories_showing");
         assertThat(response.key()).isEqualTo("key");
         assertThat(response.value()).isEqualTo(categories);
+    }
+
+    @Test
+    void resolveProfileRequest() {
+        ConsumerRecord<String, ScrapperGetRequest> record = new ConsumerRecord<>(
+                "topic", 1, 0, "key",
+                new ProfileRequest("username")
+        );
+        DTO profile = new UserDTO(
+                1L, "username", "name", "email", ZonedDateTime.now(),
+                "desc", "USER", 'M', ZonedDateTime.now(), List.of()
+        );
+        when(handler.handleProfileRequest(any())).thenReturn(profile);
+
+        ProducerRecord<String, DTO> response = resolver.resolve(record);
+
+        assertThat(response.topic()).isEqualTo("profile_showing");
+        assertThat(response.key()).isEqualTo("key");
+        assertThat(response.value()).isEqualTo(profile);
+    }
+
+    @Test
+    void resolveAIRequest() {
+        ConsumerRecord<String, ScrapperGetRequest> record = new ConsumerRecord<>(
+                "topic", 1, 0, "key",
+                new AIRequest("", "Sample")
+        );
+        DTO aiResponse = new AIResponseDTO("generated text");
+        when(handler.handleAIRequest(any())).thenReturn(aiResponse);
+
+        ProducerRecord<String, DTO> response = resolver.resolve(record);
+
+        assertThat(response.topic()).isEqualTo("ai_responses");
+        assertThat(response.key()).isEqualTo("key");
+        assertThat(response.value()).isEqualTo(aiResponse);
+    }
+
+    @Test
+    void resolveUnknownType() {
+        ConsumerRecord<String, ScrapperGetRequest> record = new ConsumerRecord<>(
+                "topic", 1, 0, "key",
+                new ScrapperGetRequest() {}
+        );
+
+        assertThatThrownBy(() -> resolver.resolve(record))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

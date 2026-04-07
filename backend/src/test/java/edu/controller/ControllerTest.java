@@ -11,12 +11,14 @@ import edu.model.web.response.AuthenticationResponse;
 import edu.model.web.response.LoginResponse;
 import edu.model.web.response.RegisterResponse;
 import edu.security.JwtProvider;
+import edu.service.EmailService;
 import edu.service.ResponseHandler;
 import edu.util.StatusCodeDescriptor;
 import jakarta.servlet.http.Cookie;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -49,6 +52,9 @@ class ControllerTest {
 
     @MockBean
     private StatusCodeDescriptor statusCodeDescriptor;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -351,5 +357,191 @@ class ControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
+    }
+
+    @SneakyThrows
+    @Test
+    void getCategories() {
+        when(responseHandler.getResponse(anyString(), anyBoolean()))
+                .thenReturn(CompletableFuture.completedFuture(
+                        new ModelAndView("Categories"))
+                );
+
+        mockMvc.perform(get("/categories"))
+                .andExpect(status().isOk())
+                .andExpect(request().asyncStarted())
+                .andDo(result -> assertThat(result.getAsyncResult())
+                        .isExactlyInstanceOf(ModelAndView.class));
+    }
+
+    @SneakyThrows
+    @Test
+    void getSearch() {
+        when(responseHandler.getResponse(anyString(), anyBoolean()))
+                .thenReturn(CompletableFuture.completedFuture(
+                        new ModelAndView("Search"))
+                );
+
+        mockMvc.perform(get("/search")
+                        .param("query", "java")
+                        .param("minLikes", "5")
+                        .param("minViews", "10")
+                        .param("minComments", "2")
+                        .param("tags", "spring, boot")
+                        .param("categories", "Tech")
+                        .param("sort", "likes")
+                        .param("limit", "10"))
+                .andExpect(status().isOk())
+                .andExpect(request().asyncStarted())
+                .andDo(result -> {
+                    ModelAndView mav = (ModelAndView) result.getAsyncResult();
+                    assertThat(mav).isNotNull();
+                    assertThat(mav.getModel().get("query")).isEqualTo("java");
+                    assertThat(mav.getModel().get("sort")).isEqualTo("likes");
+                    assertThat(mav.getModel().get("limit")).isEqualTo(10);
+                });
+    }
+
+    @SneakyThrows
+    @Test
+    void getSearchWithDefaults() {
+        when(responseHandler.getResponse(anyString(), anyBoolean()))
+                .thenReturn(CompletableFuture.completedFuture(
+                        new ModelAndView("Search"))
+                );
+
+        mockMvc.perform(get("/search"))
+                .andExpect(status().isOk())
+                .andExpect(request().asyncStarted())
+                .andDo(result -> {
+                    ModelAndView mav = (ModelAndView) result.getAsyncResult();
+                    assertThat(mav).isNotNull();
+                    assertThat(mav.getModel().get("query")).isEqualTo("");
+                    assertThat(mav.getModel().get("tags")).isEqualTo("");
+                    assertThat(mav.getModel().get("categories")).isEqualTo("");
+                    assertThat(mav.getModel().get("sort")).isEqualTo("relevance");
+                    assertThat(mav.getModel().get("limit")).isEqualTo(20);
+                });
+    }
+
+    @SneakyThrows
+    @Test
+    void confirmEmailSuccess() {
+        String token = jwtProvider.generateEmailConfirmationToken("testUser", 60000);
+
+        when(authorizationListener.waitForResponse(anyString()))
+                .thenReturn(new edu.model.web.response.ConfirmEmailResponse(true));
+
+        ModelAndView result = mockMvc.perform(get("/confirm")
+                        .param("token", token))
+                .andExpect(status().isFound())
+                .andReturn().getModelAndView();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getViewName()).isEqualTo("redirect:/login");
+    }
+
+    @SneakyThrows
+    @Test
+    void confirmEmailInvalidToken() {
+        ModelAndView result = mockMvc.perform(get("/confirm")
+                        .param("token", "invalidtoken"))
+                .andExpect(status().isFound())
+                .andReturn().getModelAndView();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getViewName()).contains("redirect:/checked-error");
+    }
+
+    @SneakyThrows
+    @Test
+    void confirmEmailWrongPurpose() {
+        String authToken = jwtProvider.generateToken("testUser", "USER");
+
+        ModelAndView result = mockMvc.perform(get("/confirm")
+                        .param("token", authToken))
+                .andExpect(status().isFound())
+                .andReturn().getModelAndView();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getViewName()).contains("redirect:/checked-error");
+    }
+
+    @SneakyThrows
+    @Test
+    void confirmEmailFailed() {
+        String token = jwtProvider.generateEmailConfirmationToken("testUser", 60000);
+
+        when(authorizationListener.waitForResponse(anyString()))
+                .thenReturn(new edu.model.web.response.ConfirmEmailResponse(false));
+
+        ModelAndView result = mockMvc.perform(get("/confirm")
+                        .param("token", token))
+                .andExpect(status().isFound())
+                .andReturn().getModelAndView();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getViewName()).contains("redirect:/checked-error");
+    }
+
+    @SneakyThrows
+    @Test
+    void confirmEmailTimeout() {
+        String token = jwtProvider.generateEmailConfirmationToken("testUser", 60000);
+
+        when(authorizationListener.waitForResponse(anyString()))
+                .thenThrow(new TimeoutException());
+
+        ModelAndView result = mockMvc.perform(get("/confirm")
+                        .param("token", token))
+                .andExpect(status().isFound())
+                .andReturn().getModelAndView();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getViewName()).contains("redirect:/checked-error");
+    }
+
+    @SneakyThrows
+    @Test
+    void postRegisterSuccessSendsEmail() {
+        RegisterRequest request = new RegisterRequest(
+                "test",
+                "test",
+                "test@example.com",
+                "test",
+                'M',
+                LocalDate.of(2025, 11, 22)
+        );
+
+        when(authorizationListener.waitForResponse(anyString()))
+                .thenReturn(new RegisterResponse(true));
+
+        mockMvc.perform(post("/register")
+                        .contentType("application/json")
+                        .content(
+                                new ObjectMapper()
+                                        .registerModule(new JavaTimeModule())
+                                        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                                        .writeValueAsString(request)
+                        ))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(emailService).sendConfirmationEmail("test", "test@example.com");
+    }
+
+    @SneakyThrows
+    @Test
+    void handleErrorWithCustomParams() {
+        ModelAndView result = mockMvc.perform(get("/checked-error")
+                        .param("HttpCode", "404")
+                        .param("ResponseDescription", "Page not found"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getModelAndView();
+        assertThat(result.getModel().get("HttpCode"))
+                .isEqualTo(404);
+        assertThat(result.getModel().get("ResponseDescription"))
+                .isEqualTo("Page not found");
     }
 }

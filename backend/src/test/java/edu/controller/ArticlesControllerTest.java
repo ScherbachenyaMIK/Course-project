@@ -2,8 +2,14 @@ package edu.controller;
 
 import edu.configuration.NoKafkaConfig;
 import edu.configuration.SecurityConfig;
+import edu.model.web.dto.ArticleDTO;
+import edu.model.web.dto.ArticleInformationDTO;
+import edu.security.JwtProvider;
 import edu.service.ResponseHandler;
 import edu.util.StatusCodeDescriptor;
+import jakarta.servlet.http.Cookie;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -35,6 +41,9 @@ class ArticlesControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private JwtProvider jwtProvider;
 
     @SneakyThrows
     @Test
@@ -104,6 +113,130 @@ class ArticlesControllerTest {
                     ModelAndView mav = (ModelAndView) result.getAsyncResult();
                     assertThat(mav.getViewName()).isEqualTo("redirect:/login");
                 })
+                .andDo(print());
+    }
+
+    @SneakyThrows
+    @Test
+    void getArticleCreateFormAuthenticated() {
+        String jwtToken = jwtProvider.generateToken("testUser", "USER");
+
+        ModelAndView result = mockMvc.perform(get("/articles/new")
+                        .cookie(new Cookie("JWT_TOKEN", jwtToken)))
+                .andExpect(status().isOk())
+                .andReturn().getModelAndView();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getViewName()).isEqualTo("ArticleCreate");
+    }
+
+    @SneakyThrows
+    @Test
+    void createArticleAuthenticated() {
+        String jwtToken = jwtProvider.generateToken("testUser", "USER");
+
+        when(responseHandler.getResponse(anyString(), anyBoolean()))
+                .thenReturn(CompletableFuture.completedFuture(
+                        new ModelAndView("Article"))
+                );
+
+        mockMvc.perform(post("/articles/new")
+                        .cookie(new Cookie("JWT_TOKEN", jwtToken))
+                        .param("title", "Test Title")
+                        .param("content", "Test Content")
+                        .param("tags", "java, spring")
+                        .param("categories", "Tech"))
+                .andExpect(status().isOk())
+                .andExpect(request().asyncStarted())
+                .andDo(print());
+    }
+
+    @SneakyThrows
+    @Test
+    void getArticleEditFormAuthenticated() {
+        String jwtToken = jwtProvider.generateToken("testUser", "USER");
+        ArticleDTO articleDTO = new ArticleDTO(
+                URI.create("/resources/standard_icon.png"),
+                "testUser",
+                "Title",
+                "Content",
+                new ArticleInformationDTO(
+                        "#tag", "cat", 30, "date", "draft", 0, 0, 0
+                ),
+                "date",
+                new ArrayList<>()
+        );
+        ModelAndView mav = new ModelAndView("Article");
+        mav.addObject("article", articleDTO);
+
+        when(responseHandler.getResponse(anyString(), anyBoolean()))
+                .thenReturn(CompletableFuture.completedFuture(mav));
+
+        mockMvc.perform(get("/articles/1/edit")
+                        .cookie(new Cookie("JWT_TOKEN", jwtToken)))
+                .andExpect(status().isOk())
+                .andExpect(request().asyncStarted())
+                .andDo(result -> {
+                    ModelAndView resultMav = (ModelAndView) result.getAsyncResult();
+                    assertThat(resultMav).isNotNull();
+                    assertThat(resultMav.getViewName()).isEqualTo("ArticleEdit");
+                })
+                .andDo(print());
+    }
+
+    @SneakyThrows
+    @Test
+    void getArticleEditFormNotAuthor() {
+        String jwtToken = jwtProvider.generateToken("otherUser", "USER");
+        ArticleDTO articleDTO = new ArticleDTO(
+                URI.create("/resources/standard_icon.png"),
+                "testUser",
+                "Title",
+                "Content",
+                new ArticleInformationDTO(
+                        "#tag", "cat", 30, "date", "draft", 0, 0, 0
+                ),
+                "date",
+                new ArrayList<>()
+        );
+        ModelAndView mav = new ModelAndView("Article");
+        mav.addObject("article", articleDTO);
+
+        when(responseHandler.getResponse(anyString(), anyBoolean()))
+                .thenReturn(CompletableFuture.completedFuture(mav));
+
+        mockMvc.perform(get("/articles/1/edit")
+                        .cookie(new Cookie("JWT_TOKEN", jwtToken)))
+                .andExpect(status().isOk())
+                .andExpect(request().asyncStarted())
+                .andDo(result -> {
+                    ModelAndView resultMav = (ModelAndView) result.getAsyncResult();
+                    assertThat(resultMav).isNotNull();
+                    assertThat(resultMav.getViewName()).isEqualTo("redirect:/articles/1");
+                })
+                .andDo(print());
+    }
+
+    @SneakyThrows
+    @Test
+    void editArticleAuthenticated() {
+        String jwtToken = jwtProvider.generateToken("testUser", "USER");
+
+        when(responseHandler.getResponse(anyString(), anyBoolean()))
+                .thenReturn(CompletableFuture.completedFuture(
+                        new ModelAndView("Article"))
+                );
+
+        mockMvc.perform(post("/articles/1/edit")
+                        .cookie(new Cookie("JWT_TOKEN", jwtToken))
+                        .param("title", "Updated Title")
+                        .param("content", "Updated Content")
+                        .param("tags", "java")
+                        .param("categories", "Tech")
+                        .param("status", "published")
+                        .param("timeToRead", "15"))
+                .andExpect(status().isOk())
+                .andExpect(request().asyncStarted())
                 .andDo(print());
     }
 }

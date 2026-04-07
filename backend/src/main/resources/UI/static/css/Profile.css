@@ -76,6 +76,18 @@
   align-items: center;
   justify-content: flex-start;
 }
+.field-value {
+  color: var(--color-gray-input);
+  text-align: left;
+  font-family: "Georgia", sans-serif;
+  font-size: 2.7vh;
+  font-weight: 400;
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
 .field-input {
   color: var(--color-gray-input);
   text-align: left;
@@ -87,12 +99,55 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  border: none;
-  background: rgba(0, 0, 0, 0);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.5vh 1vh;
+  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
 }
 .field-input:focus {
   color: var(--color-black);
   outline: none;
+  border-color: var(--color-main-emerald);
+}
+.field-textarea {
+  resize: vertical;
+  min-height: 6vh;
+}
+.field-editable.editing {
+  border: 1px solid var(--color-main-emerald);
+  background: #fff;
+}
+.hidden {
+  display: none !important;
+}
+.profile-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 1vh;
+  margin-top: 1vh;
+}
+.action-button {
+  padding: calc(var(--icon-height) * 0.5) calc(var(--icon-height) * 1.2);
+  font-family: "Arial-NarrowBold", sans-serif;
+  font-size: calc(var(--icon-height) * 1.2);
+  font-weight: 400;
+  border: none;
+  cursor: pointer;
+  color: var(--color-white);
+}
+.edit-button {
+  background: var(--color-main-emerald);
+}
+.save-button {
+  background: var(--color-main-emerald);
+}
+.cancel-button {
+  background: #888;
+}
+.action-button:hover {
+  opacity: 0.85;
 }
 .articles-area {
   display: flex;

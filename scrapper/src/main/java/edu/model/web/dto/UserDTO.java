@@ -17,7 +17,7 @@ public record UserDTO(
     String description,
     String role,
     Character sex,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
     ZonedDateTime birthDate,
     List<ArticlePreviewDTO> articles
 ) implements DTO {

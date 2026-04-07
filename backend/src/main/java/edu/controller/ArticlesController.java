@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/articles")
 public class ArticlesController {
     private static final String REDIRECT_LOGIN_URL = "redirect:/login";
+    private static final String REDIRECT_ARTICLE_URL = "redirect:/articles/";
     private static final String GET_INFO_TOPIC = "get_info";
     private static final String ARTICLE_ID_KEY = "articleId";
     private static final String CURRENT_USERNAME_KEY = "currentUsername";
@@ -115,7 +116,7 @@ public class ArticlesController {
                     Object articleObj = mav.getModel().get("article");
                     if (!(articleObj instanceof ArticleDTO article)
                             || !currentUsername.equals(article.author())) {
-                        return new ModelAndView("redirect:/articles/" + id);
+                        return new ModelAndView(REDIRECT_ARTICLE_URL + id);
                     }
                     mav.setViewName("ArticleEdit");
                     mav.addObject(ARTICLE_ID_KEY, id);
@@ -148,12 +149,6 @@ public class ArticlesController {
                         status, timeToRead
                 ));
         return responseHandler.getResponse(correlationId, true)
-                .thenApply(mav -> {
-                    if (mav != null) {
-                        mav.addObject(ARTICLE_ID_KEY, id);
-                        mav.addObject(CURRENT_USERNAME_KEY, username);
-                    }
-                    return mav;
-                });
+                .thenApply(mav -> new ModelAndView(REDIRECT_ARTICLE_URL + id));
     }
 }

@@ -237,6 +237,10 @@ class ArticlesControllerTest {
                         .param("timeToRead", "15"))
                 .andExpect(status().isOk())
                 .andExpect(request().asyncStarted())
+                .andDo(result -> {
+                    ModelAndView resultMav = (ModelAndView) result.getAsyncResult();
+                    assertThat(resultMav.getViewName()).isEqualTo("redirect:/articles/1");
+                })
                 .andDo(print());
     }
 }

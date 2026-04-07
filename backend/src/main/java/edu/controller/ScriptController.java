@@ -81,4 +81,12 @@ public class ScriptController {
                 .contentType(MediaType.valueOf(mediaType))
                 .body(resource);
     }
+
+    @GetMapping("/profile.js")
+    public ResponseEntity<Resource> getProfileScript() {
+        Resource resource = resourceLoader.getResource("classpath:UI/static/js/Profile.js");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(mediaType))
+                .body(resource);
+    }
 }

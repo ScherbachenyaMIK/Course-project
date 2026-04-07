@@ -4,6 +4,7 @@ import edu.model.web.DTO;
 import edu.model.web.request.ArticleEditRequest;
 import edu.model.web.request.ArticleSetupRequest;
 import edu.model.web.request.CommentRequest;
+import edu.model.web.request.EditProfileRequest;
 import edu.model.web.request.LikeRequest;
 import edu.model.web.request.ViewRequest;
 import edu.service.PostRequestsHandler;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class PostRequestsListener {
     private static final String ARTICLES_SHOWING_TOPIC = "articles_showing";
     private static final String COMMENTS_SHOWING_TOPIC = "comments_showing";
+    private static final String PROFILE_SHOWING_TOPIC = "profile_showing";
     @Autowired
     private KafkaConsumerLogger kafkaConsumerLogger;
 
@@ -52,6 +54,20 @@ public class PostRequestsListener {
                         null,
                         record.key(),
                         handler.handleArticleEditRequest(record.value())
+                );
+        backendProducer.sendDTOMessage(response);
+    }
+
+    @SuppressWarnings("IllegalIdentifierName")
+    @KafkaListener(topics = "profile_editing")
+    public void listenProfileEdit(ConsumerRecord<String, EditProfileRequest> record) {
+        kafkaConsumerLogger.logRequest("profile_editing", record);
+        ProducerRecord<String, DTO> response =
+                new ProducerRecord<>(
+                        PROFILE_SHOWING_TOPIC,
+                        null,
+                        record.key(),
+                        handler.handleEditProfileRequest(record.value())
                 );
         backendProducer.sendDTOMessage(response);
     }

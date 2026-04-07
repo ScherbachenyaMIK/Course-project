@@ -19,7 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -58,6 +60,61 @@ class UsersControllerTest {
         mockMvc.perform(get("/users/someUser"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/checked-error?HttpCode=404"))
+                .andDo(print());
+    }
+
+    @SneakyThrows
+    @Test
+    @WithMockUser(username = "testuser")
+    void editProfile() {
+        when(responseHandler.getResponse(anyString(), anyBoolean()))
+                .thenReturn(CompletableFuture.completedFuture(
+                        new ModelAndView("Profile"))
+                );
+
+        mockMvc.perform(post("/users/testuser/edit")
+                        .with(csrf())
+                        .param("nativeName", "New Name")
+                        .param("description", "New description")
+                        .param("sex", "M")
+                        .param("birthDate", "2000-01-15"))
+                .andExpect(status().isOk())
+                .andExpect(request().asyncStarted())
+                .andDo(result -> {
+                    ModelAndView mav = (ModelAndView) result.getAsyncResult();
+                    assertThat(mav.getViewName()).isEqualTo("redirect:/users/testuser");
+                })
+                .andDo(print());
+    }
+
+    @SneakyThrows
+    @Test
+    void editProfileUnauthenticated() {
+        mockMvc.perform(post("/users/someUser/edit")
+                        .with(csrf())
+                        .param("nativeName", "Name"))
+                .andExpect(status().isOk())
+                .andExpect(request().asyncStarted())
+                .andDo(result -> {
+                    ModelAndView mav = (ModelAndView) result.getAsyncResult();
+                    assertThat(mav.getViewName()).isEqualTo("redirect:/login");
+                })
+                .andDo(print());
+    }
+
+    @SneakyThrows
+    @Test
+    @WithMockUser(username = "otheruser")
+    void editProfileWrongUser() {
+        mockMvc.perform(post("/users/testuser/edit")
+                        .with(csrf())
+                        .param("nativeName", "Name"))
+                .andExpect(status().isOk())
+                .andExpect(request().asyncStarted())
+                .andDo(result -> {
+                    ModelAndView mav = (ModelAndView) result.getAsyncResult();
+                    assertThat(mav.getViewName()).isEqualTo("redirect:/login");
+                })
                 .andDo(print());
     }
 }

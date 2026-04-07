@@ -10,9 +10,11 @@ import edu.model.web.dto.CommentDTO;
 import edu.model.web.request.ArticleEditRequest;
 import edu.model.web.request.ArticleSetupRequest;
 import edu.model.web.request.CommentRequest;
+import edu.model.web.request.EditProfileRequest;
 import edu.model.web.request.LikeRequest;
 import edu.model.web.request.ViewRequest;
 import edu.util.ArticleDTOEntityConverter;
+import edu.util.UserDTOEntityConverter;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -82,6 +84,14 @@ public class PostRequestsHandler {
 
         Article saved = articlesService.setupArticle(article);
         return ArticleDTOEntityConverter.convert(saved, Collections.emptyList());
+    }
+
+    public DTO handleEditProfileRequest(EditProfileRequest request) {
+        User user = usersService.updateProfile(request);
+        if (user == null) {
+            return UserDTOEntityConverter.emptyDTO();
+        }
+        return UserDTOEntityConverter.convert(user);
     }
 
     public void handleViewRequest(ViewRequest request) {

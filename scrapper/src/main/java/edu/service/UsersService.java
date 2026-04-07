@@ -2,9 +2,13 @@ package edu.service;
 
 import edu.model.db.entity.User;
 import edu.model.db.repository.UsersRepository;
+import edu.model.web.request.EditProfileRequest;
 import edu.model.web.request.RegisterRequest;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,6 +88,33 @@ public class UsersService {
 
     public boolean isExistsByEmail(String email) {
         return repository.existsByEmail(email);
+    }
+
+    @Transactional
+    public User updateProfile(EditProfileRequest request) {
+        User user = repository.findUserByUsername(request.username());
+        if (user == null) {
+            return null;
+        }
+        user.setName(request.nativeName());
+        user.setDescription(request.description() != null ? request.description() : "");
+        user.setSex(request.sex());
+        user.setBirthDate(parseBirthDate(request.birthDate()));
+        return repository.save(user);
+    }
+
+    private LocalDateTime parseBirthDate(String birthDate) {
+        if (birthDate == null || birthDate.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalDateTime.of(
+                    LocalDate.parse(birthDate, DateTimeFormatter.ISO_LOCAL_DATE),
+                    LocalTime.MIN
+            );
+        } catch (DateTimeParseException e) {
+            return null;
+        }
     }
 
     private void bindingUserFields(User newUser, RegisterRequest request) {

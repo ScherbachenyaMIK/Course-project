@@ -1,68 +1,86 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{Page :: common_head(~{::meta},'Profile',~{::link},~{})}">
+<head th:replace="~{Page :: common_head(~{::meta},'Profile',~{::link},~{::script})}">
     <meta name="description" content="AI-Powered Content Hub — инновационная платформа для публикации авторских статей с использованием инструментов искусственного интеллекта. Создавайте, редактируйте и улучшайте контент с помощью ИИ. Подходит для блогеров, писателей и всех, кто хочет делиться своими идеями онлайн.">
     <meta name="keywords" content="публикация статей, контент платформа, ИИ инструменты, искусственный интеллект, создание контента, редактирование, авторские статьи, блог, AI content hub">
 
     <link rel="stylesheet" type="text/css" media="all" th:href="@{/styles/profile.css}">
+    <script th:src="@{/scripts/profile.js}" defer></script>
 </head>
 <body>
 <div th:replace="~{Page :: common_body(~{::content})}">
     <div th:fragment="content" class="horizontal-box">
         <div class="vertical-box-left">
-            <form class="profile-area">
+            <form id="profile-form" class="profile-area"
+                  th:action="@{/users/{username}/edit(username=${user.username})}" method="post">
                 <div class="icon-with-fields">
                     <img class="user-icon" th:src="${'/resources/user_icon/' + user.id}" onerror="this.onerror=null; this.src='/resources/standard_icon.png';" alt="Аватар"/>
                     <div class="icon-right-fields">
-                        <div class="field">
+                        <div class="field field-readonly">
                             <div class="field-space-content">
                                 <div class="field-label">Публичное имя пользователя:</div>
-                                <div class="field-input" th:text="${user.username}">Публичное имя пользователя</div>
+                                <div class="field-value" th:text="${user.username}">Публичное имя пользователя</div>
                             </div>
                         </div>
-                        <div class="field">
+                        <div class="field field-readonly">
                             <div class="field-space-content">
                                 <div class="field-label">Электронная почта:</div>
-                                <div class="field-input" th:text="${user.email}">Электронная почта</div>
+                                <div class="field-value" th:text="${user.email}">Электронная почта</div>
                             </div>
                         </div>
-                        <div class="field">
+                        <div class="field field-readonly">
                             <div class="field-space-content">
                                 <div class="field-label">Зарегистрирован с:</div>
-                                <div class="field-input" th:text="${user.registrationDate}">Дата регистрации</div>
+                                <div class="field-value" th:text="${user.registrationDate}">Дата регистрации</div>
                             </div>
                         </div>
-                        <div class="field">
+                        <div class="field field-readonly">
                             <div class="field-space-content">
                                 <div class="field-label">Роль:</div>
-                                <div class="field-input" th:text="${user.role}">Роль</div>
+                                <div class="field-value" th:text="${user.role}">Роль</div>
                             </div>
                         </div>
-                        <div class="field">
+                        <div class="field field-editable">
                             <div class="field-space-content">
                                 <div class="field-label">Собственное имя пользователя:</div>
-                                <div class="field-input" th:text="${user.nativeName}">Собственное имя пользователя</div>
+                                <div class="field-value" th:text="${user.nativeName}">Собственное имя</div>
+                                <input class="field-input hidden" type="text" name="nativeName"
+                                       th:value="${user.nativeName}" placeholder="Введите имя"/>
                             </div>
                         </div>
-                        <div class="field">
+                        <div class="field field-editable">
                             <div class="field-space-content">
                                 <div class="field-label">Описание:</div>
-                                <div class="field-input" th:text="${user.description}">Описание</div>
+                                <div class="field-value" th:text="${user.description}">Описание</div>
+                                <textarea class="field-input field-textarea hidden" name="description"
+                                          placeholder="Расскажите о себе" th:text="${user.description}"></textarea>
                             </div>
                         </div>
-                        <div class="field">
+                        <div class="field field-editable">
                             <div class="field-space-content">
                                 <div class="field-label">Пол:</div>
-                                <div class="field-input" th:text="${user.sex}">Пол</div>
+                                <div class="field-value" th:text="${user.sex}">Пол</div>
+                                <select class="field-input hidden" name="sex">
+                                    <option value="" th:selected="${user.sex == null}">Не указан</option>
+                                    <option value="M" th:selected="${user.sex != null and user.sex.toString() == 'M'}">М</option>
+                                    <option value="F" th:selected="${user.sex != null and user.sex.toString() == 'F'}">Ж</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="field">
+                        <div class="field field-editable">
                             <div class="field-space-content">
                                 <div class="field-label">Дата рождения:</div>
-                                <div class="field-input" th:text="${user.birthDate}">Дата рождения</div>
+                                <div class="field-value" th:text="${user.birthDate}">Дата рождения</div>
+                                <input class="field-input hidden" type="date" name="birthDate"
+                                       th:value="${user.birthDate != null and user.birthDate.length() >= 10 ? user.birthDate.substring(6, 10) + '-' + user.birthDate.substring(3, 5) + '-' + user.birthDate.substring(0, 2) : ''}"/>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="profile-actions">
+                    <button type="button" id="edit-button" class="action-button edit-button">Редактировать</button>
+                    <button type="submit" id="save-button" class="action-button save-button hidden">Сохранить</button>
+                    <button type="button" id="cancel-button" class="action-button cancel-button hidden">Отменить</button>
                 </div>
                 <hr style="border: none; border-top: 1px solid #000; margin: 10px 0;">
                 <div class="article-label">Статьи автора:</div>

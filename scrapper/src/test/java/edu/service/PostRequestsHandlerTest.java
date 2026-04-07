@@ -8,12 +8,15 @@ import edu.model.db.entity.User;
 import edu.model.web.DTO;
 import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.CommentDTO;
+import edu.model.web.dto.UserDTO;
 import edu.model.web.request.ArticleEditRequest;
 import edu.model.web.request.ArticleSetupRequest;
 import edu.model.web.request.CommentRequest;
+import edu.model.web.request.EditProfileRequest;
 import edu.model.web.request.LikeRequest;
 import edu.model.web.request.ViewRequest;
 import edu.util.ArticleDTOEntityConverter;
+import edu.util.UserDTOEntityConverter;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -374,6 +377,48 @@ class PostRequestsHandlerTest {
         DTO result = postRequestsHandler.handleArticleEditRequest(request);
 
         assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
+    }
+
+    @Test
+    void handleEditProfileRequest() {
+        EditProfileRequest request = new EditProfileRequest(
+                "username", "New Name", "New description", 'F', "2000-01-15"
+        );
+
+        User updatedUser = User.builder()
+                .id(1L)
+                .username("username")
+                .name("New Name")
+                .sex('F')
+                .email("email")
+                .userRole("USER")
+                .description("New description")
+                .registrationDate(LocalDateTime.now())
+                .articles(List.of())
+                .build();
+
+        when(usersService.updateProfile(request)).thenReturn(updatedUser);
+
+        DTO result = postRequestsHandler.handleEditProfileRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(UserDTO.class);
+        UserDTO dto = (UserDTO) result;
+        assertThat(dto.nativeName()).isEqualTo("New Name");
+        assertThat(dto.description()).isEqualTo("New description");
+        assertThat(dto.sex()).isEqualTo('F');
+    }
+
+    @Test
+    void handleEditProfileRequestUserNotFound() {
+        EditProfileRequest request = new EditProfileRequest(
+                "unknown", "Name", "Desc", 'M', "2000-01-15"
+        );
+
+        when(usersService.updateProfile(request)).thenReturn(null);
+
+        DTO result = postRequestsHandler.handleEditProfileRequest(request);
+
+        assertThat(result).isEqualTo(UserDTOEntityConverter.emptyDTO());
     }
 
     @Test

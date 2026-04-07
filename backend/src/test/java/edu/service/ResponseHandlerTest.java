@@ -6,8 +6,10 @@ import edu.model.web.dto.ArticleDTO;
 import edu.model.web.dto.ArticleFeedDTO;
 import edu.model.web.dto.CategoriesDTO;
 import edu.model.web.dto.CategoryItemDTO;
+import edu.model.web.dto.CommentDTO;
 import edu.model.web.dto.UserDTO;
 import edu.model.web.response.CheckAvailabilityResponse;
+import java.net.URI;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -255,6 +257,83 @@ class ResponseHandlerTest {
                         "model",
                         "view")
                 .isEqualTo(expected);
+    }
+
+    @SneakyThrows
+    @Test
+    void getResponseComment() {
+        CommentDTO commentDTO = new CommentDTO(
+                "author",
+                URI.create("/resources/user_icon/1"),
+                "Great article!",
+                "06.06.2025 12:00"
+        );
+        ResponseEntity<CommentDTO> expected = new ResponseEntity<>(
+                commentDTO,
+                HttpStatus.OK
+        );
+
+        CompletableFuture<?> future = handler.getApiResponse(id);
+
+        handler.completeCommentResponse(id, commentDTO);
+
+        await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until(future::isDone);
+
+        assertThat(future.get())
+                .usingRecursiveComparison()
+                .isEqualTo(expected);
+    }
+
+    @SneakyThrows
+    @Test
+    void completeResponseFeedUnknownId() {
+        ArticleFeedDTO articleFeedDTO = new ArticleFeedDTO(List.of());
+        handler.completeResponseFeed("unknownId", articleFeedDTO, "");
+    }
+
+    @SneakyThrows
+    @Test
+    void completeResponseArticleUnknownId() {
+        ArticleDTO articleDTO = new ArticleDTO(
+                null, "author", "title", "content", null, null, null);
+        handler.completeResponseArticle("unknownId", articleDTO, "");
+    }
+
+    @SneakyThrows
+    @Test
+    void completeResponseProfileUnknownId() {
+        UserDTO userDTO = new UserDTO(
+                1L, "u", "n", "e", "d", "desc", "r", 'M', "b", List.of());
+        handler.completeResponseProfile("unknownId", userDTO, "");
+    }
+
+    @SneakyThrows
+    @Test
+    void completeAvailabilityResponseUnknownId() {
+        handler.completeAvailabilityResponse("unknownId",
+                new CheckAvailabilityResponse(true, true));
+    }
+
+    @SneakyThrows
+    @Test
+    void completeResponseAIUnknownId() {
+        handler.completeResponseAI("unknownId", new AIResponseDTO("resp"));
+    }
+
+    @SneakyThrows
+    @Test
+    void completeCommentResponseUnknownId() {
+        handler.completeCommentResponse("unknownId",
+                new CommentDTO("a", URI.create("/icon"), "text", "date"));
+    }
+
+    @SneakyThrows
+    @Test
+    void completeResponseCategoriesUnknownId() {
+        handler.completeResponseCategories("unknownId",
+                new CategoriesDTO(List.of()), "Categories");
     }
 
     @SneakyThrows

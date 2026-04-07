@@ -303,4 +303,116 @@ class PostRequestsHandlerTest {
         DTO result = postRequestsHandler.handleCommentRequest(request);
         assertThat(result).isEqualTo(ArticleDTOEntityConverter.emptyDTO());
     }
+
+    @Test
+    void handleArticleSetupRequestNullContent() {
+        ArticleSetupRequest request =
+                new ArticleSetupRequest(
+                        "username",
+                        "title",
+                        null,
+                        null,
+                        null
+                );
+
+        Article articleNoContent = Article.builder()
+                .author(user)
+                .id(4L)
+                .title("title")
+                .textContent("")
+                .visibility(true)
+                .likes(0)
+                .views(0)
+                .timeToRead(5)
+                .lastUpdateDate(LocalDateTime.now())
+                .creationDate(LocalDateTime.now())
+                .tags(new HashSet<>())
+                .categories(new HashSet<>())
+                .build();
+
+        when(usersService.findUserByUsername("username"))
+                .thenReturn(user);
+        when(articlesService.setupArticle(any()))
+                .thenReturn(articleNoContent);
+
+        DTO result = postRequestsHandler.handleArticleSetupRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
+    }
+
+    @Test
+    void handleArticleEditRequestNullStatus() {
+        ArticleEditRequest request =
+                new ArticleEditRequest(
+                        1L, "username", "title",
+                        "content", "", "", null, null
+                );
+
+        when(articlesService.getArticle(1L))
+                .thenReturn(article);
+        when(articlesService.setupArticle(any()))
+                .thenReturn(article);
+
+        DTO result = postRequestsHandler.handleArticleEditRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
+    }
+
+    @Test
+    void handleArticleEditRequestBlankStatus() {
+        ArticleEditRequest request =
+                new ArticleEditRequest(
+                        1L, "username", "title",
+                        null, "", "", " ", 10
+                );
+
+        when(articlesService.getArticle(1L))
+                .thenReturn(article);
+        when(articlesService.setupArticle(any()))
+                .thenReturn(article);
+
+        DTO result = postRequestsHandler.handleArticleEditRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
+    }
+
+    @Test
+    void handleArticleSetupRequestWithCategoryNotFound() {
+        ArticleSetupRequest request =
+                new ArticleSetupRequest(
+                        "username",
+                        "title",
+                        "content",
+                        "tag1",
+                        "nonExistent"
+                );
+
+        Article savedArticle = Article.builder()
+                .author(user)
+                .id(5L)
+                .title("title")
+                .textContent("content")
+                .visibility(true)
+                .likes(0)
+                .views(0)
+                .timeToRead(5)
+                .lastUpdateDate(LocalDateTime.now())
+                .creationDate(LocalDateTime.now())
+                .tags(Set.of(new Tag(1L, "tag1", new HashSet<>())))
+                .categories(new HashSet<>())
+                .build();
+
+        when(usersService.findUserByUsername("username"))
+                .thenReturn(user);
+        when(tagsService.findOrCreate("tag1"))
+                .thenReturn(new Tag(1L, "tag1", new HashSet<>()));
+        when(categoriesService.findByName("nonExistent"))
+                .thenReturn(null);
+        when(articlesService.setupArticle(any()))
+                .thenReturn(savedArticle);
+
+        DTO result = postRequestsHandler.handleArticleSetupRequest(request);
+
+        assertThat(result).isExactlyInstanceOf(ArticleDTO.class);
+    }
 }

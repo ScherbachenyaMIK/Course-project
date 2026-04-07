@@ -1,3 +1,18 @@
+function performSearch() {
+    var query = document.getElementById('searching-input').value.trim();
+    if (query) {
+        window.location.href = '/search?query=' + encodeURIComponent(query);
+    }
+}
+
+document.querySelector('.magnifier').addEventListener('click', performSearch);
+
+document.getElementById('searching-input').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        performSearch();
+    }
+});
+
 document.getElementById('sample-form').addEventListener('submit', function(event) {
     event.preventDefault();
     document.getElementById('sample-form').style.display = 'none';

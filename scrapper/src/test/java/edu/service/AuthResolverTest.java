@@ -4,9 +4,11 @@ import edu.configuration.ApplicationConfig;
 import edu.model.web.AuthRequest;
 import edu.model.web.AuthResponse;
 import edu.model.web.request.CheckAvailabilityRequest;
+import edu.model.web.request.ConfirmEmailRequest;
 import edu.model.web.request.LoginRequest;
 import edu.model.web.request.RegisterRequest;
 import edu.model.web.response.CheckAvailabilityResponse;
+import edu.model.web.response.ConfirmEmailResponse;
 import edu.model.web.response.LoginResponse;
 import edu.model.web.response.RegisterResponse;
 import edu.util.KafkaConsumerLogger;
@@ -24,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 class AuthResolverTest {
@@ -138,6 +141,31 @@ class AuthResolverTest {
     }
 
     @Test
+    void resolveConfirmEmail() {
+        String key = "id";
+        ConfirmEmailRequest value = new ConfirmEmailRequest("testUser");
+        ConsumerRecord<String, AuthRequest> request = new ConsumerRecord<>(
+                "identification",
+                2,
+                0,
+                key,
+                value
+        );
+        ConfirmEmailResponse expectedResponse = new ConfirmEmailResponse(true);
+        ProducerRecord<String, AuthResponse> expected = new ProducerRecord<>(
+                "authorization",
+                key,
+                expectedResponse
+        );
+
+        when(authHandler.handleConfirmEmail(value)).thenReturn(expectedResponse);
+
+        ProducerRecord<String, AuthResponse> result = authResolver.resolve(request);
+
+        assertThat(result).usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    @Test
     void resolveRegisterTimeout() {
         String key = "id";
         RegisterRequest value = new RegisterRequest(
@@ -175,5 +203,25 @@ class AuthResolverTest {
         ProducerRecord<String, AuthResponse> result = authResolver.resolve(request);
 
         assertThat(result).usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    @Test
+    void resolveNullKey() {
+        ConsumerRecord<String, AuthRequest> request = new ConsumerRecord<>(
+                "identification", 2, 0, null, new LoginRequest("t", "t"));
+
+        assertThatThrownBy(() -> authResolver.resolve(request))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Key must not be null");
+    }
+
+    @Test
+    void resolveNullValue() {
+        ConsumerRecord<String, AuthRequest> request = new ConsumerRecord<>(
+                "identification", 2, 0, "key", null);
+
+        assertThatThrownBy(() -> authResolver.resolve(request))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Value must not be null");
     }
 }

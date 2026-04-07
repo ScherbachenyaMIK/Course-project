@@ -3,6 +3,7 @@ package edu.service;
 import edu.model.db.entity.Category;
 import edu.model.db.repository.CategoriesRepository;
 import java.util.HashSet;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -42,5 +43,30 @@ class CategoriesServiceTest {
         Category result = categoriesService.findByName("Unknown");
 
         assertThat(result).isNull();
+    }
+
+    @Test
+    void findAllSorted() {
+        List<Category> categories = List.of(
+                new Category(1L, "Art", "Creative works", new HashSet<>()),
+                new Category(2L, "Biology", "Living organisms", new HashSet<>()),
+                new Category(3L, "Tech", "Technology", new HashSet<>())
+        );
+        when(repository.findAllByOrderByNameAsc()).thenReturn(categories);
+
+        List<Category> result = categoriesService.findAllSorted();
+
+        assertThat(result).hasSize(3);
+        assertThat(result.get(0).getName()).isEqualTo("Art");
+        assertThat(result.get(2).getName()).isEqualTo("Tech");
+    }
+
+    @Test
+    void findAllSortedEmpty() {
+        when(repository.findAllByOrderByNameAsc()).thenReturn(List.of());
+
+        List<Category> result = categoriesService.findAllSorted();
+
+        assertThat(result).isEmpty();
     }
 }

@@ -27,11 +27,43 @@
   width: 100%;
   align-items: flex-start;
 }
+.user-icon-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 30%;
+  cursor: pointer;
+  flex-shrink: 0;
+}
 .user-icon {
   display: block;
-  width: 30%;
+  width: 100%;
   height: auto;
   object-fit: contain;
+}
+.user-icon-wrapper .user-icon-overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  background: rgba(0, 0, 0, 0.55);
+  color: var(--color-white);
+  text-align: center;
+  font-family: "Georgia", sans-serif;
+  font-size: 1.8vh;
+  padding: 0.6vh 0;
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+}
+.user-icon-wrapper:hover .user-icon-overlay {
+  opacity: 1;
+}
+.user-icon-wrapper.uploading {
+  opacity: 0.6;
+  cursor: progress;
+}
+.user-icon-error {
+  color: red;
+  font-family: "Georgia", sans-serif;
+  font-size: 1.6vh;
+  align-self: flex-start;
 }
 .icon-right-fields {
   display: flex;

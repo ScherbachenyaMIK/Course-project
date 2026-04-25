@@ -9,6 +9,7 @@
 <body>
 <div th:replace="~{Page :: common_body(~{::content})}">
     <div th:fragment="content" class="edit-container">
+        <div id="edit-data" th:attr="data-article-id=${articleId}" style="display:none;"></div>
         <form id="edit-form" class="bento-grid" method="post"
               th:action="@{'/articles/' + ${articleId} + '/edit'}">
 
@@ -66,6 +67,13 @@
 
             <div class="bento-editor">
                 <div class="bento-header">Содержание статьи</div>
+                <div class="editor-toolbar">
+                    <button type="button" id="insert-image-button" class="editor-toolbar-button">
+                        Вставить изображение
+                    </button>
+                    <span id="insert-image-status" class="editor-toolbar-status"></span>
+                </div>
+                <input type="file" id="article-image-input" accept="image/*" class="hidden"/>
                 <textarea id="content-input" name="content" class="bento-textarea"
                           placeholder="Текст вашей статьи..." th:text="${article.content}"></textarea>
             </div>
@@ -83,11 +91,17 @@
             </div>
 
             <div class="bento-attachments">
-                <div class="bento-header">Вложения</div>
+                <div class="bento-header">Обложка статьи</div>
                 <div class="attachments-body">
-                    <div class="attachments-placeholder">
-                        Перетащите файлы сюда или нажмите для загрузки
+                    <div id="preview-wrapper" class="preview-wrapper" title="Нажмите, чтобы изменить обложку">
+                        <img id="preview-image" class="preview-image"
+                             th:src="${'/resources/preview/' + articleId}"
+                             onerror="this.onerror=null; this.src='/resources/standard_preview.png';"
+                             alt="Обложка статьи"/>
+                        <div class="preview-overlay">Изменить обложку</div>
                     </div>
+                    <input type="file" id="preview-input" accept="image/*" class="hidden"/>
+                    <div id="preview-error" class="preview-error hidden"></div>
                 </div>
             </div>
 

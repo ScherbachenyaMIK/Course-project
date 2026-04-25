@@ -10,11 +10,17 @@
 <body>
 <div th:replace="~{Page :: common_body(~{::content})}">
     <div th:fragment="content" class="horizontal-box">
+        <div id="profile-data" th:attr="data-user-id=${user.id}" style="display:none;"></div>
         <div class="vertical-box-left">
             <form id="profile-form" class="profile-area"
                   th:action="@{/users/{username}/edit(username=${user.username})}" method="post">
                 <div class="icon-with-fields">
-                    <img class="user-icon" th:src="${'/resources/user_icon/' + user.id}" onerror="this.onerror=null; this.src='/resources/standard_icon.png';" alt="Аватар"/>
+                    <div class="user-icon-wrapper" id="user-icon-wrapper" title="Нажмите, чтобы изменить аватар">
+                        <img class="user-icon" id="user-icon" th:src="${'/resources/user_icon/' + user.id}" onerror="this.onerror=null; this.src='/resources/standard_icon.png';" alt="Аватар"/>
+                        <div class="user-icon-overlay">Изменить</div>
+                    </div>
+                    <input type="file" id="user-icon-input" accept="image/*" class="hidden"/>
+                    <div id="user-icon-error" class="user-icon-error hidden"></div>
                     <div class="icon-right-fields">
                         <div class="field field-readonly">
                             <div class="field-space-content">
